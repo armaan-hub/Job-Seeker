@@ -3,7 +3,7 @@
 import os
 from typing import Any
 
-from jobscout.providers.base import AIProvider, AIResponse, AIModel, ProviderType
+from jobscout.providers.base import AIModel, AIProvider, AIResponse, ProviderType
 
 
 class AnthropicProvider(AIProvider):
@@ -21,10 +21,10 @@ class AnthropicProvider(AIProvider):
             try:
                 import anthropic
                 self._client = anthropic.Anthropic(api_key=self.api_key)
-            except ImportError:
+            except ImportError as err:
                 raise ImportError(
                     "anthropic package not installed. Run: pip install anthropic"
-                )
+                ) from err
         return self._client
 
     def complete(self, prompt: str, system: str | None = None, **kwargs) -> AIResponse:
@@ -35,18 +35,17 @@ class AnthropicProvider(AIProvider):
         max_tokens = kwargs.pop("max_tokens", 4096)
 
         messages = [{"role": "user", "content": prompt}]
-        if system:
-            messages = [
-                {"role": "system", "content": system},
-                *messages,
-            ]
 
-        response = client.messages.create(
-            model=model,
-            max_tokens=max_tokens,
-            messages=messages,
+        create_kwargs: dict = {
+            "model": model,
+            "max_tokens": max_tokens,
+            "messages": messages,
             **kwargs,
-        )
+        }
+        if system:
+            create_kwargs["system"] = system
+
+        response = client.messages.create(**create_kwargs)
 
         return AIResponse(
             content=response.content[0].text,

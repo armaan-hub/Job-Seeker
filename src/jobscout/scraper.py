@@ -138,7 +138,7 @@ class NaukriGulfScraper(JobScraper):
     """Naukri Gulf job scraper."""
 
     def __init__(self):
-        super().__init("naukrigulf")
+        super().__init__("naukrigulf")
 
     def search(
         self,

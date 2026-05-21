@@ -109,7 +109,7 @@ class UserProfile:
         profile.visa_status = profile_data.get("contact", {}).get("visa")
         profile.availability = profile_data.get("contact", {}).get("availability")
 
-        profile.title = data.get("title")
+        profile.title = profile_data.get("title") or data.get("title")
         profile.summary = data.get("professional_summary")
 
         # Experience

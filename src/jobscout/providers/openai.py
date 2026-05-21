@@ -3,7 +3,7 @@
 import os
 from typing import Any
 
-from jobscout.providers.base import AIProvider, AIResponse, AIModel, ProviderType
+from jobscout.providers.base import AIModel, AIProvider, AIResponse, ProviderType
 
 
 class OpenAIProvider(AIProvider):
@@ -22,10 +22,10 @@ class OpenAIProvider(AIProvider):
                     api_key=self.api_key,
                     base_url=self.base_url,
                 )
-            except ImportError:
+            except ImportError as err:
                 raise ImportError(
                     "openai package not installed. Run: pip install openai"
-                )
+                ) from err
         return self._client
 
     def complete(self, prompt: str, system: str | None = None, **kwargs) -> AIResponse:

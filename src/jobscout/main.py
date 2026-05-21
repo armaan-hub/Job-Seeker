@@ -20,7 +20,6 @@ from jobscout.providers.openai import OpenAIProvider
 from jobscout.providers.opencode import OpenCodeProvider
 from jobscout.scraper import get_scraper
 
-
 console = Console()
 
 
