@@ -94,3 +94,41 @@ class TestResumeAdvisor:
         assert len(result) == 1
         assert isinstance(result[0], ResumeEdit)
         assert result[0].section == "General"
+
+
+class TestRequirementsAnalyzer:
+    """Test RequirementsAnalyzer.analyze()."""
+
+    def test_analyze_returns_report(self, sample_profile, sample_job):
+        from jobscout.advisor import RequirementsAnalyzer, RequirementsReport
+        provider = MockProvider(
+            '{"requirements":[{"item":"Python","priority":"must-have","candidate_has":true,"candidate_note":"5 years"}],'
+            '"coverage_score":80.0,"critical_gaps":[]}'
+        )
+        analyzer = RequirementsAnalyzer(provider)
+        result = analyzer.analyze(sample_profile, sample_job)
+        assert isinstance(result, RequirementsReport)
+        assert 0.0 <= result.coverage_score <= 100.0
+
+    def test_analyze_parses_requirements(self, sample_profile, sample_job):
+        from jobscout.advisor import Requirement, RequirementsAnalyzer
+        provider = MockProvider(
+            '{"requirements":[{"item":"SQL","priority":"must-have","candidate_has":true,"candidate_note":"Expert"}],'
+            '"coverage_score":90.0,"critical_gaps":[]}'
+        )
+        analyzer = RequirementsAnalyzer(provider)
+        result = analyzer.analyze(sample_profile, sample_job)
+        assert len(result.requirements) >= 1
+        req = result.requirements[0]
+        assert isinstance(req, Requirement)
+        assert req.item == "SQL"
+        assert req.candidate_has is True
+
+    def test_analyze_fallback_on_bad_json(self, sample_profile, sample_job):
+        from jobscout.advisor import RequirementsAnalyzer, RequirementsReport
+        provider = MockProvider("Not valid JSON")
+        analyzer = RequirementsAnalyzer(provider)
+        result = analyzer.analyze(sample_profile, sample_job)
+        assert isinstance(result, RequirementsReport)
+        assert result.coverage_score == 0.0
+        assert len(result.critical_gaps) >= 1

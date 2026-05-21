@@ -98,3 +98,58 @@ class ResumeAdvisor:
                     reason="Raw AI response (JSON parsing failed)",
                 )
             ]
+
+
+class RequirementsAnalyzer:
+    """Analyzes job requirements against a candidate's profile."""
+
+    SYSTEM_PROMPT = (
+        "You are an expert recruiter and talent assessor specialising in the MENA market. "
+        "Return ONLY a valid JSON object, no prose."
+    )
+
+    def __init__(self, provider: AIProvider) -> None:
+        self._provider = provider
+
+    def analyze(self, profile: UserProfile, job: JobListing) -> RequirementsReport:
+        """Return a requirements coverage report for the given job."""
+        prompt = (
+            f"Candidate profile:\n{profile}\n\n"
+            f"Job listing:\nTitle: {job.title}\nCompany: {job.company}\n"
+            f"Description: {job.description}\n\n"
+            "Analyze the job requirements against the candidate's profile. "
+            "Return a JSON object with keys: requirements (array of objects with "
+            "item, priority, candidate_has, candidate_note), coverage_score (0-100), "
+            "critical_gaps (array of strings)."
+        )
+        response = self._provider.complete(prompt, system=self.SYSTEM_PROMPT)
+        return self._parse(response.content)
+
+    def _parse(self, content: str) -> RequirementsReport:
+        try:
+            text = content.strip()
+            if text.startswith("```"):
+                text = text.split("```")[1]
+                if text.startswith("json"):
+                    text = text[4:]
+            data = json.loads(text)
+            requirements = [
+                Requirement(
+                    item=r.get("item", ""),
+                    priority=r.get("priority", "nice-to-have"),
+                    candidate_has=bool(r.get("candidate_has", False)),
+                    candidate_note=r.get("candidate_note", ""),
+                )
+                for r in data.get("requirements", [])
+            ]
+            return RequirementsReport(
+                requirements=requirements,
+                coverage_score=float(data.get("coverage_score", 0.0)),
+                critical_gaps=list(data.get("critical_gaps", [])),
+            )
+        except (json.JSONDecodeError, KeyError, TypeError, ValueError):
+            return RequirementsReport(
+                requirements=[],
+                coverage_score=0.0,
+                critical_gaps=["Unable to parse AI response"],
+            )
