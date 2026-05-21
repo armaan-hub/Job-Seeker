@@ -132,3 +132,42 @@ class TestRequirementsAnalyzer:
         assert isinstance(result, RequirementsReport)
         assert result.coverage_score == 0.0
         assert len(result.critical_gaps) >= 1
+
+
+class TestApplicationCoach:
+    """Test ApplicationCoach.advise()."""
+
+    def test_advise_returns_quick_tips(self, sample_profile, sample_job):
+        from jobscout.advisor import ApplicationCoach, CoachAdvice
+        provider = MockProvider(
+            '{"quick_tips":["Apply via LinkedIn referral","Tailor cover letter to role"]}'
+        )
+        coach = ApplicationCoach(provider)
+        result = coach.advise(sample_profile, sample_job, include_plan=False)
+        assert isinstance(result, CoachAdvice)
+        assert len(result.quick_tips) >= 1
+        assert result.action_plan is None
+
+    def test_advise_includes_action_plan_when_requested(self, sample_profile, sample_job):
+        from jobscout.advisor import ApplicationCoach, CoachAdvice
+        provider = MockProvider(
+            '{"quick_tips":["Network first"],'
+            '"action_plan":{"before_applying":["Research company"],'
+            '"cover_letter":["Open with impact"],'
+            '"interview_prep":["Practice STAR method"]}}'
+        )
+        coach = ApplicationCoach(provider)
+        result = coach.advise(sample_profile, sample_job, include_plan=True)
+        assert result.action_plan is not None
+        assert "before_applying" in result.action_plan
+        assert "cover_letter" in result.action_plan
+        assert "interview_prep" in result.action_plan
+
+    def test_advise_fallback_on_bad_json(self, sample_profile, sample_job):
+        from jobscout.advisor import ApplicationCoach, CoachAdvice
+        provider = MockProvider("Not valid JSON")
+        coach = ApplicationCoach(provider)
+        result = coach.advise(sample_profile, sample_job, include_plan=False)
+        assert isinstance(result, CoachAdvice)
+        assert len(result.quick_tips) >= 1
+        assert result.action_plan is None

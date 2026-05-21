@@ -153,3 +153,61 @@ class RequirementsAnalyzer:
                 coverage_score=0.0,
                 critical_gaps=["Unable to parse AI response"],
             )
+
+
+class ApplicationCoach:
+    """Provides coaching advice for landing a specific job."""
+
+    SYSTEM_PROMPT = (
+        "You are an expert career coach and interview trainer specialising in the MENA job market. "
+        "Return ONLY a valid JSON object, no prose."
+    )
+
+    def __init__(self, provider: AIProvider) -> None:
+        self._provider = provider
+
+    def advise(
+        self,
+        profile: UserProfile,
+        job: JobListing,
+        include_plan: bool = False,
+    ) -> CoachAdvice:
+        """Return coaching advice; include_plan=True adds a full action plan."""
+        plan_instruction = (
+            " Also include an 'action_plan' object with keys before_applying, "
+            "cover_letter, interview_prep (each an array of strings)."
+            if include_plan
+            else ""
+        )
+        prompt = (
+            f"Candidate profile:\n{profile}\n\n"
+            f"Job listing:\nTitle: {job.title}\nCompany: {job.company}\n"
+            f"Description: {job.description}\n\n"
+            "Provide career coaching for this application. "
+            f"Return a JSON object with key 'quick_tips' (array of strings).{plan_instruction}"
+        )
+        response = self._provider.complete(prompt, system=self.SYSTEM_PROMPT)
+        return self._parse(response.content, include_plan)
+
+    def _parse(self, content: str, include_plan: bool) -> CoachAdvice:
+        try:
+            text = content.strip()
+            if text.startswith("```"):
+                text = text.split("```")[1]
+                if text.startswith("json"):
+                    text = text[4:]
+            data = json.loads(text)
+            action_plan: dict[str, list[str]] | None = None
+            if include_plan and "action_plan" in data:
+                action_plan = {
+                    k: list(v) for k, v in data["action_plan"].items()
+                }
+            return CoachAdvice(
+                quick_tips=list(data.get("quick_tips", [])),
+                action_plan=action_plan,
+            )
+        except (json.JSONDecodeError, KeyError, TypeError):
+            return CoachAdvice(
+                quick_tips=[content],
+                action_plan=None,
+            )
