@@ -59,3 +59,38 @@ class TestDataclasses:
             action_plan=None,
         )
         assert len(advice.quick_tips) == 1
+
+
+class TestResumeAdvisor:
+    """Test ResumeAdvisor.suggest_edits()."""
+
+    def test_suggest_edits_returns_list(self, sample_profile, sample_job):
+        from jobscout.advisor import ResumeAdvisor, ResumeEdit
+        provider = MockProvider(
+            '[{"section":"Experience","current_text":"Managed data","suggested_text":"Led ETL pipelines","reason":"Quantifies impact"}]'
+        )
+        advisor = ResumeAdvisor(provider)
+        result = advisor.suggest_edits(sample_profile, sample_job)
+        assert isinstance(result, list)
+        assert len(result) >= 1
+        assert isinstance(result[0], ResumeEdit)
+
+    def test_suggest_edits_parses_fields(self, sample_profile, sample_job):
+        from jobscout.advisor import ResumeAdvisor, ResumeEdit
+        provider = MockProvider(
+            '[{"section":"Summary","current_text":"Analyst","suggested_text":"Senior FP&A Analyst","reason":"Matches title"}]'
+        )
+        advisor = ResumeAdvisor(provider)
+        result = advisor.suggest_edits(sample_profile, sample_job)
+        assert result[0].section == "Summary"
+        assert result[0].reason == "Matches title"
+
+    def test_suggest_edits_fallback_on_bad_json(self, sample_profile, sample_job):
+        from jobscout.advisor import ResumeAdvisor, ResumeEdit
+        provider = MockProvider("This is not JSON at all")
+        advisor = ResumeAdvisor(provider)
+        result = advisor.suggest_edits(sample_profile, sample_job)
+        assert isinstance(result, list)
+        assert len(result) == 1
+        assert isinstance(result[0], ResumeEdit)
+        assert result[0].section == "General"
