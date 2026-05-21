@@ -2,7 +2,12 @@
 
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass
+
+from jobscout.profile import UserProfile
+from jobscout.providers.base import AIProvider
+from jobscout.scraper import JobListing
 
 
 @dataclass
@@ -40,12 +45,6 @@ class CoachAdvice:
 
     quick_tips: list[str]
     action_plan: dict[str, list[str]] | None  # None if not requested
-
-import json
-
-from jobscout.profile import UserProfile
-from jobscout.scraper import JobListing
-from jobscout.providers.base import AIProvider
 
 
 class ResumeAdvisor:
