@@ -1,0 +1,274 @@
+"""CLI entry point for Job Scout."""
+
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+import click
+from rich.console import Console
+from rich.panel import Panel
+from rich.progress import Progress, SpinnerColumn, TextColumn
+from rich.table import Table
+
+from jobscout import __version__
+from jobscout.config import JobScoutConfig, get_config
+from jobscout.matcher import JobMatcher, MatchResult, SkillGapAnalyzer
+from jobscout.profile import ProfileParser
+from jobscout.providers.anthropic import AnthropicProvider
+from jobscout.providers.openai import OpenAIProvider
+from jobscout.providers.opencode import OpenCodeProvider
+from jobscout.scraper import get_scraper
+
+
+console = Console()
+
+
+def get_provider(config: JobScoutConfig):
+    """Get the configured AI provider."""
+    if config.active_provider == "anthropic":
+        return AnthropicProvider(config.anthropic.api_key)
+    elif config.active_provider == "openai":
+        return OpenAIProvider(config.openai.api_key)
+    elif config.active_provider == "opencode":
+        return OpenCodeProvider(
+            base_url=config.opencode.base_url,
+            api_key=config.opencode.api_key,
+        )
+    else:
+        raise ValueError(f"Unknown provider: {config.active_provider}")
+
+
+def format_match_result(result: MatchResult, detailed: bool = False) -> None:
+    """Format and print a single match result."""
+    score = result.score
+    score_color = (
+        "green" if score >= 70 else "yellow" if score >= 50 else "red"
+    )
+
+    panel_content = [
+        f"[bold]Score:[/bold] [{score_color}]{score:.0f}%[/]"
+    ]
+
+    if detailed:
+        panel_content.extend([
+            f"[bold]Reasoning:[/bold] {result.reasoning}",
+            "",
+            f"[bold]Strengths:[/bold] {', '.join(result.strengths) if result.strengths else 'N/A'}",
+        ])
+        if result.missing_skills:
+            panel_content.append(f"[bold]Missing Skills:[/bold] {', '.join(result.missing_skills)}")
+        if result.improvement_tips:
+            panel_content.append(f"[bold]Tips:[/bold] {result.improvement_tips[0]}")
+
+    console.print(Panel(
+        "\n".join(panel_content),
+        title=f"[bold]{result.job.title}[/bold] at {result.job.company}",
+        subtitle=f"{result.job.location} | Source: {result.job.source}",
+        border_style="blue",
+    ))
+
+
+def display_skill_analysis(analysis: dict) -> None:
+    """Display skill gap analysis."""
+    console.print("\n[bold cyan]Skill Gap Analysis[/bold cyan]")
+
+    table = Table(show_header=True, header_style="bold magenta")
+    table.add_column("Category")
+    table.add_column("Items")
+
+    if analysis.get("emphasize_skills"):
+        table.add_row("Emphasize", ", ".join(analysis["emphasize_skills"]))
+    if analysis.get("develop_skills"):
+        table.add_row("Develop", ", ".join(analysis["develop_skills"]))
+    if analysis.get("keywords"):
+        table.add_row("Keywords", ", ".join(analysis["keywords"]))
+    if analysis.get("certifications"):
+        table.add_row("Certifications", ", ".join(analysis["certifications"]))
+
+    console.print(table)
+
+
+@click.group()
+@click.version_option(version=__version__)
+def main():
+    """AI Job Scout — Find jobs that match your profile."""
+    pass
+
+
+@main.command()
+@click.option(
+    "--profile",
+    type=click.Path(exists=True, path_type=Path),
+    help="Path to profile JSON file",
+)
+@click.option(
+    "--location",
+    default="Dubai, UAE",
+    help="Job location filter",
+)
+@click.option(
+    "--roles",
+    multiple=True,
+    help="Job roles to search for (can specify multiple)",
+)
+@click.option(
+    "--sources",
+    multiple=True,
+    help="Job sources to use (linkedin, indeed, bayt, naukrigulf, mock)",
+)
+@click.option(
+    "--max-results",
+    default=10,
+    type=int,
+    help="Maximum number of jobs to return",
+)
+@click.option(
+    "--detailed",
+    is_flag=True,
+    help="Show detailed match analysis",
+)
+@click.option(
+    "--analyze-skills",
+    is_flag=True,
+    help="Run skill gap analysis",
+)
+def search(
+    profile: Path | None,
+    location: str,
+    roles: tuple[str, ...],
+    sources: tuple[str, ...],
+    max_results: int,
+    detailed: bool,
+    analyze_skills: bool,
+):
+    """Search for jobs matching your profile."""
+    config = get_config()
+
+    # Load profile
+    if profile:
+        try:
+            user_profile = ProfileParser.load_profile(profile)
+            console.print(f"[green]Loaded profile:[/green] {user_profile.name or profile.name}")
+        except Exception as e:
+            console.print(f"[red]Error loading profile:[/red] {e}")
+            sys.exit(1)
+    else:
+        # Use default profile path if exists
+        default_profile = Path("My Instroduction/aniket_profile.json")
+        if default_profile.exists():
+            user_profile = ProfileParser.load_profile(default_profile)
+            console.print(f"[green]Using default profile:[/green] {user_profile.name}")
+        else:
+            console.print("[yellow]Warning:[/yellow] No profile loaded, using defaults")
+            from jobscout.profile import UserProfile
+            user_profile = UserProfile()
+
+    # Determine roles
+    target_roles = list(roles) if roles else config.default_roles
+
+    # Determine sources
+    job_sources = list(sources) if sources else config.job_sources
+
+    console.print(f"\n[bold]Searching for:[/bold] {', '.join(target_roles)}")
+    console.print(f"[bold]Location:[/bold] {location}")
+    console.print(f"[bold]Sources:[/bold] {', '.join(job_sources)}\n")
+
+    # Scrape jobs
+    all_jobs = []
+    with Progress(
+        SpinnerColumn(),
+        TextColumn("[progress.description]{task.description}"),
+        console=console,
+    ) as progress:
+        for source in job_sources:
+            task = progress.add_task(f"Scraping {source}...", total=None)
+            scraper = get_scraper(source)
+            jobs = scraper.search(roles=target_roles, location=location, max_results=max_results)
+            all_jobs.extend(jobs)
+            progress.update(task, completed=True)
+
+    if not all_jobs:
+        console.print("[yellow]No jobs found.[/yellow]")
+        return
+
+    console.print(f"[green]Found {len(all_jobs)} jobs[/green]\n")
+
+    # Match jobs with AI
+    try:
+        provider = get_provider(config)
+        matcher = JobMatcher(provider)
+
+        with console.status("[bold green]Analyzing matches with AI..."):
+            results = matcher.match_profile_to_jobs(user_profile, all_jobs, detailed)
+
+        # Display top matches
+        console.print(f"\n[bold cyan]Top {min(max_results, len(results))} Matches:[/bold cyan]\n")
+
+        for result in results[:max_results]:
+            format_match_result(result, detailed)
+
+        # Skill gap analysis
+        if analyze_skills:
+            analyzer = SkillGapAnalyzer(provider)
+            analysis = analyzer.analyze_gaps(user_profile, target_roles)
+            display_skill_analysis(analysis)
+
+    except Exception as e:
+        console.print(f"[red]Error:[/red] {e}")
+        sys.exit(1)
+
+
+@main.command()
+@click.option(
+    "--profile",
+    type=click.Path(exists=True, path_type=Path),
+    required=True,
+    help="Path to profile JSON file",
+)
+def analyze(profile: Path):
+    """Analyze skill gaps for a profile."""
+    config = get_config()
+
+    try:
+        user_profile = ProfileParser.load_profile(profile)
+        provider = get_provider(config)
+        analyzer = SkillGapAnalyzer(provider)
+
+        with console.status("[bold green]Analyzing skill gaps..."):
+            analysis = analyzer.analyze_gaps(user_profile, user_profile.target_roles)
+
+        display_skill_analysis(analysis)
+
+    except Exception as e:
+        console.print(f"[red]Error:[/red] {e}")
+        sys.exit(1)
+
+
+@main.command()
+def providers():
+    """Show configured AI providers."""
+    config = get_config()
+
+    table = Table(show_header=True, header_style="bold magenta")
+    table.add_column("Provider")
+    table.add_column("Status")
+    table.add_column("Active")
+
+    providers_info = [
+        ("anthropic", bool(config.anthropic.api_key)),
+        ("openai", bool(config.openai.api_key)),
+        ("opencode", bool(config.opencode.base_url)),
+    ]
+
+    for name, has_key in providers_info:
+        status = "[green]Configured[/green]" if has_key else "[yellow]Not configured[/yellow]"
+        active = "[bold green]✓[/bold green]" if config.active_provider == name else ""
+        table.add_row(name, status, active)
+
+    console.print(table)
+    console.print(f"\nActive provider: [bold]{config.active_provider}[/bold]")
+
+
+if __name__ == "__main__":
+    main()

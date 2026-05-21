@@ -1,0 +1,279 @@
+{
+  "profile": {
+    "name": "Aniket Kumar Mishra",
+    "title": "Financial Data Analyst | Automation Specialist | Certified AI Professional",
+    "contact": {
+      "phone": "+971 52 507 0142",
+      "email": "armaanmishra86@gmail.com",
+      "location": "Dubai, UAE",
+      "linkedin": "linkedin.com/in/aniket-kumar-mishra-793633b8",
+      "visa": "UAE Employment Visa (transferable)",
+      "availability": "Immediate"
+    },
+    "personal": {
+      "dob": "20 February 1996",
+      "nationality": "Indian",
+      "languages": ["English", "Hindi"]
+    }
+  },
+
+  "professional_summary": "Financial Data Analyst with 10+ years of experience bridging Finance and Data Engineering. Specialises in building automated data pipelines that transform messy financial data into actionable insights. Expert in Excel, VBA, and Power Query. Recently engineered a Big Data ETL solution processing 6 million+ records (1.5 GB) for a Real Estate portfolio. Certified Artificial Intelligence Professional (KHDA Attested | CPD Certified | London Chamber | Grade: A++ Excellent). Currently completing AI, Data Science & Machine Learning programme at LISRC (Jun 2026). Immediately available in Dubai.",
+
+  "experience": [
+    {
+      "company": "Rank Accounting & Consultancy",
+      "location": "Dubai, UAE",
+      "role": "Senior Financial Analyst & Data Automation Lead",
+      "start": "2019-12",
+      "end": "Present",
+      "key_achievement": "Engineered ETL pipeline processing 6 million+ records (1.5 GB) reducing reporting from days to minutes",
+      "bullets": [
+        "Engineered a robust ETL pipeline using Power Query & VBA to process 6 million+ records (1.5 GB), reducing financial reporting time from days to minutes and enabling real-time forecasting for a Real Estate data warehouse.",
+        "Built complex VBA-based financial models to analyse variance trends across manufacturing clients, identifying cost leakages of up to 15%.",
+        "Replaced static PDF audit reports with interactive Power BI dashboards for P&L and Cash Flow analysis.",
+        "Designed data-driven AML monitoring structures ensuring compliance with UAE Central Bank regulations; implemented KYC workflow automation.",
+        "Developed automated financial reporting templates eliminating manual reconciliation, saving 8+ hours per reporting cycle."
+      ]
+    },
+    {
+      "company": "United Facilities Management",
+      "location": "Muscat, Oman",
+      "role": "Senior Project Data Analyst",
+      "start": "2017-11",
+      "end": "2019-11",
+      "bullets": [
+        "Developed custom Excel-based cost-tracking software using advanced VBA macros to monitor daily project expenses, eliminating the need for expensive third-party tools.",
+        "Prepared daily cost analysis reports, cash flow audits, and customer feedback analytics for senior management.",
+        "Maintained and optimised operational systems for finance and accounting functions, identifying and resolving key process inefficiencies."
+      ]
+    },
+    {
+      "company": "Bio Sciences Lab Pvt. Ltd.",
+      "location": "Delhi, India",
+      "role": "Financial Systems Analyst & Auditor",
+      "start": "2015-05",
+      "end": "2017-10",
+      "bullets": [
+        "Built a complete accounting and inventory management system from scratch using Excel for a pharmaceutical client, replacing a manual paper-based process.",
+        "Managed VAT returns, Balance Sheet preparation, and conducted internal audits to ensure regulatory accuracy.",
+        "Introduced automated stock reconciliation tools, reducing inventory discrepancies and improving audit trail documentation."
+      ]
+    },
+    {
+      "company": "Prime International Inc.",
+      "location": "Kanpur, India",
+      "role": "Financial Analyst",
+      "start": "2014-04",
+      "end": "2015-05",
+      "bullets": [
+        "Managed full-cycle financial analysis, VAT return preparation, and data documentation across multiple client accounts.",
+        "Prepared monthly financial summaries and reconciliation reports ensuring accuracy of all financial records."
+      ]
+    }
+  ],
+
+  "education": [
+    {
+      "degree": "AI, Data Science and Machine Learning",
+      "institution": "London International Studies and Research Centre (LISRC)",
+      "start": "2025-04",
+      "end": "2026-06",
+      "status": "In Progress"
+    },
+    {
+      "degree": "Bachelor of Commerce – Accounting & Financial Accounting",
+      "institution": "Chitra P.G. Degree College, Kanpur University, India",
+      "year": "2015",
+      "status": "Completed"
+    }
+  ],
+
+  "certifications": [
+    {
+      "group": "Immersive Business Training, Dubai",
+      "accreditation": ["KHDA Attested", "CPD Certified", "London Chamber of Commerce Verified"],
+      "items": [
+        {
+          "name": "Certified AI Professional – Certificate of Achievement",
+          "date": "2026-04",
+          "grade": "A++ Excellent",
+          "hours": 45,
+          "notes": "London Chamber Verified | Cert: CERT-1779117402195-TPC4DO6E3"
+        },
+        {
+          "name": "Certified AI Professional – Certificate Diploma (CPD Certified)",
+          "date": "2026-04",
+          "hours": 45,
+          "notes": "KHDA Attested | Cert: CERT-1779092671128-9IDRAMWCU"
+        },
+        {
+          "name": "Artificial Intelligence (AI) – Certificate of Completion",
+          "date_range": "2025-09 to 2026-04",
+          "hours": 45,
+          "grade": "A++ Excellent",
+          "permit": "628185",
+          "notes": "KHDA QR Attested"
+        }
+      ]
+    },
+    {
+      "group": "Anthropic",
+      "items": [
+        { "name": "Claude Code 101", "date": "2026-04", "skills": ["Claude Code", "Claude AI Skills"] }
+      ]
+    },
+    {
+      "group": "IBM",
+      "items": [
+        { "name": "Data Science Methodology", "date": "2026-03", "skills": ["Data Modeling"] },
+        { "name": "Tools for Data Science", "date": "2026-01", "skills": ["Data Science"] },
+        { "name": "What is Data Science?", "date": "2026-01" },
+        { "name": "Data Science Orientation", "date": "2026-01" },
+        { "name": "Data Science Professional Certificate", "date": "Ongoing", "skills": ["Python", "SQL", "Machine Learning"] }
+      ]
+    },
+    {
+      "group": "University of Pennsylvania",
+      "items": [
+        { "name": "Modeling Risk and Realities", "date": "2026-03" },
+        { "name": "Introduction to Spreadsheets and Models", "date": "2026-03", "skills": ["Business Analysis", "Financial Analysis"] },
+        { "name": "Fundamentals of Business and Financial Quantitative Modeling", "date": "2026-03" }
+      ]
+    },
+    {
+      "group": "Microsoft",
+      "items": [
+        { "name": "Power BI (ETL): Extract, Transform and Load Data in Power BI", "date": "2026-02", "skills": ["Microsoft Power BI"] },
+        { "name": "Harnessing the Power of Data with Power BI", "date": "2026-02" },
+        { "name": "Preparing Data for Analysis with Microsoft Excel", "date": "2026-02", "skills": ["Microsoft Power BI"] }
+      ]
+    },
+    {
+      "group": "University of Colorado Boulder",
+      "items": [
+        { "name": "Excel/VBA for Creative Problem Solving", "date": "2026-02", "skills": ["VBA", "Business Analysis"] }
+      ]
+    },
+    {
+      "group": "Udemy",
+      "items": [
+        { "name": "Analyzing & Visualizing Data with Microsoft Power BI", "date": "2024-08", "skills": ["Power BI", "DAX"] },
+        { "name": "Financial Analyst Certification", "date": "2024-01", "skills": ["Financial Reporting", "Microsoft Excel"] },
+        { "name": "Power BI Desktop for Business Intelligence (Maven Analytics)", "skills": ["Power BI", "DAX"] },
+        { "name": "Excel: Business Intelligence with Power Query & DAX", "skills": ["Power Query", "DAX"] },
+        { "name": "Anti-Money Laundering Concepts (GenMan Solutions)", "date": "2024", "skills": ["AML"] }
+      ]
+    },
+    {
+      "group": "LinkedIn Learning",
+      "items": [
+        { "name": "CSS Essential Training", "date": "2021-05" },
+        { "name": "HTML Essential Training", "date": "2021-03" }
+      ]
+    },
+    {
+      "group": "United Latino Students Association (ULSA)",
+      "items": [
+        { "name": "What is Data Science?", "date": "2026-01" }
+      ]
+    }
+  ],
+
+  "skills": {
+    "data_engineering": [
+      "ETL Pipeline Design",
+      "Advanced Power Query (M Language)",
+      "Excel VBA & Macros",
+      "Power BI ETL",
+      "Data Cleansing & Mining",
+      "Big Data Processing (6M+ records)"
+    ],
+    "analytics_and_databases": [
+      "SQL (Querying & Joins)",
+      "Python (Pandas)",
+      "Power BI (DAX)",
+      "Financial Modeling",
+      "Business Analysis"
+    ],
+    "ai_and_data_science": [
+      "Certified AI Professional (KHDA)",
+      "Claude Code (Anthropic)",
+      "Claude AI Skills",
+      "Data Science Methodology",
+      "Data Modeling",
+      "Machine Learning (Foundational)"
+    ],
+    "finance": [
+      "AML/KYC Compliance",
+      "Internal Audit",
+      "Cost & Variance Analysis",
+      "Financial Reporting",
+      "VAT & Tax Filing",
+      "P&L Analysis",
+      "Cash Flow Analysis",
+      "Balance Sheet Preparation"
+    ],
+    "tools_and_platforms": [
+      "Microsoft Excel (Advanced)",
+      "Power BI",
+      "Power Query",
+      "VBA",
+      "SQL",
+      "Python (Pandas)",
+      "Claude AI",
+      "Claude Code"
+    ],
+    "soft_skills": [
+      "Strategic Problem Solving",
+      "Analytical Thinking",
+      "Cross-Functional Teamwork",
+      "Process Optimisation",
+      "Attention to Detail"
+    ]
+  },
+
+  "key_metrics": {
+    "years_experience": 10,
+    "records_processed": "6 million+ (1.5 GB)",
+    "cost_leakage_identified": "up to 15%",
+    "hours_saved_per_cycle": "8+",
+    "certifications_count": 22,
+    "ai_cert_grade": "A++ Excellent",
+    "ai_cert_hours": 45
+  },
+
+  "target_roles": [
+    "Financial Data Analyst",
+    "Data Analyst",
+    "Senior Financial Analyst",
+    "Data Automation Specialist",
+    "Business Intelligence Analyst",
+    "AI Data Analyst",
+    "ETL Developer",
+    "Power BI Developer",
+    "Financial Systems Analyst"
+  ],
+
+  "preferred_locations": ["Dubai, UAE", "Abu Dhabi, UAE", "Sharjah, UAE", "Remote"],
+
+  "cv_versions": {
+    "premium": "Aniket_Premium_CV_Updated.docx – Naukri-style premium format with two-column layout, dotted borders, Book Antiqua font, blue bar",
+    "ats": "Aniket_Mishra_ATS_CV.docx – Single column, Calibri font, no tables, ATS-safe bullet points"
+  },
+
+  "linkedin_post_titles": {
+    "completion_cert": "Certified AI Professional – KHDA Attested | CPD Certified | A++ Excellent",
+    "achievement_cert": "Certified AI Professional – Certificate of Achievement | London Chamber Verified",
+    "diploma_cert": "Certified AI Professional – CPD Diploma | Immersive Business Training, Dubai"
+  },
+
+  "ats_tips": {
+    "use_ats_cv_for": ["Job portals (LinkedIn, Naukri, Bayt, Indeed)", "Company career pages", "Online applications"],
+    "use_premium_cv_for": ["Direct recruiter emails", "Interviews", "Networking"],
+    "top_keywords": [
+      "ETL Pipeline", "Power BI", "DAX", "Power Query", "VBA", "Financial Modeling",
+      "AML", "KYC", "SQL", "Python", "Pandas", "Data Automation",
+      "Certified AI Professional", "KHDA", "Financial Data Analyst"
+    ]
+  }
+}
