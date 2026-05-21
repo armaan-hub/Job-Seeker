@@ -12,6 +12,7 @@ from rich.progress import Progress, SpinnerColumn, TextColumn
 from rich.table import Table
 
 from jobscout import __version__
+from jobscout.advisor import ApplicationCoach, RequirementsAnalyzer, ResumeAdvisor
 from jobscout.config import JobScoutConfig, get_config
 from jobscout.matcher import JobMatcher, MatchResult, SkillGapAnalyzer
 from jobscout.profile import ProfileParser
@@ -19,7 +20,7 @@ from jobscout.providers.anthropic import AnthropicProvider
 from jobscout.providers.openai import OpenAIProvider
 from jobscout.providers.opencode import OpenCodeProvider
 from jobscout.scraper import get_scraper
-from jobscout.state import save_results
+from jobscout.state import load_job_at_index, save_results
 
 console = Console()
 
@@ -87,6 +88,71 @@ def display_skill_analysis(analysis: dict) -> None:
         table.add_row("Certifications", ", ".join(analysis["certifications"]))
 
     console.print(table)
+
+
+def display_resume_edits(edits) -> None:
+    """Display resume edit suggestions."""
+    from jobscout.advisor import ResumeEdit  # noqa: F401
+    console.print("\n[bold cyan]📄 Resume Edits[/bold cyan]")
+    if not edits:
+        console.print("[dim]No edits suggested.[/dim]")
+        return
+    for i, edit in enumerate(edits, 1):
+        console.print(Panel(
+            f"[bold]Current:[/bold] {edit.current_text}\n"
+            f"[bold green]Suggested:[/bold green] {edit.suggested_text}\n"
+            f"[bold]Why:[/bold] {edit.reason}",
+            title=f"[{i}] {edit.section}",
+            border_style="cyan",
+        ))
+
+
+def display_requirements_report(report) -> None:
+    """Display requirements coverage report."""
+    score = report.coverage_score
+    score_color = "green" if score >= 70 else "yellow" if score >= 50 else "red"
+    console.print(f"\n[bold cyan]📋 Requirements Analysis[/bold cyan]  "
+                  f"Coverage: [{score_color}]{score:.0f}%[/]")
+
+    table = Table(show_header=True, header_style="bold magenta")
+    table.add_column("Requirement")
+    table.add_column("Priority")
+    table.add_column("You Have It?")
+    table.add_column("Notes")
+
+    for req in report.requirements:
+        has_it = "[green]✓[/green]" if req.candidate_has else "[red]✗[/red]"
+        priority_color = "red" if req.priority == "must-have" else "yellow"
+        table.add_row(
+            req.item,
+            f"[{priority_color}]{req.priority}[/]",
+            has_it,
+            req.candidate_note,
+        )
+    console.print(table)
+
+    if report.critical_gaps:
+        console.print(f"[red bold]Critical gaps:[/red bold] {', '.join(report.critical_gaps)}")
+
+
+def display_coach_advice(advice) -> None:
+    """Display application coaching advice."""
+    console.print("\n[bold cyan]🎯 Application Coach[/bold cyan]")
+    for tip in advice.quick_tips:
+        console.print(f"  • {tip}")
+
+    if advice.action_plan:
+        console.print("\n[bold]Action Plan:[/bold]")
+        labels = {
+            "before_applying": "Before Applying",
+            "cover_letter": "Cover Letter",
+            "interview_prep": "Interview Prep",
+        }
+        for key, steps in advice.action_plan.items():
+            label = labels.get(key, key.replace("_", " ").title())
+            console.print(f"\n  [bold yellow]{label}:[/bold yellow]")
+            for step in steps:
+                console.print(f"    → {step}")
 
 
 @click.group()
@@ -279,6 +345,69 @@ def providers():
 
     console.print(table)
     console.print(f"\nActive provider: [bold]{config.active_provider}[/bold]")
+
+
+@main.command()
+@click.argument("index", type=int)
+@click.option(
+    "--profile",
+    type=click.Path(exists=True, path_type=Path),
+    help="Path to profile JSON file",
+)
+@click.option(
+    "--plan",
+    is_flag=True,
+    help="Include full action plan (before_applying, cover_letter, interview_prep)",
+)
+def advise(index: int, profile: Path | None, plan: bool):
+    """Get AI coaching for job number INDEX from your last search."""
+    job = load_job_at_index(index)
+    if job is None:
+        console.print(
+            f"[red]No job at index {index}.[/red] "
+            "Run [bold]job-scout search[/bold] first, then use the number shown next to each result."
+        )
+        sys.exit(1)
+
+    console.print(f"\n[bold]Advising on:[/bold] {job.title} at {job.company}\n")
+
+    config = get_config()
+    if profile:
+        try:
+            user_profile = ProfileParser.load_profile(profile)
+        except Exception as e:
+            console.print(f"[red]Error loading profile:[/red] {e}")
+            sys.exit(1)
+    else:
+        default_profile = Path("My Instroduction/aniket_profile.json")
+        if default_profile.exists():
+            user_profile = ProfileParser.load_profile(default_profile)
+        else:
+            from jobscout.profile import UserProfile
+            user_profile = UserProfile()
+
+    try:
+        provider = get_provider(config)
+
+        with console.status("[bold green]Analyzing resume fit..."):
+            resume_advisor = ResumeAdvisor(provider)
+            edits = resume_advisor.suggest_edits(user_profile, job)
+
+        with console.status("[bold green]Analyzing requirements..."):
+            req_analyzer = RequirementsAnalyzer(provider)
+            report = req_analyzer.analyze(user_profile, job)
+
+        with console.status("[bold green]Generating coaching advice..."):
+            coach = ApplicationCoach(provider)
+            advice = coach.advise(user_profile, job, include_plan=plan)
+
+        display_resume_edits(edits)
+        display_requirements_report(report)
+        display_coach_advice(advice)
+
+    except Exception as e:
+        console.print(f"[red]Error:[/red] {e}")
+        sys.exit(1)
 
 
 if __name__ == "__main__":
