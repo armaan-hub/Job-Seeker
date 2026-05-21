@@ -19,6 +19,7 @@ from jobscout.providers.anthropic import AnthropicProvider
 from jobscout.providers.openai import OpenAIProvider
 from jobscout.providers.opencode import OpenCodeProvider
 from jobscout.scraper import get_scraper
+from jobscout.state import save_results
 
 console = Console()
 
@@ -202,10 +203,21 @@ def search(
             results = matcher.match_profile_to_jobs(user_profile, all_jobs, detailed)
 
         # Display top matches
-        console.print(f"\n[bold cyan]Top {min(max_results, len(results))} Matches:[/bold cyan]\n")
+        top_results = results[:max_results]
+        console.print(f"\n[bold cyan]Top {len(top_results)} Matches:[/bold cyan]\n")
 
-        for result in results[:max_results]:
+        for idx, result in enumerate(top_results, start=1):
+            console.print(f"[dim]\\[{idx}][/dim]", end=" ")
             format_match_result(result, detailed)
+
+        # Persist results for advise command
+        save_results(
+            [r.job for r in top_results],
+            [r.score for r in top_results],
+        )
+        console.print(
+            "\n[dim]💡 Tip: Run [bold]job-scout advise <N>[/bold] for AI coaching on any result above.[/dim]"
+        )
 
         # Skill gap analysis
         if analyze_skills:
