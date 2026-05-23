@@ -12,19 +12,31 @@ class TestMockScraper:
         assert scraper.name == "mock"
 
     def test_get_scraper_supports_international_boards(self):
-        """Test new international scrapers can be constructed."""
+        """Test international scrapers can be constructed via canonical and legacy IDs."""
         assert get_scraper("remoteok").name == "remoteok"
         assert get_scraper("gulftalent").name == "gulftalent"
-        assert get_scraper("seek").name == "seek"
+        # seek is now seek_au; legacy alias still works
+        assert get_scraper("seek_au").name == "seek_au"
+        assert get_scraper("seek").name == "seek_au"  # legacy alias
         assert get_scraper("weworkremotely").name == "weworkremotely"
+        # Spot-check new global regions
+        assert get_scraper("indeed_us").name == "indeed_us"
+        assert get_scraper("stepstone_de").name == "stepstone_de"
+        assert get_scraper("naukri").name == "naukri"
 
     def test_board_registry_and_regions_cover_new_boards(self):
         """Test board metadata and regional mappings are exposed."""
-        assert len(BOARD_REGISTRY) == 14
+        # Registry now has 70+ boards covering 16 regions globally
+        assert len(BOARD_REGISTRY) >= 60
         assert BOARD_REGISTRY["remoteok"]["status"] == "live"
-        assert BOARD_REGISTRY["weworkremotely"]["status"] == "stub"
+        # New global regions present
+        assert "usa" in REGION_BOARDS
+        assert "germany" in REGION_BOARDS
+        assert "australia" in REGION_BOARDS
+        assert "brazil" in REGION_BOARDS
         assert REGION_BOARDS["uae"]["boards"] == ["gulftalent", "bayt", "naukrigulf", "dubizzle"]
-        assert REGION_BOARDS["global_remote"]["boards"] == ["remoteok", "weworkremotely"]
+        assert "remoteok" in REGION_BOARDS["global_remote"]["boards"]
+        assert "remotive" in REGION_BOARDS["global_remote"]["boards"]
 
     def test_mock_search_returns_jobs(self):
         """Test mock scraper returns jobs."""

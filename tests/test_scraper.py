@@ -4,7 +4,15 @@ from __future__ import annotations
 
 from typing import Any
 
-from jobscout.scraper import RemoteOKScraper, _build_generated_jobs, _search_url
+from jobscout.scraper import (
+    BOARD_REGISTRY,
+    REGION_BOARDS,
+    JobListing,
+    RemoteOKScraper,
+    _build_generated_jobs,
+    _search_url,
+    get_scraper,
+)
 
 
 class DummyResponse:
@@ -19,21 +27,54 @@ class DummyResponse:
         return self._payload
 
 
-def test_search_url_builds_seek_deep_link() -> None:
-    """Seek URLs should point to the real board search page."""
+def test_job_listing_from_dict_preserves_gateway_flag() -> None:
+    """Gateway cards should survive JSON round-trips."""
+    job = JobListing.from_dict(
+        {
+            "title": "Browse Data Analyst jobs →",
+            "company": "SEEK",
+            "location": "Sydney, Australia",
+            "source": "seek_au",
+            "is_gateway": True,
+        }
+    )
+
+    assert job.is_gateway is True
+
+
+def test_search_url_builds_seek_au_deep_link() -> None:
+    """Seek AU URLs should point to the real board search page."""
     assert (
-        _search_url("seek", "Data Analyst", "Sydney, Australia")
-        == "https://www.seek.com.au/data-analyst-jobs/in-Sydney-Australia"
+        _search_url("seek_au", "Data Analyst", "Sydney, Australia")
+        == "https://www.seek.com.au/data-analyst-jobs/in-sydney-australia"
     )
 
 
-def test_build_generated_jobs_uses_board_search_urls() -> None:
-    """Generated preview jobs should deep-link to the source board search."""
-    jobs = _build_generated_jobs("seek", ["Data Analyst"], "Sydney, Australia", 3)
 
-    assert len(jobs) == 3
-    assert all(job.url.startswith("https://www.seek.com.au/") for job in jobs)
-    assert all("example.com" not in job.url for job in jobs)
+def test_build_generated_jobs_returns_single_gateway_card() -> None:
+    """Generated boards should return one gateway card, not fake listings."""
+    jobs = _build_generated_jobs("seek_au", ["Data Analyst"], "Sydney, Australia", 3)
+
+    assert len(jobs) == 1
+    assert jobs[0].title == "Browse Data Analyst jobs →"
+    assert jobs[0].company == "SEEK"
+    assert jobs[0].is_gateway is True
+    assert jobs[0].url == "https://www.seek.com.au/data-analyst-jobs/in-sydney-australia"
+
+
+
+def test_registry_and_scrapers_include_new_gateway_boards() -> None:
+    """Expanded regional boards should be registered and constructible."""
+    assert "seek_au" in BOARD_REGISTRY
+    assert "remotive" in BOARD_REGISTRY
+    assert REGION_BOARDS["global_remote"]["boards"][-3:] == ["remotive", "wellfound", "himalayas"]
+
+    gateway_job = get_scraper("seek_au").search(["Data Analyst"], "Sydney", 1)[0]
+    legacy_job = get_scraper("seek").search(["Data Analyst"], "Sydney", 1)[0]
+
+    assert gateway_job.is_gateway is True
+    assert gateway_job.source == "seek_au"
+    assert legacy_job.source == "seek_au"
 
 
 def test_remoteok_scraper_parses_live_api_results(monkeypatch: Any) -> None:

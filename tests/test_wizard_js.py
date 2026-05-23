@@ -6,7 +6,6 @@ import json
 import subprocess
 from pathlib import Path
 
-
 WIZARD_JS_PATH = Path(__file__).resolve().parents[1] / "web" / "static" / "wizard.js"
 
 

@@ -642,6 +642,64 @@ class TestResultsStep:
         assert b"/wizard/coaching/1" in response.data
         assert b"Get Coaching" in response.data
 
+    def test_results_renders_gateway_cards_with_search_actions(self, client, monkeypatch):
+        """Gateway cards render as board search links while live cards keep AI details."""
+        from web import routes
+
+        mixed_results = [
+            {
+                "job": {
+                    "title": "Browse Data Analyst jobs \\u2192",
+                    "company": "SEEK",
+                    "location": "Sydney, Australia",
+                    "url": "https://www.seek.com.au/data-analyst-jobs/in-sydney-australia",
+                    "source": "seek_au",
+                    "salary": "",
+                    "description": "Search SEEK for live openings.",
+                    "requirements": [],
+                    "benefits": [],
+                    "is_gateway": True,
+                },
+                "score": 88.0,
+                "reasoning": "Gateway cards should not show AI analysis.",
+                "skill_match": {},
+                "missing_skills": [],
+                "strengths": [],
+                "improvement_tips": [],
+            },
+            {
+                "job": {
+                    "title": "Data Analyst",
+                    "company": "Acme Remote",
+                    "location": "Remote",
+                    "url": "https://remoteok.com/remote-jobs/123",
+                    "source": "remoteok",
+                    "salary": "$100k",
+                    "description": "Live listing",
+                    "requirements": [],
+                    "benefits": [],
+                    "is_gateway": False,
+                },
+                "score": 85.0,
+                "reasoning": "Strong match due to Python and SQL skills.",
+                "skill_match": {"Python": 0.9},
+                "missing_skills": ["Tableau"],
+                "strengths": ["Python", "SQL"],
+                "improvement_tips": [],
+            },
+        ]
+        monkeypatch.setattr(routes, "load_web_results", lambda: mixed_results)
+
+        response = client.get("/wizard/results")
+
+        assert response.status_code == 200
+        assert b"Including 1 board search links and 1 live-matched jobs" in response.data
+        assert b"Search SEEK" in response.data
+        assert b"Search Link" in response.data
+        assert response.data.count(b"AI Analysis") == 1
+        assert response.data.count(b"Get Coaching") == 1
+        assert response.data.count(b"score-badge") == 1
+
     def test_results_score_colors(self, client, seeded_results, monkeypatch):
         """Score >= 70 gets score-green class, < 50 gets score-red."""
         from web import routes

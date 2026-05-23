@@ -253,6 +253,7 @@ def run_search_worker(profile_dict: dict, search_config: dict, job_id: str) -> N
                         "posted_date": posted_date.isoformat() if isinstance(posted_date, datetime) else None,
                         "requirements": result.job.requirements,
                         "benefits": result.job.benefits,
+                        "is_gateway": result.job.is_gateway,
                     },
                     "score": result.score,
                     "reasoning": result.reasoning,

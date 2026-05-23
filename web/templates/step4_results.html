@@ -3,6 +3,13 @@
 
 {% block content %}
 <div class="wizard-container">
+  {% set counts = namespace(gateway=0) %}
+  {% for r in results %}
+    {% if r.job.is_gateway %}
+      {% set counts.gateway = counts.gateway + 1 %}
+    {% endif %}
+  {% endfor %}
+  {% set live_count = results|length - counts.gateway %}
 
   <!-- Results Header -->
   <div class="results-header">
@@ -12,6 +19,10 @@
       </h2>
       <p style="font-size:0.88rem;color:#64748b;margin-top:4px">
         Ranked by AI match score against your profile
+        {% if counts.gateway %}
+        <br>
+        <span style="font-size:0.82rem">Including {{ counts.gateway }} board search links and {{ live_count }} live-matched jobs</span>
+        {% endif %}
       </p>
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap">
@@ -24,19 +35,56 @@
   <div class="notice-banner notice-info" style="margin-bottom:20px">
     <span style="font-size:1.1rem">ℹ️</span>
     <div>
-      <strong>About these results:</strong>
-      Only <strong>RemoteOK</strong> returns live real-time listings. All other boards (Seek, GulfTalent, Bayt, etc.) show <em>representative sample jobs</em> — real scraper integrations are coming soon.
-      Boards are clearly labelled <span style="background:#dcfce7;color:#15803d;padding:1px 7px;border-radius:99px;font-size:0.78rem;font-weight:600">⚡ Live</span> or
-      <span style="background:#fef3c7;color:#92400e;padding:1px 7px;border-radius:99px;font-size:0.78rem;font-weight:600">🔬 Sample</span> on each card.
+      <strong>How results work:</strong>
+      <strong>⚡ Live</strong> cards (RemoteOK) show real-time jobs with AI match scores.
+      <strong>🔗 Search</strong> cards are direct links to search each job board for your role — click to find real listings.
     </div>
   </div>
 
   <div class="results-grid">
     {% for i, r in enumerate(results, 1) %}
-    {% set is_live = r.job.source in ['remoteok', 'weworkremotely'] %}
-    <article class="result-card">
+    {% set is_gateway = r.job.is_gateway %}
+    {% set is_live = not is_gateway and r.job.source == 'remoteok' %}
 
-      <!-- Card top row: title + score -->
+    {% if is_gateway %}
+    {# ── Gateway / Search-Link Card ──────────────────────────────── #}
+    <article class="result-card" style="border-left:4px solid #3b82f6;background:#f8faff">
+      <div class="result-header">
+        <div class="result-info">
+          <div class="result-title" style="font-size:1.05rem">🔍 {{ r.job.title }}</div>
+          <div class="result-company" style="color:#1e40af;font-weight:600">
+            🏢 {{ r.job.company }}
+            {% if r.job.location %}
+            &nbsp;·&nbsp; 📍 {{ r.job.location }}
+            {% endif %}
+          </div>
+          <div class="result-meta" style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+            <span class="chip chip-blue" style="font-weight:700">📋 {{ r.job.source | upper }}</span>
+            <span style="background:#dbeafe;color:#1d4ed8;padding:2px 10px;border-radius:99px;font-size:0.78rem;font-weight:600">🔗 Search Link</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin:10px 0 6px;color:#64748b;font-size:0.82rem;line-height:1.4">
+        Real job board
+      </div>
+
+      <div style="margin:10px 0 14px;color:#475569;font-size:0.9rem;line-height:1.5">
+        {{ r.job.description }}
+      </div>
+
+      <div class="result-actions">
+        {% if r.job.url and r.job.url.startswith('http') %}
+        <a class="btn btn-primary" href="{{ r.job.url }}" target="_blank" rel="noopener noreferrer" style="font-size:1rem;padding:10px 24px">
+          🔍 Search {{ r.job.company }} →
+        </a>
+        {% endif %}
+      </div>
+    </article>
+
+    {% else %}
+    {# ── Live / AI-Matched Card ───────────────────────────────────── #}
+    <article class="result-card">
       <div class="result-header">
         <div class="result-info">
           <div class="result-title">{{ r.job.title }}</div>
@@ -46,36 +94,27 @@
             &nbsp;·&nbsp; 📍 {{ r.job.location }}
             {% endif %}
           </div>
-          <!-- Source + quality badges -->
           <div class="result-meta" style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;align-items:center">
-            <span class="chip chip-blue" style="font-weight:700">
-              📋 {{ r.job.source | upper }}
-            </span>
+            <span class="chip chip-blue" style="font-weight:700">📋 {{ r.job.source | upper }}</span>
             {% if is_live %}
             <span style="background:#dcfce7;color:#15803d;padding:2px 10px;border-radius:99px;font-size:0.78rem;font-weight:600">⚡ Live listing</span>
-            {% else %}
-            <span style="background:#fef3c7;color:#92400e;padding:2px 10px;border-radius:99px;font-size:0.78rem;font-weight:600">🔬 Sample job</span>
             {% endif %}
             {% if r.job.salary %}
             <span class="chip chip-gray">💰 {{ r.job.salary }}</span>
             {% endif %}
           </div>
         </div>
-
-        <!-- Match Score -->
         <div class="score-badge {% if r.score >= 70 %}score-green{% elif r.score >= 50 %}score-yellow{% else %}score-red{% endif %}">
           {{ r.score|round|int }}
           <span class="score-label">Match</span>
         </div>
       </div>
 
-      <!-- Why you match -->
       <div class="result-reasoning">
         <strong style="color:#1e293b;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.5px">🤖 AI Analysis</strong><br>
         {% if (r.reasoning|length) > 250 %}{{ r.reasoning[:250] }}…{% else %}{{ r.reasoning }}{% endif %}
       </div>
 
-      <!-- Strengths -->
       {% if r.strengths %}
       <div class="chips-row">
         <span class="chip-section">✅ Your strengths:</span>
@@ -83,7 +122,6 @@
       </div>
       {% endif %}
 
-      <!-- Missing skills -->
       {% if r.missing_skills %}
       <div class="chips-row" style="margin-top:4px">
         <span class="chip-section">📚 Skills to add:</span>
@@ -91,23 +129,18 @@
       </div>
       {% endif %}
 
-      <!-- Actions -->
       <div class="result-actions">
-        {% if is_live and r.job.url and (r.job.url.startswith('https://') or r.job.url.startswith('http://')) %}
+        {% if r.job.url and r.job.url.startswith('http') %}
         <a class="btn btn-primary" href="{{ r.job.url }}" target="_blank" rel="noopener noreferrer">
           View Real Job →
         </a>
-        {% else %}
-        <span class="btn btn-secondary" style="opacity:0.55;cursor:not-allowed" title="Sample listing — no real URL available">
-          🔬 Sample (no link)
-        </span>
         {% endif %}
         <a class="btn btn-secondary" href="/wizard/coaching/{{ i }}">
           💡 Get Coaching →
         </a>
       </div>
-
     </article>
+    {% endif %}
     {% endfor %}
   </div>
 

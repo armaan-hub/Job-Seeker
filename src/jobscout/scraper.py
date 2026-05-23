@@ -92,6 +92,357 @@ BOARD_REGISTRY: dict[str, dict[str, str]] = {
         "quality": "good",
         "status": "stub",
     },
+    # Australia (new canonical IDs)
+    "seek_au": {
+        "label": "SEEK",
+        "description": "Australia's largest job board with 100k+ live listings.",
+        "quality": "verified",
+        "status": "preview",
+    },
+    "indeed_au": {
+        "label": "Indeed AU",
+        "description": "Indeed's dedicated Australian portal with broad coverage.",
+        "quality": "verified",
+        "status": "preview",
+    },
+    "jora_au": {
+        "label": "Jora AU",
+        "description": "Aggregated job search for Australian opportunities.",
+        "quality": "good",
+        "status": "preview",
+    },
+    "adzuna_au": {
+        "label": "Adzuna AU",
+        "description": "Smart job search with salary insights for Australia.",
+        "quality": "good",
+        "status": "preview",
+    },
+    "careerone": {
+        "label": "CareerOne",
+        "description": "Australian job board with strong employer network.",
+        "quality": "good",
+        "status": "preview",
+    },
+    # New Zealand
+    "seek_nz": {
+        "label": "SEEK NZ",
+        "description": "New Zealand's top job marketplace with nationwide listings.",
+        "quality": "verified",
+        "status": "preview",
+    },
+    "trademe_jobs": {
+        "label": "Trade Me Jobs",
+        "description": "NZ's most popular classifieds platform including jobs.",
+        "quality": "verified",
+        "status": "preview",
+    },
+    "jora_nz": {
+        "label": "Jora NZ",
+        "description": "Aggregated job search across New Zealand boards.",
+        "quality": "good",
+        "status": "preview",
+    },
+    # UK (new canonical IDs)
+    "totaljobs": {
+        "label": "Totaljobs",
+        "description": "One of the UK's largest job boards with strong professional coverage.",
+        "quality": "verified",
+        "status": "preview",
+    },
+    "cv_library": {
+        "label": "CV-Library",
+        "description": "Leading UK job board with 1M+ registered candidates.",
+        "quality": "verified",
+        "status": "preview",
+    },
+    "indeed_uk": {
+        "label": "Indeed UK",
+        "description": "UK's top general job search engine.",
+        "quality": "verified",
+        "status": "preview",
+    },
+    "adzuna_uk": {
+        "label": "Adzuna UK",
+        "description": "UK aggregator with real-time salary benchmarks.",
+        "quality": "good",
+        "status": "preview",
+    },
+    # USA
+    "indeed_us": {
+        "label": "Indeed US",
+        "description": "America's #1 job site with millions of listings.",
+        "quality": "verified",
+        "status": "preview",
+    },
+    "ziprecruiter": {
+        "label": "ZipRecruiter",
+        "description": "AI-powered job matching used by 1M+ employers.",
+        "quality": "verified",
+        "status": "preview",
+    },
+    "dice": {
+        "label": "Dice",
+        "description": "Premier US tech and IT job board.",
+        "quality": "verified",
+        "status": "preview",
+    },
+    "simplyhired": {
+        "label": "SimplyHired",
+        "description": "Broad US aggregator with salary estimator.",
+        "quality": "good",
+        "status": "preview",
+    },
+    # Canada
+    "indeed_ca": {
+        "label": "Indeed CA",
+        "description": "Canada's leading job search engine.",
+        "quality": "verified",
+        "status": "preview",
+    },
+    "jobbank": {
+        "label": "Job Bank",
+        "description": "Government of Canada's official job board.",
+        "quality": "verified",
+        "status": "preview",
+    },
+    "workopolis": {
+        "label": "Workopolis",
+        "description": "Major Canadian job board with strong corporate listings.",
+        "quality": "good",
+        "status": "preview",
+    },
+    # Germany
+    "stepstone_de": {
+        "label": "StepStone DE",
+        "description": "Germany's most-visited job portal with 60k+ listings.",
+        "quality": "verified",
+        "status": "preview",
+    },
+    "xing_jobs": {
+        "label": "XING Jobs",
+        "description": "German professional network job board (strong in DACH region).",
+        "quality": "verified",
+        "status": "preview",
+    },
+    "indeed_de": {
+        "label": "Indeed DE",
+        "description": "Indeed's German portal for nationwide roles.",
+        "quality": "verified",
+        "status": "preview",
+    },
+    "arbeitsagentur": {
+        "label": "Arbeitsagentur",
+        "description": "Official German Federal Employment Agency job board.",
+        "quality": "verified",
+        "status": "preview",
+    },
+    # France
+    "indeed_fr": {
+        "label": "Indeed FR",
+        "description": "France's top job search with broad sector coverage.",
+        "quality": "verified",
+        "status": "preview",
+    },
+    "france_travail": {
+        "label": "France Travail",
+        "description": "Official French national employment service.",
+        "quality": "verified",
+        "status": "preview",
+    },
+    "apec": {
+        "label": "APEC",
+        "description": "French executive and manager career portal.",
+        "quality": "verified",
+        "status": "preview",
+    },
+    "cadremploi": {
+        "label": "Cadremploi",
+        "description": "Leading French board for cadres and senior professionals.",
+        "quality": "good",
+        "status": "preview",
+    },
+    # Netherlands
+    "indeed_nl": {
+        "label": "Indeed NL",
+        "description": "Netherlands' most-used job search engine.",
+        "quality": "verified",
+        "status": "preview",
+    },
+    "nationalevacaturebank": {
+        "label": "Nationale Vacaturebank",
+        "description": "The Netherlands' largest job board.",
+        "quality": "verified",
+        "status": "preview",
+    },
+    "intermediair": {
+        "label": "Intermediair",
+        "description": "Dutch academic and professional career platform.",
+        "quality": "good",
+        "status": "preview",
+    },
+    # Saudi Arabia
+    "bayt_sa": {
+        "label": "Bayt KSA",
+        "description": "Bayt's dedicated Saudi Arabia job listings.",
+        "quality": "verified",
+        "status": "preview",
+    },
+    "naukrigulf_sa": {
+        "label": "NaukriGulf KSA",
+        "description": "Saudi Arabia-focused NaukriGulf listings.",
+        "quality": "good",
+        "status": "preview",
+    },
+    "jadarat": {
+        "label": "Jadarat",
+        "description": "Saudi national job portal linked to government hiring.",
+        "quality": "verified",
+        "status": "preview",
+    },
+    # India (add to existing)
+    "naukri": {
+        "label": "Naukri",
+        "description": "India's #1 job portal with 1M+ listings.",
+        "quality": "verified",
+        "status": "preview",
+    },
+    "indeed_in": {
+        "label": "Indeed IN",
+        "description": "Indeed's India portal with national and MNC roles.",
+        "quality": "verified",
+        "status": "preview",
+    },
+    "shine": {
+        "label": "Shine",
+        "description": "Indian job board by HT Media with strong analytics roles.",
+        "quality": "good",
+        "status": "preview",
+    },
+    "timesjobs": {
+        "label": "TimesJobs",
+        "description": "Times Group-owned Indian job portal with diverse listings.",
+        "quality": "good",
+        "status": "preview",
+    },
+    # Singapore
+    "jobstreet_sg": {
+        "label": "JobStreet SG",
+        "description": "Singapore's leading job marketplace (SEEK-owned).",
+        "quality": "verified",
+        "status": "preview",
+    },
+    "mycareersfuture": {
+        "label": "MyCareersFuture",
+        "description": "Singapore government's official career portal.",
+        "quality": "verified",
+        "status": "preview",
+    },
+    "indeed_sg": {
+        "label": "Indeed SG",
+        "description": "Indeed's Singapore portal with local and MNC roles.",
+        "quality": "verified",
+        "status": "preview",
+    },
+    "glints_sg": {
+        "label": "Glints SG",
+        "description": "Tech-focused Southeast Asian job platform.",
+        "quality": "good",
+        "status": "preview",
+    },
+    # Southeast Asia
+    "jobstreet_sea": {
+        "label": "JobStreet SEA",
+        "description": "Dominant job board across Malaysia, Philippines, Indonesia.",
+        "quality": "verified",
+        "status": "preview",
+    },
+    "jobsdb_sea": {
+        "label": "JobsDB SEA",
+        "description": "Major job board for Hong Kong and Southeast Asia.",
+        "quality": "verified",
+        "status": "preview",
+    },
+    "kalibrr": {
+        "label": "Kalibrr",
+        "description": "Tech-enabled job board for Philippines and Southeast Asia.",
+        "quality": "good",
+        "status": "preview",
+    },
+    "glints_sea": {
+        "label": "Glints SEA",
+        "description": "Southeast Asia's startup and tech job platform.",
+        "quality": "good",
+        "status": "preview",
+    },
+    # South Africa
+    "careers24": {
+        "label": "Careers24",
+        "description": "South Africa's leading job board.",
+        "quality": "verified",
+        "status": "preview",
+    },
+    "pnet": {
+        "label": "PNet",
+        "description": "Major South African professional job portal.",
+        "quality": "verified",
+        "status": "preview",
+    },
+    "indeed_za": {
+        "label": "Indeed ZA",
+        "description": "Indeed's South Africa portal.",
+        "quality": "verified",
+        "status": "preview",
+    },
+    "adzuna_za": {
+        "label": "Adzuna ZA",
+        "description": "SA aggregator with salary data.",
+        "quality": "good",
+        "status": "preview",
+    },
+    # Brazil
+    "catho": {
+        "label": "Catho",
+        "description": "Brazil's largest job portal with 5M+ candidates.",
+        "quality": "verified",
+        "status": "preview",
+    },
+    "vagas": {
+        "label": "Vagas",
+        "description": "Leading Brazilian job board for professional roles.",
+        "quality": "verified",
+        "status": "preview",
+    },
+    "indeed_br": {
+        "label": "Indeed BR",
+        "description": "Indeed's Brazil portal.",
+        "quality": "verified",
+        "status": "preview",
+    },
+    "gupy": {
+        "label": "Gupy",
+        "description": "Modern Brazilian HR platform used by major employers.",
+        "quality": "good",
+        "status": "preview",
+    },
+    # Global Remote (add to existing)
+    "remotive": {
+        "label": "Remotive",
+        "description": "Curated remote job board for tech and digital professionals.",
+        "quality": "verified",
+        "status": "preview",
+    },
+    "wellfound": {
+        "label": "Wellfound",
+        "description": "AngelList Talent — startup and tech remote jobs.",
+        "quality": "verified",
+        "status": "preview",
+    },
+    "himalayas": {
+        "label": "Himalayas",
+        "description": "Fully remote jobs with transparent salaries and timezones.",
+        "quality": "good",
+        "status": "preview",
+    },
 }
 
 REGION_BOARDS: dict[str, dict[str, Any]] = {
@@ -105,37 +456,91 @@ REGION_BOARDS: dict[str, dict[str, Any]] = {
         "name": "Saudi Arabia",
         "icon": "🇸🇦",
         "default_location": "Riyadh, Saudi Arabia",
-        "boards": ["gulftalent", "bayt", "naukrigulf"],
+        "boards": ["bayt_sa", "naukrigulf_sa", "jadarat", "gulftalent"],
+    },
+    "australia": {
+        "name": "Australia",
+        "icon": "🇦🇺",
+        "default_location": "Sydney, Australia",
+        "boards": ["seek_au", "indeed_au", "jora_au", "adzuna_au", "careerone"],
+    },
+    "new_zealand": {
+        "name": "New Zealand",
+        "icon": "🇳🇿",
+        "default_location": "Auckland, New Zealand",
+        "boards": ["seek_nz", "trademe_jobs", "jora_nz"],
     },
     "uk": {
         "name": "United Kingdom",
         "icon": "🇬🇧",
         "default_location": "London, UK",
-        "boards": ["reed", "glassdoor"],
+        "boards": ["reed", "totaljobs", "cv_library", "indeed_uk", "adzuna_uk"],
     },
-    "australia": {
-        "name": "Australia & NZ",
-        "icon": "🇦🇺",
-        "default_location": "Sydney, Australia",
-        "boards": ["seek"],
+    "usa": {
+        "name": "United States",
+        "icon": "🇺🇸",
+        "default_location": "New York, USA",
+        "boards": ["indeed_us", "ziprecruiter", "dice", "simplyhired"],
+    },
+    "canada": {
+        "name": "Canada",
+        "icon": "🇨🇦",
+        "default_location": "Toronto, Canada",
+        "boards": ["indeed_ca", "jobbank", "workopolis"],
+    },
+    "germany": {
+        "name": "Germany",
+        "icon": "🇩🇪",
+        "default_location": "Berlin, Germany",
+        "boards": ["stepstone_de", "xing_jobs", "indeed_de", "arbeitsagentur"],
+    },
+    "france": {
+        "name": "France",
+        "icon": "🇫🇷",
+        "default_location": "Paris, France",
+        "boards": ["indeed_fr", "france_travail", "apec", "cadremploi"],
+    },
+    "netherlands": {
+        "name": "Netherlands",
+        "icon": "🇳🇱",
+        "default_location": "Amsterdam, Netherlands",
+        "boards": ["indeed_nl", "nationalevacaturebank", "intermediair"],
     },
     "india": {
         "name": "India",
         "icon": "🇮🇳",
         "default_location": "Bangalore, India",
-        "boards": ["foundit", "naukrigulf"],
+        "boards": ["naukri", "indeed_in", "foundit", "shine", "timesjobs"],
+    },
+    "singapore": {
+        "name": "Singapore",
+        "icon": "🇸🇬",
+        "default_location": "Singapore",
+        "boards": ["jobstreet_sg", "mycareersfuture", "indeed_sg", "glints_sg"],
     },
     "sea": {
         "name": "Southeast Asia",
-        "icon": "🇸🇬",
-        "default_location": "Singapore",
-        "boards": ["jobstreet"],
+        "icon": "🌏",
+        "default_location": "Kuala Lumpur, Malaysia",
+        "boards": ["jobstreet_sea", "jobsdb_sea", "kalibrr", "glints_sea"],
+    },
+    "south_africa": {
+        "name": "South Africa",
+        "icon": "🇿🇦",
+        "default_location": "Johannesburg, South Africa",
+        "boards": ["careers24", "pnet", "indeed_za", "adzuna_za"],
+    },
+    "brazil": {
+        "name": "Brazil",
+        "icon": "🇧🇷",
+        "default_location": "São Paulo, Brazil",
+        "boards": ["catho", "vagas", "indeed_br", "gupy"],
     },
     "global_remote": {
         "name": "Remote / Global",
         "icon": "🌐",
         "default_location": "Remote",
-        "boards": ["remoteok", "weworkremotely"],
+        "boards": ["remoteok", "weworkremotely", "remotive", "wellfound", "himalayas"],
     },
 }
 
@@ -158,11 +563,71 @@ _DEFAULT_LOCATIONS: dict[str, str] = {
     "gulftalent": "Dubai, UAE",
     "dubizzle": "Dubai, UAE",
     "remoteok": "Remote",
+    "weworkremotely": "Remote",
     "seek": "Sydney, Australia",
+    "glassdoor": "London, UK",
+    "reed": "London, UK",
+    "jobstreet": "Singapore",
+    "foundit": "Bangalore, India",
+    "seek_au": "Sydney, Australia",
+    "indeed_au": "Sydney, Australia",
+    "jora_au": "Sydney, Australia",
+    "adzuna_au": "Sydney, Australia",
+    "careerone": "Sydney, Australia",
+    "seek_nz": "Auckland, New Zealand",
+    "trademe_jobs": "Auckland, New Zealand",
+    "jora_nz": "Auckland, New Zealand",
+    "totaljobs": "London, UK",
+    "cv_library": "London, UK",
+    "indeed_uk": "London, UK",
+    "adzuna_uk": "London, UK",
+    "indeed_us": "New York, USA",
+    "ziprecruiter": "New York, USA",
+    "dice": "New York, USA",
+    "simplyhired": "New York, USA",
+    "indeed_ca": "Toronto, Canada",
+    "jobbank": "Toronto, Canada",
+    "workopolis": "Toronto, Canada",
+    "stepstone_de": "Berlin, Germany",
+    "xing_jobs": "Berlin, Germany",
+    "indeed_de": "Berlin, Germany",
+    "arbeitsagentur": "Berlin, Germany",
+    "indeed_fr": "Paris, France",
+    "france_travail": "Paris, France",
+    "apec": "Paris, France",
+    "cadremploi": "Paris, France",
+    "indeed_nl": "Amsterdam, Netherlands",
+    "nationalevacaturebank": "Amsterdam, Netherlands",
+    "intermediair": "Amsterdam, Netherlands",
+    "bayt_sa": "Riyadh, Saudi Arabia",
+    "naukrigulf_sa": "Riyadh, Saudi Arabia",
+    "jadarat": "Riyadh, Saudi Arabia",
+    "naukri": "Bangalore, India",
+    "indeed_in": "Bangalore, India",
+    "shine": "Bangalore, India",
+    "timesjobs": "Bangalore, India",
+    "jobstreet_sg": "Singapore",
+    "mycareersfuture": "Singapore",
+    "indeed_sg": "Singapore",
+    "glints_sg": "Singapore",
+    "jobstreet_sea": "Kuala Lumpur, Malaysia",
+    "jobsdb_sea": "Kuala Lumpur, Malaysia",
+    "kalibrr": "Manila, Philippines",
+    "glints_sea": "Kuala Lumpur, Malaysia",
+    "careers24": "Johannesburg, South Africa",
+    "pnet": "Johannesburg, South Africa",
+    "indeed_za": "Johannesburg, South Africa",
+    "adzuna_za": "Johannesburg, South Africa",
+    "catho": "São Paulo, Brazil",
+    "vagas": "São Paulo, Brazil",
+    "indeed_br": "São Paulo, Brazil",
+    "gupy": "São Paulo, Brazil",
+    "remotive": "Remote",
+    "wellfound": "Remote",
+    "himalayas": "Remote",
 }
 
-_REMOTE_BOARDS = {"mock", "remoteok", "weworkremotely"}
-
+_REMOTE_BOARDS = {"mock", "remoteok", "weworkremotely", "remotive", "wellfound", "himalayas"}
 
 @dataclass
 class JobListing:
@@ -178,6 +643,7 @@ class JobListing:
     posted_date: datetime | None = None
     requirements: list[str] = field(default_factory=list)
     benefits: list[str] = field(default_factory=list)
+    is_gateway: bool = False
 
     def to_prompt_text(self) -> str:
         """Convert a listing to prompt-friendly text."""
@@ -203,6 +669,7 @@ Requirements: {', '.join(self.requirements[:5])}
             salary=data.get("salary"),
             requirements=data.get("requirements", []),
             benefits=data.get("benefits", []),
+            is_gateway=data.get("is_gateway", False),
         )
 
 
@@ -427,6 +894,286 @@ class FoundItScraper(StubScraper):
         super().__init__("foundit")
 
 
+class SeekAUScraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("seek_au")
+
+
+class IndeedAUScraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("indeed_au")
+
+
+class JoraAUScraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("jora_au")
+
+
+class AdzunaAUScraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("adzuna_au")
+
+
+class CareerOneScraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("careerone")
+
+
+class SeekNZScraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("seek_nz")
+
+
+class TradeMeJobsScraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("trademe_jobs")
+
+
+class JoraNZScraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("jora_nz")
+
+
+class TotalJobsScraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("totaljobs")
+
+
+class CVLibraryScraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("cv_library")
+
+
+class IndeedUKScraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("indeed_uk")
+
+
+class AdzunaUKScraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("adzuna_uk")
+
+
+class IndeedUSScraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("indeed_us")
+
+
+class ZipRecruiterScraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("ziprecruiter")
+
+
+class DiceScraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("dice")
+
+
+class SimplyHiredScraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("simplyhired")
+
+
+class IndeedCAScraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("indeed_ca")
+
+
+class JobBankScraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("jobbank")
+
+
+class WorkopolisScraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("workopolis")
+
+
+class StepStoneDEScraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("stepstone_de")
+
+
+class XingJobsScraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("xing_jobs")
+
+
+class IndeedDEScraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("indeed_de")
+
+
+class ArbeitsagenturScraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("arbeitsagentur")
+
+
+class IndeedFRScraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("indeed_fr")
+
+
+class FranceTravailScraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("france_travail")
+
+
+class APECScraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("apec")
+
+
+class CadremploiScraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("cadremploi")
+
+
+class IndeedNLScraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("indeed_nl")
+
+
+class NationaleVacaturebankScraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("nationalevacaturebank")
+
+
+class IntermediairScraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("intermediair")
+
+
+class BaytSAScraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("bayt_sa")
+
+
+class NaukriGulfSAScraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("naukrigulf_sa")
+
+
+class JadaratScraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("jadarat")
+
+
+class NaukriScraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("naukri")
+
+
+class IndeedINScraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("indeed_in")
+
+
+class ShineScraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("shine")
+
+
+class TimesJobsScraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("timesjobs")
+
+
+class JobStreetSGScraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("jobstreet_sg")
+
+
+class MyCareersFutureScraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("mycareersfuture")
+
+
+class IndeedSGScraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("indeed_sg")
+
+
+class GlintsSGScraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("glints_sg")
+
+
+class JobStreetSEAScraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("jobstreet_sea")
+
+
+class JobsDBSEAScraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("jobsdb_sea")
+
+
+class KalibrrScraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("kalibrr")
+
+
+class GlintsSEAScraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("glints_sea")
+
+
+class Careers24Scraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("careers24")
+
+
+class PNetScraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("pnet")
+
+
+class IndeedZAScraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("indeed_za")
+
+
+class AdzunaZAScraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("adzuna_za")
+
+
+class CathoScraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("catho")
+
+
+class VagasScraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("vagas")
+
+
+class IndeedBRScraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("indeed_br")
+
+
+class GupyScraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("gupy")
+
+
+class RemotiveScraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("remotive")
+
+
+class WellfoundScraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("wellfound")
+
+
+class HimalayasScraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("himalayas")
+
+
 class MockScraper(JobScraper):
     """Mock scraper for testing and demo flows."""
 
@@ -494,50 +1241,103 @@ def _search_url(source: str, role: str, location: str) -> str:
     """Generate a real job board search URL for a given source, role, and location."""
     import urllib.parse
 
-    encoded_role = urllib.parse.quote_plus(role)
-    encoded_location = urllib.parse.quote_plus(location)
-    slug_role = urllib.parse.quote(role.lower().replace(" ", "-"))
-    slug_location = urllib.parse.quote(location.replace(" ", "-").replace(",", "").strip())
+    role_enc = urllib.parse.quote_plus(role)
+    location_enc = urllib.parse.quote_plus(location)
+    role_slug = urllib.parse.quote(role.lower().replace(" ", "-"), safe="-")
+    location_slug = urllib.parse.quote(
+        location.lower().replace(" ", "-").replace(",", "").strip(), safe="-"
+    )
 
-    urls: dict[str, str] = {
-        "seek": f"https://www.seek.com.au/{slug_role}-jobs/in-{slug_location}",
-        "linkedin": (
-            "https://www.linkedin.com/jobs/search/"
-            f"?keywords={encoded_role}&location={encoded_location}"
-        ),
-        "indeed": (
-            f"https://au.indeed.com/jobs?q={encoded_role}&l={encoded_location}"
-            if any(place in location.lower() for place in ["australia", "sydney", "melbourne"])
-            else f"https://www.indeed.com/jobs?q={encoded_role}&l={encoded_location}"
-        ),
-        "bayt": f"https://www.bayt.com/en/international/jobs/{slug_role}-jobs/?q={encoded_role}",
-        "naukrigulf": f"https://www.naukrigulf.com/{slug_role}-jobs",
-        "gulftalent": f"https://www.gulftalent.com/jobs?q={encoded_role}&l={encoded_location}",
-        "dubizzle": f"https://uae.dubizzle.com/jobs/?q={encoded_role}",
-        "glassdoor": (
-            "https://www.glassdoor.com/Job/jobs.htm"
-            f"?sc.keyword={encoded_role}&locKeyword={encoded_location}"
-        ),
-        "reed": f"https://www.reed.co.uk/jobs/{slug_role}-jobs",
-        "jobstreet": (
-            "https://www.jobstreet.com.sg/en/job-search/find-jobs.php"
-            f"?q={encoded_role}&l={encoded_location}"
-        ),
-        "foundit": (
-            "https://www.foundit.in/srp/results"
-            f"?query={encoded_role}&location={encoded_location}"
-        ),
-        "weworkremotely": (
-            "https://weworkremotely.com/remote-jobs/search"
-            f"?term={encoded_role}"
-        ),
-        "remoteok": f"https://remoteok.com/remote-{slug_role}-jobs",
+    templates: dict[str, str] = {
+        # Australia
+        "seek_au": f"https://www.seek.com.au/{role_slug}-jobs/in-{location_slug}",
+        "seek": f"https://www.seek.com.au/{role_slug}-jobs/in-{location_slug}",  # legacy alias
+        "indeed_au": f"https://au.indeed.com/jobs?q={role_enc}&l={location_enc}",
+        "jora_au": f"https://au.jora.com/jobs?q={role_enc}&l={location_enc}",
+        "adzuna_au": f"https://www.adzuna.com.au/search?q={role_enc}&loc={location_enc}",
+        "careerone": f"https://www.careerone.com.au/jobs?q={role_enc}&where={location_enc}",
+        # New Zealand
+        "seek_nz": f"https://www.seek.co.nz/{role_slug}-jobs",
+        "trademe_jobs": f"https://www.trademe.co.nz/a/jobs/search?search_string={role_enc}",
+        "jora_nz": f"https://nz.jora.com/jobs?q={role_enc}&l={location_enc}",
+        # UK
+        "reed": f"https://www.reed.co.uk/jobs/{role_slug}-jobs-in-{location_slug}",
+        "totaljobs": f"https://www.totaljobs.com/jobs/{role_slug}/in-{location_slug}",
+        "cv_library": f"https://www.cv-library.co.uk/search-jobs?q={role_enc}&geo={location_enc}&us=1",
+        "indeed_uk": f"https://uk.indeed.com/jobs?q={role_enc}&l={location_enc}",
+        "adzuna_uk": f"https://www.adzuna.co.uk/search?q={role_enc}&loc={location_enc}",
+        "guardian_jobs": f"https://jobs.theguardian.com/search/?q={role_enc}&l={location_enc}",
+        # USA
+        "indeed_us": f"https://www.indeed.com/jobs?q={role_enc}&l={location_enc}",
+        "ziprecruiter": f"https://www.ziprecruiter.com/jobs-search?search={role_enc}&location={location_enc}",
+        "dice": f"https://www.dice.com/jobs?q={role_enc}&location={location_enc}",
+        "simplyhired": f"https://www.simplyhired.com/search?q={role_enc}&l={location_enc}",
+        # Canada
+        "indeed_ca": f"https://ca.indeed.com/jobs?q={role_enc}&l={location_enc}",
+        "jobbank": f"https://www.jobbank.gc.ca/jobsearch/jobsearch?searchstring={role_enc}&locationstring={location_enc}",
+        "workopolis": f"https://www.workopolis.com/jobsearch/find-jobs?ak={role_enc}&l={location_enc}",
+        # Germany
+        "stepstone_de": f"https://www.stepstone.de/jobs/{role_slug}",
+        "xing_jobs": f"https://www.xing.com/jobs/search?keywords={role_enc}&location={location_enc}",
+        "indeed_de": f"https://de.indeed.com/jobs?q={role_enc}&l={location_enc}",
+        "arbeitsagentur": f"https://www.arbeitsagentur.de/jobsuche/suche?was={role_enc}&wo={location_enc}",
+        # France
+        "indeed_fr": f"https://fr.indeed.com/jobs?q={role_enc}&l={location_enc}",
+        "france_travail": f"https://www.france.travail.fr/offres-emploi/recherche/result.html?motsCles={role_enc}",
+        "apec": f"https://www.apec.fr/candidat/recherche-emploi.html/emploi?motsCles={role_enc}",
+        "cadremploi": f"https://www.cadremploi.fr/emploi/recherche?q={role_enc}&l={location_enc}",
+        # Netherlands
+        "indeed_nl": f"https://nl.indeed.com/jobs?q={role_enc}&l={location_enc}",
+        "nationalevacaturebank": f"https://www.nationalevacaturebank.nl/vacature/zoeken?query={role_enc}&location={location_enc}",
+        "intermediair": f"https://www.intermediair.nl/vacatures/{role_slug}",
+        # UAE/Gulf (existing)
+        "bayt": f"https://www.bayt.com/en/international/jobs/?q={role_enc}",
+        "naukrigulf": f"https://www.naukrigulf.com/{role_slug}-jobs",
+        "gulftalent": f"https://www.gulftalent.com/jobs?q={role_enc}&l={location_enc}",
+        "dubizzle": f"https://uae.dubizzle.com/jobs/?q={role_enc}",
+        # Saudi Arabia
+        "bayt_sa": f"https://www.bayt.com/en/saudi-arabia/jobs/?q={role_enc}",
+        "naukrigulf_sa": f"https://www.naukrigulf.com/{role_slug}-jobs-in-saudi-arabia",
+        "jadarat": f"https://jadarat.sa/Search/{role_enc}",
+        # India
+        "naukri": f"https://www.naukri.com/{role_slug}-jobs",
+        "indeed_in": f"https://www.indeed.co.in/jobs?q={role_enc}&l={location_enc}",
+        "foundit": f"https://www.foundit.in/srp/results?query={role_enc}&location={location_enc}",
+        "shine": f"https://www.shine.com/job-search/{role_slug}-jobs",
+        "timesjobs": f"https://www.timesjobs.com/candidate/job-search.html?searchType=personalizedSearch&from=submit&txtKeywords={role_enc}&txtLocation={location_enc}",
+        # Singapore
+        "jobstreet_sg": f"https://www.jobstreet.com.sg/en/job-search/find-jobs.php?q={role_enc}&l={location_enc}",
+        "mycareersfuture": f"https://www.mycareersfuture.gov.sg/search?search={role_enc}&sortBy=new_posting_date",
+        "indeed_sg": f"https://sg.indeed.com/jobs?q={role_enc}&l={location_enc}",
+        "glints_sg": f"https://glints.com/sg/opportunities/jobs/explore?keyword={role_enc}&country=SG",
+        # SEA
+        "jobstreet_sea": f"https://www.jobstreet.com.my/en/job-search/find-jobs.php?q={role_enc}",
+        "jobstreet": f"https://www.jobstreet.com.sg/en/job-search/find-jobs.php?q={role_enc}&l={location_enc}",  # legacy
+        "jobsdb_sea": f"https://hk.jobsdb.com/hk/search-jobs/{role_slug}/1",
+        "kalibrr": f"https://www.kalibrr.com/job-board/te/{role_slug}",
+        "glints_sea": f"https://glints.com/opportunities/jobs/explore?keyword={role_enc}",
+        # South Africa
+        "careers24": f"https://www.careers24.com/jobs/{role_slug}-jobs/",
+        "pnet": f"https://www.pnet.co.za/jobs/{role_slug}-jobs/",
+        "indeed_za": f"https://za.indeed.com/jobs?q={role_enc}&l={location_enc}",
+        "adzuna_za": f"https://www.adzuna.co.za/search?q={role_enc}",
+        # Brazil
+        "catho": f"https://www.catho.com.br/vagas/{role_slug}/",
+        "vagas": f"https://www.vagas.com.br/vagas-de-{role_slug}",
+        "indeed_br": f"https://br.indeed.com/jobs?q={role_enc}&l={location_enc}",
+        "gupy": f"https://portal.gupy.io/job-search/term={role_enc}",
+        # Global
+        "linkedin": f"https://www.linkedin.com/jobs/search/?keywords={role_enc}&location={location_enc}",
+        "indeed": f"https://www.indeed.com/jobs?q={role_enc}&l={location_enc}",
+        "glassdoor": f"https://www.glassdoor.com/Job/jobs.htm?sc.keyword={role_enc}&locKeyword={location_enc}",
+        "remoteok": f"https://remoteok.com/remote-{role_slug}-jobs",
+        "weworkremotely": f"https://weworkremotely.com/remote-jobs/search?term={role_enc}",
+        "remotive": f"https://remotive.com/remote-jobs?query={role_enc}",
+        "wellfound": f"https://wellfound.com/jobs?q={role_enc}",
+        "himalayas": f"https://himalayas.app/jobs/remote?q={role_enc}",
         "mock": "",
     }
-    return urls.get(
-        source,
-        f"https://www.google.com/search?q={encoded_role}+jobs+{encoded_location}",
-    )
+    return templates.get(source, f"https://www.google.com/search?q={role_enc}+jobs+{location_enc}")
 
 
 def _build_generated_jobs(
@@ -546,47 +1346,32 @@ def _build_generated_jobs(
     location: str | None,
     max_results: int,
 ) -> list[JobListing]:
-    """Generate representative jobs for live board previews."""
+    """Return one gateway search card per board (not fake multi-listings)."""
     if max_results <= 0:
         return []
 
-    search_roles = roles or ["Data Analyst"]
-    companies = _SAMPLE_COMPANIES.get(source, [BOARD_REGISTRY[source]["label"]])
-    default_location = _DEFAULT_LOCATIONS.get(source, "Dubai, UAE")
+    board_info = BOARD_REGISTRY.get(source, {})
+    board_label = board_info.get("label", source.title())
+    board_desc = board_info.get("description", f"Search {board_label} for job listings.")
+
+    role = roles[0] if roles else "Data Analyst"
+    default_location = _DEFAULT_LOCATIONS.get(source, location or "your area")
     requested_location = (location or "").strip() or default_location
-    requirements = [
-        "SQL and spreadsheet modelling",
-        "Dashboarding or BI tooling",
-        "Stakeholder communication",
-        "Data quality and process improvement",
-        "Problem-solving mindset",
-    ]
-    if source in _REMOTE_BOARDS:
-        requirements[1] = "Async collaboration across time zones"
 
-    listings: list[JobListing] = []
-    seniority_labels = ["Senior", "Lead", "Principal", "Specialist"]
-    for index in range(max_results):
-        role = search_roles[index % len(search_roles)]
-        title = role if index == 0 else f"{seniority_labels[index % len(seniority_labels)]} {role}"
-        company = companies[index % len(companies)]
-        job_location = "Remote" if source in _REMOTE_BOARDS and requested_location.lower() == "remote" else requested_location
-        listings.append(
-            JobListing(
-                title=title,
-                company=company,
-                location=job_location,
-                description=(
-                    f"{BOARD_REGISTRY[source]['label']} sourced opportunity for {role}. "
-                    "Ideal candidates bring strong analytics, reporting, and automation experience."
-                ),
-                url=_search_url(source, role, requested_location),
-                source=source,
-                requirements=requirements.copy(),
-            )
+    search_url = _search_url(source, role, requested_location)
+
+    return [
+        JobListing(
+            title=f"Browse {role} jobs →",
+            company=board_label,
+            location=requested_location,
+            description=f"{board_desc} Click to search real {role} openings on {board_label}.",
+            url=search_url,
+            source=source,
+            requirements=[],
+            is_gateway=True,
         )
-
-    return listings
+    ]
 
 
 def get_scraper(name: str, **kwargs: Any) -> JobScraper:
@@ -601,11 +1386,67 @@ def get_scraper(name: str, **kwargs: Any) -> JobScraper:
         "dubizzle": DubizzleScraper,
         "remoteok": RemoteOKScraper,
         "weworkremotely": WeWorkRemotelyScraper,
-        "seek": SeekScraper,
+        "seek": SeekAUScraper,
+        "seek_au": SeekAUScraper,
+        "indeed_au": IndeedAUScraper,
+        "jora_au": JoraAUScraper,
+        "adzuna_au": AdzunaAUScraper,
+        "careerone": CareerOneScraper,
+        "seek_nz": SeekNZScraper,
+        "trademe_jobs": TradeMeJobsScraper,
+        "jora_nz": JoraNZScraper,
         "glassdoor": GlassdoorScraper,
         "reed": ReedScraper,
+        "totaljobs": TotalJobsScraper,
+        "cv_library": CVLibraryScraper,
+        "indeed_uk": IndeedUKScraper,
+        "adzuna_uk": AdzunaUKScraper,
+        "indeed_us": IndeedUSScraper,
+        "ziprecruiter": ZipRecruiterScraper,
+        "dice": DiceScraper,
+        "simplyhired": SimplyHiredScraper,
+        "indeed_ca": IndeedCAScraper,
+        "jobbank": JobBankScraper,
+        "workopolis": WorkopolisScraper,
+        "stepstone_de": StepStoneDEScraper,
+        "xing_jobs": XingJobsScraper,
+        "indeed_de": IndeedDEScraper,
+        "arbeitsagentur": ArbeitsagenturScraper,
+        "indeed_fr": IndeedFRScraper,
+        "france_travail": FranceTravailScraper,
+        "apec": APECScraper,
+        "cadremploi": CadremploiScraper,
+        "indeed_nl": IndeedNLScraper,
+        "nationalevacaturebank": NationaleVacaturebankScraper,
+        "intermediair": IntermediairScraper,
+        "bayt_sa": BaytSAScraper,
+        "naukrigulf_sa": NaukriGulfSAScraper,
+        "jadarat": JadaratScraper,
         "jobstreet": JobStreetScraper,
         "foundit": FoundItScraper,
+        "naukri": NaukriScraper,
+        "indeed_in": IndeedINScraper,
+        "shine": ShineScraper,
+        "timesjobs": TimesJobsScraper,
+        "jobstreet_sg": JobStreetSGScraper,
+        "mycareersfuture": MyCareersFutureScraper,
+        "indeed_sg": IndeedSGScraper,
+        "glints_sg": GlintsSGScraper,
+        "jobstreet_sea": JobStreetSEAScraper,
+        "jobsdb_sea": JobsDBSEAScraper,
+        "kalibrr": KalibrrScraper,
+        "glints_sea": GlintsSEAScraper,
+        "careers24": Careers24Scraper,
+        "pnet": PNetScraper,
+        "indeed_za": IndeedZAScraper,
+        "adzuna_za": AdzunaZAScraper,
+        "catho": CathoScraper,
+        "vagas": VagasScraper,
+        "indeed_br": IndeedBRScraper,
+        "gupy": GupyScraper,
+        "remotive": RemotiveScraper,
+        "wellfound": WellfoundScraper,
+        "himalayas": HimalayasScraper,
     }
 
     if name not in scrapers:
