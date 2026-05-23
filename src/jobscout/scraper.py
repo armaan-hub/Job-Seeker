@@ -123,6 +123,31 @@ BOARD_REGISTRY: dict[str, dict[str, str]] = {
         "quality": "good",
         "status": "preview",
     },
+    # Australia — specialist finance recruiters (many exclusive listings)
+    "hays_au": {
+        "label": "Hays Australia",
+        "description": "Leading specialist finance & data recruiter in Australia — many exclusive listings.",
+        "quality": "verified",
+        "status": "preview",
+    },
+    "roberthalf_au": {
+        "label": "Robert Half AU",
+        "description": "Finance specialist recruiter with senior AU roles.",
+        "quality": "verified",
+        "status": "preview",
+    },
+    "michaelpage_au": {
+        "label": "Michael Page AU",
+        "description": "Senior finance & data placement specialist in Australia.",
+        "quality": "verified",
+        "status": "preview",
+    },
+    "hudson_au": {
+        "label": "Hudson AU",
+        "description": "Senior/specialist professional roles in Australia.",
+        "quality": "good",
+        "status": "preview",
+    },
     # New Zealand
     "seek_nz": {
         "label": "SEEK NZ",
@@ -211,7 +236,7 @@ BOARD_REGISTRY: dict[str, dict[str, str]] = {
         "quality": "good",
         "status": "preview",
     },
-    # Germany
+    # Germany (extended — specialist + English-language boards)
     "stepstone_de": {
         "label": "StepStone DE",
         "description": "Germany's most-visited job portal with 60k+ listings.",
@@ -234,6 +259,24 @@ BOARD_REGISTRY: dict[str, dict[str, str]] = {
         "label": "Arbeitsagentur",
         "description": "Official German Federal Employment Agency job board.",
         "quality": "verified",
+        "status": "preview",
+    },
+    "internatjobs_de": {
+        "label": "Internatjobs.de",
+        "description": "English-speaking jobs in Germany — ideal for international candidates.",
+        "quality": "good",
+        "status": "preview",
+    },
+    "experteer_de": {
+        "label": "Experteer DE",
+        "description": "Senior/executive roles in Germany (€60k+), DACH-focused.",
+        "quality": "good",
+        "status": "preview",
+    },
+    "monster_de": {
+        "label": "Monster DE",
+        "description": "Mid-tier German job board with broad corporate listings.",
+        "quality": "good",
         "status": "preview",
     },
     # France
@@ -488,7 +531,8 @@ REGION_BOARDS: dict[str, dict[str, Any]] = {
         "name": "Australia",
         "icon": "🇦🇺",
         "default_location": "Sydney, Australia",
-        "boards": ["seek_au", "indeed_au", "jora_au", "adzuna_au", "careerone"],
+        "boards": ["seek_au", "indeed_au", "jora_au", "adzuna_au", "careerone",
+                   "hays_au", "roberthalf_au", "michaelpage_au", "hudson_au"],
     },
     "new_zealand": {
         "name": "New Zealand",
@@ -517,8 +561,9 @@ REGION_BOARDS: dict[str, dict[str, Any]] = {
     "germany": {
         "name": "Germany",
         "icon": "🇩🇪",
-        "default_location": "Berlin, Germany",
-        "boards": ["stepstone_de", "xing_jobs", "indeed_de", "arbeitsagentur"],
+        "default_location": "Frankfurt, Germany",
+        "boards": ["stepstone_de", "xing_jobs", "indeed_de", "arbeitsagentur",
+                   "internatjobs_de", "experteer_de", "monster_de"],
     },
     "france": {
         "name": "France",
@@ -961,6 +1006,31 @@ class CareerOneScraper(GeneratedScraper):
         super().__init__("careerone")
 
 
+# Australia — specialist finance/data recruiter boards (many exclusive listings)
+class HaysAUScraper(GeneratedScraper):
+    """Hays Australia — specialist finance & data recruiter."""
+    def __init__(self) -> None:
+        super().__init__("hays_au")
+
+
+class RobertHalfAUScraper(GeneratedScraper):
+    """Robert Half Australia — finance specialist recruiter."""
+    def __init__(self) -> None:
+        super().__init__("roberthalf_au")
+
+
+class MichaelPageAUScraper(GeneratedScraper):
+    """Michael Page Australia — senior finance placement."""
+    def __init__(self) -> None:
+        super().__init__("michaelpage_au")
+
+
+class HudsonAUScraper(GeneratedScraper):
+    """Hudson Australia — senior/specialist professionals."""
+    def __init__(self) -> None:
+        super().__init__("hudson_au")
+
+
 class SeekNZScraper(GeneratedScraper):
     def __init__(self) -> None:
         super().__init__("seek_nz")
@@ -1049,6 +1119,23 @@ class IndeedDEScraper(GeneratedScraper):
 class ArbeitsagenturScraper(GeneratedScraper):
     def __init__(self) -> None:
         super().__init__("arbeitsagentur")
+
+
+class InternatJobsDEScraper(GeneratedScraper):
+    """Internatjobs.de — English-language jobs in Germany."""
+    def __init__(self) -> None:
+        super().__init__("internatjobs_de")
+
+
+class ExperteerDEScraper(GeneratedScraper):
+    """Experteer.de — senior/executive roles in Germany (€60k+)."""
+    def __init__(self) -> None:
+        super().__init__("experteer_de")
+
+
+class MonsterDEScraper(GeneratedScraper):
+    def __init__(self) -> None:
+        super().__init__("monster_de")
 
 
 class IndeedFRScraper(GeneratedScraper):
@@ -1644,6 +1731,11 @@ def _search_url(source: str, role: str, location: str) -> str:
         "jora_au": f"https://au.jora.com/jobs?q={role_enc}&l={location_enc}",
         "adzuna_au": f"https://www.adzuna.com.au/jobs/search?q={role_enc}&where={location_enc}",
         "careerone": f"https://www.careerone.com.au/jobs?q={role_enc}&where={location_enc}",
+        # Australia — specialist finance/data recruiters (many exclusive listings)
+        "hays_au": f"https://www.hays.com.au/job/search?q={role_enc}&l={location_enc}",
+        "roberthalf_au": f"https://www.roberthalf.com.au/jobs/{role_slug}?location={location_enc}",
+        "michaelpage_au": f"https://www.michaelpage.com.au/jobs/finance?keyword={role_enc}&location={location_enc}",
+        "hudson_au": f"https://au.hudson.com/find-a-job?keyword={role_enc}&location={location_enc}",
         # New Zealand
         "seek_nz": f"https://www.seek.co.nz/jobs?keywords={role_enc}&where={location_enc}",
         "trademe_jobs": f"https://www.trademe.co.nz/a/jobs/search?search_string={role_enc}",
@@ -1669,6 +1761,10 @@ def _search_url(source: str, role: str, location: str) -> str:
         "xing_jobs": f"https://www.xing.com/jobs/search?keywords={role_enc}&location={location_enc}",
         "indeed_de": f"https://de.indeed.com/jobs?q={role_enc}&l={location_enc}",
         "arbeitsagentur": f"https://www.arbeitsagentur.de/jobsuche/suche?was={role_enc}&wo={location_enc}",
+        # Germany — English-friendly and senior/executive boards
+        "internatjobs_de": f"https://internatjobs.de/jobs?q={role_enc}&l={location_enc}",
+        "experteer_de": f"https://www.experteer.de/jobs?q={role_enc}&l={location_enc}",
+        "monster_de": f"https://www.monster.de/jobs/suche/?q={role_enc}&where={location_enc}",
         # France
         "indeed_fr": f"https://fr.indeed.com/jobs?q={role_enc}&l={location_enc}",
         "france_travail": f"https://www.france.travail.fr/offres-emploi/recherche/result.html?motsCles={role_enc}",

@@ -13,12 +13,13 @@
     "personal": {
       "dob": "20 February 1996",
       "nationality": "Indian",
-      "languages": ["English", "Hindi"]
+      "languages": [
+        "English",
+        "Hindi"
+      ]
     }
   },
-
   "professional_summary": "Senior Financial Data Analyst & FP&A Specialist with 10+ years of experience bridging Finance and Data Engineering. Expert in ETL pipeline design, Power BI dashboards, Advanced SQL, and financial modelling — transforming complex datasets into actionable business intelligence. Proven track record in budgeting & forecasting, KPI reporting, variance analysis, and executive stakeholder presentations. Recently engineered a Big Data ETL solution processing 6 million+ records (1.5 GB), cutting reporting time from days to minutes. Certified Artificial Intelligence Professional (KHDA Attested | CPD Certified | Grade: A++ Excellent). Immediately available in Dubai — UAE Employment Visa (transferable).",
-
   "experience": [
     {
       "company": "Rank Accounting & Consultancy",
@@ -71,7 +72,6 @@
       ]
     }
   ],
-
   "education": [
     {
       "degree": "AI, Data Science and Machine Learning",
@@ -87,11 +87,14 @@
       "status": "Completed"
     }
   ],
-
   "certifications": [
     {
       "group": "Immersive Business Training, Dubai",
-      "accreditation": ["KHDA Attested", "CPD Certified", "London Chamber of Commerce Verified"],
+      "accreditation": [
+        "KHDA Attested",
+        "CPD Certified",
+        "London Chamber of Commerce Verified"
+      ],
       "items": [
         {
           "name": "Certified AI Professional – Certificate of Achievement",
@@ -119,66 +122,174 @@
     {
       "group": "Anthropic",
       "items": [
-        { "name": "Claude Code 101", "date": "2026-04", "skills": ["Claude Code", "Claude AI Skills"] }
+        {
+          "name": "Claude Code 101",
+          "date": "2026-04",
+          "skills": [
+            "Claude Code",
+            "Claude AI Skills"
+          ]
+        }
       ]
     },
     {
       "group": "IBM",
       "items": [
-        { "name": "Data Science Methodology", "date": "2026-03", "skills": ["Data Modeling"] },
-        { "name": "Tools for Data Science", "date": "2026-01", "skills": ["Data Science"] },
-        { "name": "What is Data Science?", "date": "2026-01" },
-        { "name": "Data Science Orientation", "date": "2026-01" },
-        { "name": "Data Science Professional Certificate", "date": "Ongoing", "skills": ["Python", "SQL", "Machine Learning"] }
+        {
+          "name": "Data Science Methodology",
+          "date": "2026-03",
+          "skills": [
+            "Data Modeling"
+          ]
+        },
+        {
+          "name": "Tools for Data Science",
+          "date": "2026-01",
+          "skills": [
+            "Data Science"
+          ]
+        },
+        {
+          "name": "What is Data Science?",
+          "date": "2026-01"
+        },
+        {
+          "name": "Data Science Orientation",
+          "date": "2026-01"
+        },
+        {
+          "name": "Data Science Professional Certificate",
+          "date": "Ongoing",
+          "skills": [
+            "Python",
+            "SQL",
+            "Machine Learning"
+          ]
+        }
       ]
     },
     {
       "group": "University of Pennsylvania",
       "items": [
-        { "name": "Modeling Risk and Realities", "date": "2026-03" },
-        { "name": "Introduction to Spreadsheets and Models", "date": "2026-03", "skills": ["Business Analysis", "Financial Analysis"] },
-        { "name": "Fundamentals of Business and Financial Quantitative Modeling", "date": "2026-03" }
+        {
+          "name": "Modeling Risk and Realities",
+          "date": "2026-03"
+        },
+        {
+          "name": "Introduction to Spreadsheets and Models",
+          "date": "2026-03",
+          "skills": [
+            "Business Analysis",
+            "Financial Analysis"
+          ]
+        },
+        {
+          "name": "Fundamentals of Business and Financial Quantitative Modeling",
+          "date": "2026-03"
+        }
       ]
     },
     {
       "group": "Microsoft",
       "items": [
-        { "name": "Power BI (ETL): Extract, Transform and Load Data in Power BI", "date": "2026-02", "skills": ["Microsoft Power BI"] },
-        { "name": "Harnessing the Power of Data with Power BI", "date": "2026-02" },
-        { "name": "Preparing Data for Analysis with Microsoft Excel", "date": "2026-02", "skills": ["Microsoft Power BI"] }
+        {
+          "name": "Power BI (ETL): Extract, Transform and Load Data in Power BI",
+          "date": "2026-02",
+          "skills": [
+            "Microsoft Power BI"
+          ]
+        },
+        {
+          "name": "Harnessing the Power of Data with Power BI",
+          "date": "2026-02"
+        },
+        {
+          "name": "Preparing Data for Analysis with Microsoft Excel",
+          "date": "2026-02",
+          "skills": [
+            "Microsoft Power BI"
+          ]
+        }
       ]
     },
     {
       "group": "University of Colorado Boulder",
       "items": [
-        { "name": "Excel/VBA for Creative Problem Solving", "date": "2026-02", "skills": ["VBA", "Business Analysis"] }
+        {
+          "name": "Excel/VBA for Creative Problem Solving",
+          "date": "2026-02",
+          "skills": [
+            "VBA",
+            "Business Analysis"
+          ]
+        }
       ]
     },
     {
       "group": "Udemy",
       "items": [
-        { "name": "Analyzing & Visualizing Data with Microsoft Power BI", "date": "2024-08", "skills": ["Power BI", "DAX"] },
-        { "name": "Financial Analyst Certification", "date": "2024-01", "skills": ["Financial Reporting", "Microsoft Excel"] },
-        { "name": "Power BI Desktop for Business Intelligence (Maven Analytics)", "skills": ["Power BI", "DAX"] },
-        { "name": "Excel: Business Intelligence with Power Query & DAX", "skills": ["Power Query", "DAX"] },
-        { "name": "Anti-Money Laundering Concepts (GenMan Solutions)", "date": "2024", "skills": ["AML"] }
+        {
+          "name": "Analyzing & Visualizing Data with Microsoft Power BI",
+          "date": "2024-08",
+          "skills": [
+            "Power BI",
+            "DAX"
+          ]
+        },
+        {
+          "name": "Financial Analyst Certification",
+          "date": "2024-01",
+          "skills": [
+            "Financial Reporting",
+            "Microsoft Excel"
+          ]
+        },
+        {
+          "name": "Power BI Desktop for Business Intelligence (Maven Analytics)",
+          "skills": [
+            "Power BI",
+            "DAX"
+          ]
+        },
+        {
+          "name": "Excel: Business Intelligence with Power Query & DAX",
+          "skills": [
+            "Power Query",
+            "DAX"
+          ]
+        },
+        {
+          "name": "Anti-Money Laundering Concepts (GenMan Solutions)",
+          "date": "2024",
+          "skills": [
+            "AML"
+          ]
+        }
       ]
     },
     {
       "group": "LinkedIn Learning",
       "items": [
-        { "name": "CSS Essential Training", "date": "2021-05" },
-        { "name": "HTML Essential Training", "date": "2021-03" }
+        {
+          "name": "CSS Essential Training",
+          "date": "2021-05"
+        },
+        {
+          "name": "HTML Essential Training",
+          "date": "2021-03"
+        }
       ]
     },
     {
       "group": "United Latino Students Association (ULSA)",
       "items": [
-        { "name": "What is Data Science?", "date": "2026-01" }
+        {
+          "name": "What is Data Science?",
+          "date": "2026-01"
+        }
       ]
     }
   ],
-
   "skills": {
     "data_engineering": [
       "ETL Pipeline Design & Optimisation",
@@ -199,7 +310,10 @@
       "KPI Reporting & Development",
       "Financial Modeling",
       "Business Analysis",
-      "MIS Reporting"
+      "MIS Reporting",
+      "Power BI Developer (DAX, Power Query, PBIX)",
+      "Dimensional Data Modeling (Star Schema)",
+      "Data Governance & Quality Management"
     ],
     "finance_and_fp_a": [
       "FP&A (Financial Planning & Analysis)",
@@ -211,7 +325,14 @@
       "Financial Reporting (IFRS-aligned)",
       "AML / KYC Compliance (UAE Central Bank)",
       "Internal Audit",
-      "VAT & Tax Filing (UAE)"
+      "VAT & Tax Filing (UAE)",
+      "AIFRS-compliant Financial Reporting",
+      "AML/KYC Compliance (AUSTRAC-framework applicable)",
+      "Resources Sector FP&A Awareness",
+      "Management Accounting & MIS Reporting",
+      "Financial Controlling Analytics",
+      "HGB-aware Financial Reporting",
+      "AML Compliance (BaFin-equivalent frameworks)"
     ],
     "ai_and_data_science": [
       "Certified AI Professional (KHDA A++ Excellent)",
@@ -238,7 +359,6 @@
       "Analytical Thinking"
     ]
   },
-
   "key_metrics": {
     "years_experience": 10,
     "records_processed": "6 million+ (1.5 GB)",
@@ -248,7 +368,6 @@
     "ai_cert_grade": "A++ Excellent",
     "ai_cert_hours": 45
   },
-
   "target_roles": [
     "Financial Data Analyst",
     "Data Analyst",
@@ -260,33 +379,62 @@
     "Power BI Developer",
     "Financial Systems Analyst"
   ],
-
-  "preferred_locations": ["Dubai, UAE", "Abu Dhabi, UAE", "Sharjah, UAE", "Remote"],
-
+  "preferred_locations": [
+    "Dubai, UAE",
+    "Abu Dhabi, UAE",
+    "Sharjah, UAE",
+    "Remote"
+  ],
   "cv_versions": {
     "premium": "Aniket_Premium_CV_Updated.docx – Naukri-style premium format with two-column layout, dotted borders, Book Antiqua font, blue bar",
     "ats": "Aniket_Mishra_ATS_CV.docx – Single column, Calibri font, no tables, ATS-safe bullet points"
   },
-
   "linkedin_post_titles": {
     "completion_cert": "Certified AI Professional – KHDA Attested | CPD Certified | A++ Excellent",
     "achievement_cert": "Certified AI Professional – Certificate of Achievement | London Chamber Verified",
     "diploma_cert": "Certified AI Professional – CPD Diploma | Immersive Business Training, Dubai"
   },
-
   "ats_tips": {
-    "use_ats_cv_for": ["Job portals (LinkedIn, Naukri, Bayt, Indeed)", "Company career pages", "Online applications"],
-    "use_premium_cv_for": ["Direct recruiter emails", "Interviews", "Networking"],
+    "use_ats_cv_for": [
+      "Job portals (LinkedIn, Naukri, Bayt, Indeed)",
+      "Company career pages",
+      "Online applications"
+    ],
+    "use_premium_cv_for": [
+      "Direct recruiter emails",
+      "Interviews",
+      "Networking"
+    ],
     "top_keywords": [
-      "ETL Pipeline", "Power BI", "DAX", "Power Query", "VBA", "Financial Modeling",
-      "AML", "KYC", "SQL", "Advanced SQL", "Python", "Pandas", "NumPy",
-      "FP&A", "Budgeting and Forecasting", "KPI Reporting", "Business Intelligence",
-      "Data Automation", "Variance Analysis", "IFRS", "MIS Reporting",
-      "Stakeholder Management", "Dashboard", "Data Modeling",
-      "Certified AI Professional", "KHDA", "Financial Data Analyst"
+      "ETL Pipeline",
+      "Power BI",
+      "DAX",
+      "Power Query",
+      "VBA",
+      "Financial Modeling",
+      "AML",
+      "KYC",
+      "SQL",
+      "Advanced SQL",
+      "Python",
+      "Pandas",
+      "NumPy",
+      "FP&A",
+      "Budgeting and Forecasting",
+      "KPI Reporting",
+      "Business Intelligence",
+      "Data Automation",
+      "Variance Analysis",
+      "IFRS",
+      "MIS Reporting",
+      "Stakeholder Management",
+      "Dashboard",
+      "Data Modeling",
+      "Certified AI Professional",
+      "KHDA",
+      "Financial Data Analyst"
     ]
   },
-
   "cv_gap_audit": {
     "last_updated": "2026-05-23",
     "keywords_added": [
@@ -309,6 +457,53 @@
       "Azure Data Factory / Power Automate — natural extension of Power BI/ETL experience",
       "Snowflake / Azure Synapse — modern cloud data warehouse (emerging in UAE)",
       "Python advanced: Seaborn, SciPy, scikit-learn — for AI Data Analyst roles"
-    ]
+    ],
+    "australia_priority": {
+      "score": "7.0/10",
+      "action": "PRIMARY — START NOW",
+      "immediate_steps": [
+        "Begin Microsoft PL-300 (Power BI Data Analyst Associate) certification prep",
+        "Initiate ACS Skills Assessment (ANZSCO 261111 ICT Business Analyst) — critical path for visa",
+        "Register with Hays AU, Robert Half AU, Michael Page AU as candidate",
+        "Update LinkedIn: headline with Power BI + FP&A + Open to Relocate AU",
+        "Book IELTS Academic exam targeting 7.5+ bands"
+      ],
+      "top_target_roles": [
+        "Senior Power BI Developer",
+        "Financial Data Analyst",
+        "BI Analyst",
+        "Senior FP&A Analyst"
+      ],
+      "top_target_cities": [
+        "Sydney",
+        "Melbourne",
+        "Perth (resources sector)"
+      ],
+      "salary_target_aud": "105,000-125,000"
+    },
+    "germany_priority": {
+      "score": "5.0/10",
+      "action": "SECONDARY — 12-month preparation plan",
+      "blockers": [
+        "German language (70-75% of roles require German)",
+        "SAP gap (German corporate standard)",
+        "Degree recognition via anabin.kmk.org required"
+      ],
+      "preparation_steps": [
+        "German language A1→B1 (Goethe-Institut online)",
+        "SAP Analytics Cloud basics (free trial available)",
+        "Degree recognition via anabin.kmk.org",
+        "CFA Level 1 for Frankfurt banking competitiveness"
+      ],
+      "english_friendly_boards": [
+        "internatjobs_de",
+        "experteer_de"
+      ],
+      "top_target_cities": [
+        "Frankfurt (banking)",
+        "Berlin/Munich (tech)"
+      ],
+      "salary_target_eur": "60,000-75,000"
+    }
   }
 }
