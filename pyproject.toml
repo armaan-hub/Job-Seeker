@@ -29,6 +29,7 @@ dependencies = [
     "rich>=13.0",
     "pyyaml>=6.0",
     "flask>=3.0",
+    "pdfplumber>=0.11",
 ]
 
 [project.optional-dependencies]

@@ -45,7 +45,7 @@ class TestUploadStep:
     def test_get_upload_page(self, client) -> None:
         response = client.get("/wizard/upload")
         assert response.status_code == 200
-        assert b"Upload Your Profile" in response.data
+        assert b"Upload Your CV" in response.data
 
     def test_valid_json_upload_redirects_to_configure(self, client, sample_profile_json: str) -> None:
         response = client.post(
@@ -89,6 +89,68 @@ class TestUploadStep:
 
         with client.session_transaction() as sess:
             assert sess["profile_data"]["profile_storage"] == "disk"
+
+    def test_pdf_upload_no_file_shows_error(self, client) -> None:
+        response = client.post("/wizard/upload-pdf", data={}, follow_redirects=True)
+        assert response.status_code == 200
+        assert b"Please select a PDF file" in response.data
+
+    def test_pdf_upload_wrong_type_shows_error(self, client) -> None:
+        response = client.post(
+            "/wizard/upload-pdf",
+            data={"profile_pdf": (io.BytesIO(b"not a pdf"), "profile.txt")},
+            content_type="multipart/form-data",
+            follow_redirects=True,
+        )
+        assert response.status_code == 200
+        assert b"Only PDF files are supported" in response.data
+
+    def test_pdf_upload_empty_pdf_shows_error(self, client, monkeypatch) -> None:
+        import web.routes as routes_mod
+
+        monkeypatch.setattr(
+            routes_mod,
+            "get_provider_health",
+            lambda: {"ok": False, "provider": "opencode", "message": "no key"},
+        )
+
+        from web import pdf_parser
+
+        monkeypatch.setattr(pdf_parser, "extract_text_from_pdf", lambda _: "")
+
+        response = client.post(
+            "/wizard/upload-pdf",
+            data={"profile_pdf": (io.BytesIO(b"%PDF-1.4 fake"), "cv.pdf")},
+            content_type="multipart/form-data",
+            follow_redirects=True,
+        )
+        assert response.status_code == 200
+        assert b"Could not extract text" in response.data
+
+    def test_pdf_upload_uses_minimal_fallback_when_no_ai(self, client, monkeypatch) -> None:
+        import web.routes as routes_mod
+
+        monkeypatch.setattr(
+            routes_mod,
+            "get_provider_health",
+            lambda: {"ok": False, "provider": "opencode", "message": "no key"},
+        )
+
+        from web import pdf_parser
+
+        monkeypatch.setattr(
+            pdf_parser,
+            "extract_text_from_pdf",
+            lambda _: "John Doe\nSoftware Engineer\njohn@example.com",
+        )
+
+        response = client.post(
+            "/wizard/upload-pdf",
+            data={"profile_pdf": (io.BytesIO(b"%PDF-1.4 fake"), "cv.pdf")},
+            content_type="multipart/form-data",
+        )
+        assert response.status_code == 302
+        assert response.headers["Location"].endswith("/wizard/configure")
 
 
 class TestConfigureStep:

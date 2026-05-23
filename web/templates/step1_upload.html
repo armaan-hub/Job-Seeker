@@ -2,49 +2,140 @@
 {% block step_number %}1{% endblock %}
 {% block content %}
 
-<h1 class="page-title">Upload Your Profile</h1>
-<p class="page-subtitle">Upload your CV/resume as a JSON file, or try with a sample profile first.</p>
+<h1 class="page-title">Upload Your CV / Resume</h1>
+<p class="page-subtitle">Choose how you'd like to provide your profile information.</p>
 
 {% if session.get('profile_preview') %}
-<div class="profile-preview">
-  <div class="profile-avatar">👤</div>
+<div class="profile-loaded-banner">
+  <span class="profile-loaded-icon">✅</span>
   <div>
-    <div class="profile-name">{{ session['profile_preview'].get('name', 'Your Profile') }}</div>
-    <div class="profile-title">{{ session['profile_preview'].get('title', '') }}</div>
-    <div class="profile-meta">
-      {{ session['profile_preview'].get('skills_count', 0) }} skills ·
-      Target roles: {{ session['profile_preview'].get('target_roles', []) | join(', ') or 'Not set' }}
+    <div class="profile-loaded-name">{{ session['profile_preview'].get('name', 'Your Profile') }}</div>
+    <div class="profile-loaded-meta">
+      {{ session['profile_preview'].get('title', '') }}
+      · {{ session['profile_preview'].get('skills_count', 0) }} skills
     </div>
   </div>
+  <a href="{{ url_for('wizard.configure_get') }}" class="btn-primary" style="margin-left:auto;">
+    Continue →
+  </a>
 </div>
 {% endif %}
 
-<div class="card">
-  <div class="card-title">📄 Upload Profile JSON</div>
+<!-- Upload Options Grid -->
+<div class="upload-options-grid">
 
-  <form method="POST" enctype="multipart/form-data" action="{{ url_for('wizard.upload_post') }}">
-    <label class="upload-zone" for="profile_json" id="upload-zone">
-      <div class="upload-icon">📂</div>
-      <h3>Click to choose your profile JSON</h3>
-      <p>Supports <strong>.json</strong> files — your CV exported as structured data</p>
-      <input id="profile_json" type="file" name="profile_json" accept=".json" required
-             onchange="document.getElementById('upload-zone').style.borderColor='#22c55e'; document.getElementById('file-name').textContent=this.files[0].name;" />
-    </label>
-    <p id="file-name" class="text-muted mt-4"></p>
-    <div class="btn-group">
-      <button type="submit" class="btn-primary btn-lg">⬆ Upload &amp; Continue</button>
+  <!-- Option 1: PDF Upload -->
+  <div class="upload-option-card upload-option-pdf">
+    <div class="upload-option-header">
+      <span class="upload-option-icon">📄</span>
+      <div>
+        <div class="upload-option-title">Upload PDF Resume</div>
+        <div class="upload-option-sub">AI will read & extract your profile automatically</div>
+      </div>
+      <span class="upload-option-badge badge-recommended">Recommended</span>
     </div>
-  </form>
+
+    <form method="POST" enctype="multipart/form-data" action="{{ url_for('wizard.upload_pdf_post') }}" id="pdf-form">
+      <div class="drop-zone" id="pdf-drop-zone" onclick="document.getElementById('pdf-input').click()">
+        <div class="drop-zone-icon">📎</div>
+        <div class="drop-zone-title">Drag & drop your PDF here</div>
+        <div class="drop-zone-sub">or click to browse — supports <strong>.pdf</strong> files</div>
+        <div class="drop-zone-filename" id="pdf-filename"></div>
+        <input type="file" id="pdf-input" name="profile_pdf" accept=".pdf" style="display:none"
+               onchange="handleFileSelect(this, 'pdf-drop-zone', 'pdf-filename', 'pdf-submit')" />
+      </div>
+      <div class="upload-features">
+        <span class="upload-feature">🤖 AI-powered extraction</span>
+        <span class="upload-feature">⚡ Works with any PDF format</span>
+        <span class="upload-feature">🔒 Processed locally</span>
+      </div>
+      <button type="submit" id="pdf-submit" class="btn-primary btn-lg btn-block" disabled>
+        🚀 Parse CV with AI
+      </button>
+    </form>
+  </div>
+
+  <!-- Option 2: JSON Upload -->
+  <div class="upload-option-card upload-option-json">
+    <div class="upload-option-header">
+      <span class="upload-option-icon">📋</span>
+      <div>
+        <div class="upload-option-title">Upload Profile JSON</div>
+        <div class="upload-option-sub">For advanced users with a structured profile</div>
+      </div>
+    </div>
+
+    <form method="POST" enctype="multipart/form-data" action="{{ url_for('wizard.upload_post') }}" id="json-form">
+      <div class="drop-zone drop-zone-json" id="json-drop-zone" onclick="document.getElementById('json-input').click()">
+        <div class="drop-zone-icon">🗂</div>
+        <div class="drop-zone-title">Click to select your JSON file</div>
+        <div class="drop-zone-sub">Structured profile in <strong>.json</strong> format</div>
+        <div class="drop-zone-filename" id="json-filename"></div>
+        <input type="file" id="json-input" name="profile_json" accept=".json" style="display:none"
+               onchange="handleFileSelect(this, 'json-drop-zone', 'json-filename', 'json-submit')" />
+      </div>
+      <button type="submit" id="json-submit" class="btn-secondary btn-lg btn-block" disabled>
+        ⬆ Upload JSON Profile
+      </button>
+    </form>
+  </div>
+
 </div>
 
-<div class="card">
-  <div class="card-title">🚀 Quick Start — Use Sample Profile</div>
-  <p class="text-muted">Don't have a JSON profile yet? Use our pre-built sample to explore the app.</p>
+<!-- Sample Profile -->
+<div class="sample-profile-banner">
+  <div class="sample-profile-left">
+    <span style="font-size:1.5rem;">🎭</span>
+    <div>
+      <div style="font-weight:700; font-size:0.95rem; color:#1e293b;">No CV ready yet?</div>
+      <div style="font-size:0.85rem; color:#64748b;">Try the built-in sample profile (Aniket Kumar Mishra, Financial Data Analyst)</div>
+    </div>
+  </div>
   <form method="POST" action="{{ url_for('wizard.upload_sample_post') }}">
-    <div class="btn-group">
-      <button type="submit" class="btn-secondary btn-lg">🎭 Load Sample Profile</button>
-    </div>
+    <button type="submit" class="btn-secondary">Load Sample Profile →</button>
   </form>
 </div>
+
+<script>
+function handleFileSelect(input, zoneId, filenameId, submitId) {
+  const zone = document.getElementById(zoneId);
+  const filenameEl = document.getElementById(filenameId);
+  const submitBtn = document.getElementById(submitId);
+  if (input.files && input.files[0]) {
+    const file = input.files[0];
+    filenameEl.textContent = '📎 ' + file.name + ' (' + (file.size / 1024).toFixed(1) + ' KB)';
+    filenameEl.style.display = 'block';
+    zone.classList.add('drop-zone-selected');
+    submitBtn.removeAttribute('disabled');
+  }
+}
+
+// Drag and drop support
+['pdf-drop-zone', 'json-drop-zone'].forEach(function(id) {
+  const zone = document.getElementById(id);
+  if (!zone) return;
+  zone.addEventListener('dragover', function(e) {
+    e.preventDefault();
+    zone.classList.add('drag-over');
+  });
+  zone.addEventListener('dragleave', function() {
+    zone.classList.remove('drag-over');
+  });
+  zone.addEventListener('drop', function(e) {
+    e.preventDefault();
+    zone.classList.remove('drag-over');
+    const inputId = id === 'pdf-drop-zone' ? 'pdf-input' : 'json-input';
+    const filenameId = id === 'pdf-drop-zone' ? 'pdf-filename' : 'json-filename';
+    const submitId = id === 'pdf-drop-zone' ? 'pdf-submit' : 'json-submit';
+    const input = document.getElementById(inputId);
+    const dt = new DataTransfer();
+    if (e.dataTransfer.files[0]) {
+      dt.items.add(e.dataTransfer.files[0]);
+      input.files = dt.files;
+      handleFileSelect(input, id, filenameId, submitId);
+    }
+  });
+});
+</script>
 
 {% endblock %}

@@ -1,6 +1,7 @@
 """Wizard route handlers."""
 
 import sys
+import tempfile
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
@@ -21,6 +22,7 @@ from flask import (
 from jobscout.config import get_config
 from web.wizard import (
     get_job_at_index,
+    get_provider_health,
     get_search_status,
     load_profile_from_session,
     load_web_results,
@@ -75,6 +77,66 @@ def upload_sample_post():
     session.pop("job_id", None)
     flash("Loaded sample profile.", "success")
     return redirect(url_for("wizard.configure_get"))
+
+
+@wizard_bp.route("/upload-pdf", methods=["POST"])
+def upload_pdf_post():
+    """Parse a PDF CV using pdfplumber + AI extraction."""
+    f = request.files.get("profile_pdf")
+    if not f or f.filename == "":
+        flash("Please select a PDF file.", "error")
+        return redirect(url_for("wizard.upload_get"))
+
+    if not f.filename.lower().endswith(".pdf"):
+        flash("Only PDF files are supported here. For JSON, use the JSON upload above.", "error")
+        return redirect(url_for("wizard.upload_get"))
+
+    # Save upload to temp file for pdfplumber
+    with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp:
+        tmp_path = Path(tmp.name)
+        f.save(tmp_path)
+
+    try:
+        from web.pdf_parser import (  # noqa: E402
+            ai_parse_cv_text,
+            extract_text_from_pdf,
+            minimal_profile_from_text,
+        )
+
+        cv_text = extract_text_from_pdf(tmp_path)
+        if not cv_text.strip():
+            flash("Could not extract text from this PDF. Please try a text-based PDF or JSON upload.", "error")
+            return redirect(url_for("wizard.upload_get"))
+
+        # Try AI-powered extraction; fall back to minimal profile on failure
+        health = get_provider_health()
+        if health["ok"]:
+            from jobscout.config import get_config as _gc  # noqa: E402
+            from jobscout.main import get_provider  # noqa: E402
+
+            cfg = _gc()
+            provider = get_provider(cfg)
+            try:
+                profile_dict = ai_parse_cv_text(cv_text, provider)
+            except Exception:
+                profile_dict = minimal_profile_from_text(cv_text)
+        else:
+            profile_dict = minimal_profile_from_text(cv_text)
+
+        content = json.dumps(profile_dict)
+        save_profile_to_session(session, content)
+        session.pop("search_config", None)
+        session.pop("job_id", None)
+        name = session.get("profile_preview", {}).get("name", "Your profile")
+        flash(f"CV parsed successfully! Profile loaded for {name}.", "success")
+        return redirect(url_for("wizard.configure_get"))
+
+    except Exception as exc:
+        flash(f"Could not parse PDF: {exc}", "error")
+        return redirect(url_for("wizard.upload_get"))
+    finally:
+        if tmp_path.exists():
+            tmp_path.unlink(missing_ok=True)
 
 
 @wizard_bp.route("/configure", methods=["GET"])

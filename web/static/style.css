@@ -333,3 +333,137 @@ table.req-table tr:hover td { background: #f8fafc; }
 .mt-4 { margin-top: 16px; }
 .back-link { display: inline-flex; align-items: center; gap: 6px; color: #3b82f6; text-decoration: none; font-size: 0.875rem; margin-bottom: 16px; }
 .back-link:hover { color: #1d4ed8; }
+
+/* ── Upload Page Redesign ─────────────────────────────── */
+.upload-options-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+@media (max-width: 680px) {
+  .upload-options-grid { grid-template-columns: 1fr; }
+}
+
+.upload-option-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 20px;
+  border: 2px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transition: border-color 0.2s;
+}
+.upload-option-pdf { border-top: 4px solid #3b82f6; }
+.upload-option-json { border-top: 4px solid #8b5cf6; }
+.upload-option-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+
+.upload-option-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.upload-option-icon { font-size: 1.5rem; flex-shrink: 0; }
+.upload-option-title { font-size: 1rem; font-weight: 700; color: #0f172a; }
+.upload-option-sub { font-size: 0.8rem; color: #64748b; margin-top: 2px; }
+.upload-option-badge {
+  margin-left: auto;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.badge-recommended { background: #dbeafe; color: #1d4ed8; }
+
+/* Drop zone */
+.drop-zone {
+  border: 2px dashed #93c5fd;
+  border-radius: 10px;
+  padding: 28px 16px;
+  text-align: center;
+  background: #eff6ff;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  position: relative;
+}
+.drop-zone:hover, .drop-zone.drag-over {
+  background: #dbeafe;
+  border-color: #3b82f6;
+}
+.drop-zone-json { border-color: #c4b5fd; background: #f5f3ff; }
+.drop-zone-json:hover, .drop-zone-json.drag-over {
+  background: #ede9fe;
+  border-color: #8b5cf6;
+}
+.drop-zone-selected {
+  border-style: solid;
+  border-color: #22c55e !important;
+  background: #f0fdf4 !important;
+}
+.drop-zone-icon { font-size: 2rem; margin-bottom: 8px; }
+.drop-zone-title { font-size: 0.9rem; font-weight: 700; color: #1d4ed8; margin-bottom: 4px; }
+.drop-zone-json .drop-zone-title { color: #7c3aed; }
+.drop-zone-sub { font-size: 0.8rem; color: #64748b; }
+.drop-zone-filename {
+  display: none;
+  margin-top: 10px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #16a34a;
+  background: #dcfce7;
+  padding: 4px 12px;
+  border-radius: 999px;
+}
+
+/* Upload feature chips */
+.upload-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.upload-feature {
+  font-size: 0.75rem;
+  background: #f0f9ff;
+  color: #0369a1;
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid #bae6fd;
+}
+
+/* Profile loaded banner */
+.profile-loaded-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #f0fdf4;
+  border: 2px solid #86efac;
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+}
+.profile-loaded-icon { font-size: 1.5rem; flex-shrink: 0; }
+.profile-loaded-name { font-weight: 700; color: #065f46; font-size: 1rem; }
+.profile-loaded-meta { font-size: 0.8rem; color: #047857; }
+
+/* Sample profile banner */
+.sample-profile-banner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: #fff;
+  border: 2px dashed #cbd5e1;
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+}
+.sample-profile-left { display: flex; align-items: center; gap: 12px; flex: 1; }
+
+/* Disabled button style */
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
