@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block step_number %}2{% endblock %}
+{% block content %}
+<h1>Configure Search</h1>
+<p>Tip: include Mock source for a deterministic demo flow.</p>
+
+<form method="POST" action="{{ url_for('wizard.configure_post') }}" class="job-card">
+  <label for="roles">Roles (comma-separated)</label>
+  <input id="roles" name="roles" type="text" value="{{ roles | join(', ') }}" />
+  <div id="roles-tags"></div>
+
+  <label for="location">Location</label>
+  <input id="location" name="location" type="text" value="{{ location }}" />
+
+  <fieldset>
+    <legend>Sources</legend>
+    {% for source in ['mock', 'linkedin', 'indeed', 'bayt', 'naukrigulf'] %}
+    <label>
+      <input type="checkbox" name="sources" value="{{ source }}" {% if source in sources %}checked{% endif %} />
+      {{ source }}
+    </label>
+    {% endfor %}
+  </fieldset>
+
+  <label for="max_results">Max Results (5-30)</label>
+  <input id="max_results" name="max_results" type="number" min="5" max="30" value="{{ max_results }}" />
+
+  <div>
+    <a class="btn-secondary" href="{{ url_for('wizard.upload_get') }}">Back</a>
+    <button type="submit" class="btn-primary">Continue</button>
+  </div>
+</form>
+<script src="{{ url_for('static', filename='wizard.js') }}"></script>
+{% endblock %}

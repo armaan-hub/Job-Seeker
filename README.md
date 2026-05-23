@@ -54,6 +54,42 @@ jobscout analyze --profile data/profile.json
 jobscout providers
 ```
 
+## Web App (Guided Wizard)
+
+A browser-based wizard for non-technical users. No CLI knowledge required.
+
+### Quick Start
+
+```bash
+# Install web dependencies
+pip install -e ".[web]"
+
+# Start the web server
+cd job-scout
+python web/app.py
+
+# Open in browser
+open http://localhost:5000
+```
+
+### Wizard Steps
+
+1. **Upload Profile** — Upload your CV/profile as a JSON file
+2. **Configure Search** — Choose job roles, location, and sources
+3. **Search** — AI matches your profile to available jobs (background)
+4. **Results** — View ranked matches with scores, strengths, and skill gaps
+5. **Get Coaching** — Resume edits, requirements analysis, and application tips
+
+### Notes
+
+- Default source is `mock` (demo data). Live scrapers (LinkedIn, Indeed, etc.) require additional setup.
+- Add your AI provider API key to `.env` before starting:
+  ```
+  ACTIVE_PROVIDER=anthropic
+  ANTHROPIC_API_KEY=sk-your-key-here
+  ```
+- Results are saved to `~/.jobscout/web_results.json`
+
 ## Usage
 
 ### Search Command

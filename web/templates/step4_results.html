@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block step_number %}4{% endblock %}
+{% block content %}
+<h1>Your Top Matches ({{ results|length }})</h1>
+
+<div class="results-grid">
+  {% for i, r in enumerate(results, 1) %}
+  <article class="result-card">
+    <div class="result-header">
+      <div>
+        <div class="result-title">{{ r.job.title }}</div>
+        <div class="result-company">{{ r.job.company }}{% if r.job.location %} • {{ r.job.location }}{% endif %}</div>
+        <div>
+          <span class="chip chip-blue">{{ r.job.source or "unknown" }}</span>
+          {% if r.job.salary %}<span class="chip chip-gray">{{ r.job.salary }}</span>{% endif %}
+        </div>
+      </div>
+      <div class="score-badge {% if r.score >= 70 %}score-green{% elif r.score >= 50 %}score-yellow{% else %}score-red{% endif %}">{{ r.score|round|int }}</div>
+    </div>
+
+    <h3>Why you match</h3>
+    <p>{% if (r.reasoning|length) > 200 %}{{ r.reasoning[:200] }}…{% else %}{{ r.reasoning }}{% endif %}</p>
+
+    {% if r.strengths %}
+    <div><strong>Strengths:</strong>
+      {% for item in r.strengths[:4] %}<span class="chip chip-green">{{ item }}</span>{% endfor %}
+    </div>
+    {% endif %}
+
+    {% if r.missing_skills %}
+    <div><strong>Missing skills:</strong>
+      {% for item in r.missing_skills[:4] %}<span class="chip chip-red">{{ item }}</span>{% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="result-actions">
+      <a class="btn-secondary" href="{{ r.job.url if r.job.url and (r.job.url.startswith('https://') or r.job.url.startswith('http://')) else '#' }}" target="_blank" rel="noopener noreferrer">View Job →</a>
+      <a class="btn-primary" href="/wizard/coaching/{{ i }}">Get Coaching →</a>
+    </div>
+  </article>
+  {% endfor %}
+</div>
+
+<div class="result-actions">
+  <form method="POST" action="/wizard/search">
+    <button type="submit" class="btn-primary">Search Again</button>
+  </form>
+  <a class="btn-secondary" href="/wizard/configure">Adjust Search</a>
+  <a href="/wizard/results-export">Download Results</a>
+</div>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block step_number %}1{% endblock %}
+{% block content %}
+<h1>Upload Your Profile</h1>
+<p>Upload your profile as a JSON file. Don't have one? See README for format.</p>
+
+<form method="POST" enctype="multipart/form-data" action="{{ url_for('wizard.upload_post') }}" class="job-card">
+  <label for="profile_json">Choose profile JSON</label>
+  <input id="profile_json" type="file" name="profile_json" accept=".json" required />
+  <button type="submit" class="btn-primary">Upload Profile</button>
+</form>
+
+<form method="POST" action="{{ url_for('wizard.upload_sample_post') }}">
+  <button type="submit" class="btn-secondary">Use Sample Profile</button>
+</form>
+
+{% if session.get('profile_preview') %}
+<div class="job-card">
+  <h3>Profile Preview</h3>
+  <p><strong>Name:</strong> {{ session['profile_preview'].get('name', 'N/A') }}</p>
+  <p><strong>Title:</strong> {{ session['profile_preview'].get('title', 'N/A') }}</p>
+  <p><strong>Skills:</strong> {{ session['profile_preview'].get('skills_count', 0) }}</p>
+  <p><strong>Target Roles:</strong> {{ session['profile_preview'].get('target_roles', []) | join(', ') }}</p>
+</div>
+{% endif %}
+{% endblock %}

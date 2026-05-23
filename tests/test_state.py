@@ -2,9 +2,6 @@
 
 from __future__ import annotations
 
-import json
-from pathlib import Path
-
 
 class TestStatePersistence:
     """Test save/load of search results."""

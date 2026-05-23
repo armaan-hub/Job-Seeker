@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+{% block step_number %}5{% endblock %}
+{% block content %}
+<a class="btn-secondary" href="/wizard/results">← Back to Results</a>
+<h1>Coaching Report for {{ job.title }} at {{ job.company }}</h1>
+<p>
+  <small>
+    {{ job.location or "Location N/A" }} · {{ job.source or "Source N/A" }}
+    {% if job.salary %} · {{ job.salary }}{% endif %}
+  </small>
+</p>
+
+<form method="GET" action="{{ url_for('wizard.coaching_get', job_index=job_index) }}" class="job-card">
+  <label>
+    <input type="checkbox" name="include_plan" value="true" {% if include_plan %}checked{% endif %} onchange="this.form.submit()" />
+    Include Full Action Plan
+  </label>
+  <noscript><button type="submit" class="btn-primary">Apply</button></noscript>
+</form>
+
+{% if coaching.errors %}
+<div class="warning-box">
+  <strong>Some coaching sections could not be generated:</strong>
+  <ul>
+    {% for error in coaching.errors %}
+    <li>{{ error }}</li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
+
+<section class="coaching-section">
+  <h2>📄 Resume Edits</h2>
+  {% if not coaching.resume_edits %}
+  <p>No specific resume edits suggested.</p>
+  {% else %}
+  <table class="req-table">
+    <thead>
+      <tr>
+        <th>Section</th>
+        <th>Current Text</th>
+        <th>Suggested Text</th>
+        <th>Why</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for edit in coaching.resume_edits %}
+      {% set current_text = edit.current_text or "" %}
+      {% set suggested_text = edit.suggested_text or "" %}
+      <tr>
+        <td>{{ edit.section }}</td>
+        <td>{{ current_text[:80] }}{% if current_text|length > 80 %}…{% endif %}</td>
+        <td>{{ suggested_text[:80] }}{% if suggested_text|length > 80 %}…{% endif %}</td>
+        <td>{{ edit.reason }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+</section>
+
+<section class="coaching-section">
+  <h2>📋 Requirements Analysis</h2>
+  {% set req_data = coaching.requirements or {} %}
+  {% set coverage = req_data.get('coverage_score', 0) %}
+  {% set coverage_class = 'score-red' %}
+  {% if coverage >= 70 %}
+    {% set coverage_class = 'score-green' %}
+  {% elif coverage >= 50 %}
+    {% set coverage_class = 'score-yellow' %}
+  {% endif %}
+  <div class="coverage-score {{ coverage_class }}">{{ coverage|round|int }}%</div>
+
+  {% set gaps = req_data.get('critical_gaps', []) %}
+  {% if gaps %}
+  <div>
+    {% for gap in gaps %}
+    <span style="display:inline-block;background:#fee2e2;color:#b91c1c;border:1px solid #fca5a5;border-radius:999px;padding:0.15rem 0.5rem;margin:0 0.25rem 0.25rem 0;">{{ gap }}</span>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <table class="req-table">
+    <thead>
+      <tr>
+        <th>Requirement</th>
+        <th>Priority</th>
+        <th>You Have It?</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for req in req_data.get('requirements', []) %}
+      <tr>
+        <td>{{ req.item }}</td>
+        <td {% if req.priority == 'must-have' %}class="priority-must"{% endif %}>{{ req.priority }}</td>
+        <td>
+          {% if req.candidate_has %}
+          <span class="has-yes">✓</span>
+          {% else %}
+          <span class="has-no">✗</span>
+          {% endif %}
+        </td>
+        <td>{{ req.candidate_note }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+
+<section class="coaching-section">
+  <h2>🎯 Application Coaching</h2>
+  {% set coaching_info = coaching.coaching or {} %}
+  <ol>
+    {% for tip in coaching_info.get('quick_tips', []) %}
+    <li>{{ tip }}</li>
+    {% endfor %}
+  </ol>
+
+  {% if include_plan and coaching_info.get('action_plan') %}
+  {% set action_plan = coaching_info.get('action_plan', {}) %}
+  <div class="action-subsection">
+    <h3>Before Applying</h3>
+    <ul>
+      {% for item in action_plan.get('before_applying', []) %}
+      <li>{{ item }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  <div class="action-subsection">
+    <h3>Cover Letter Tips</h3>
+    <ul>
+      {% for item in action_plan.get('cover_letter', []) %}
+      <li>{{ item }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  <div class="action-subsection">
+    <h3>Interview Prep</h3>
+    <ul>
+      {% for item in action_plan.get('interview_prep', []) %}
+      <li>{{ item }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% else %}
+  <a class="btn-primary" href="{{ url_for('wizard.coaching_get', job_index=job_index, include_plan='true') }}">Get Full Action Plan</a>
+  {% endif %}
+</section>
+{% endblock %}

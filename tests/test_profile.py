@@ -1,9 +1,6 @@
 """Tests for profile parsing."""
 
-import json
 from pathlib import Path
-
-import pytest
 
 from jobscout.profile import ProfileParser, UserProfile
 

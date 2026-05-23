@@ -1,11 +1,20 @@
 """Test configuration and fixtures."""
 
-import pytest
+import os
 import sys
 from pathlib import Path
 
-# Add src to path for imports
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+import pytest
+
+# Add project root and src to path for imports
+_root = str(Path(__file__).parent.parent)
+_src = str(Path(__file__).parent.parent / "src")
+for _p in (_root, _src):
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
+
+# Silence SECRET_KEY warning in all web tests
+os.environ.setdefault("SECRET_KEY", "test-secret-key-not-for-production")
 
 
 @pytest.fixture

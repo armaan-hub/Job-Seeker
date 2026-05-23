@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
 from jobscout.providers.base import AIProvider, AIResponse, ProviderType
 
 
@@ -44,7 +43,7 @@ class TestDataclasses:
         assert req.priority == "must-have"
 
     def test_requirements_report_importable(self):
-        from jobscout.advisor import Requirement, RequirementsReport
+        from jobscout.advisor import RequirementsReport
         report = RequirementsReport(
             requirements=[],
             coverage_score=75.0,
@@ -76,7 +75,7 @@ class TestResumeAdvisor:
         assert isinstance(result[0], ResumeEdit)
 
     def test_suggest_edits_parses_fields(self, sample_profile, sample_job):
-        from jobscout.advisor import ResumeAdvisor, ResumeEdit
+        from jobscout.advisor import ResumeAdvisor
         provider = MockProvider(
             '[{"section":"Summary","current_text":"Analyst","suggested_text":"Senior FP&A Analyst","reason":"Matches title"}]'
         )
@@ -149,7 +148,7 @@ class TestApplicationCoach:
         assert result.action_plan is None
 
     def test_advise_includes_action_plan_when_requested(self, sample_profile, sample_job):
-        from jobscout.advisor import ApplicationCoach, CoachAdvice
+        from jobscout.advisor import ApplicationCoach
         provider = MockProvider(
             '{"quick_tips":["Network first"],'
             '"action_plan":{"before_applying":["Research company"],'

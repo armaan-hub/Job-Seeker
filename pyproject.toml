@@ -28,9 +28,14 @@ dependencies = [
     "click>=8.1",
     "rich>=13.0",
     "pyyaml>=6.0",
+    "flask>=3.0",
 ]
 
 [project.optional-dependencies]
+web = [
+    "flask>=3.0",
+]
+
 dev = [
     "pytest>=8.0",
     "ruff>=0.3",

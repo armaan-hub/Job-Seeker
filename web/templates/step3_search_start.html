@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block step_number %}3{% endblock %}
+{% block content %}
+<h1>Ready to Search</h1>
+<p>Start background matching with your selected sources.</p>
+<form method="POST" action="{{ url_for('wizard.search_post') }}">
+  <button class="btn-primary" type="submit">Start Search</button>
+  <a class="btn-secondary" href="{{ url_for('wizard.configure_get') }}">Back</a>
+</form>
+{% endblock %}
