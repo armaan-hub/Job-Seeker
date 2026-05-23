@@ -6,8 +6,10 @@ import json
 from types import SimpleNamespace
 
 from web.wizard import (
+    get_provider_health,
     load_profile_from_session,
     load_web_results,
+    run_coaching,
     save_profile_to_session,
 )
 
@@ -90,10 +92,51 @@ def test_provider_health_missing_key(monkeypatch) -> None:
     )
     monkeypatch.setattr(wizard, "get_config", lambda: fake_cfg)
 
-    health = wizard.get_provider_health()
+    health = get_provider_health()
 
     assert health["ok"] is False
     assert "not set" in health["message"]
+
+
+def test_provider_health_returns_safe_fallback_on_exception(monkeypatch) -> None:
+    from web import wizard
+
+    monkeypatch.setattr(wizard, "get_config", lambda: (_ for _ in ()).throw(RuntimeError("boom")))
+
+    assert get_provider_health() == {"ok": True, "provider": "unknown", "message": ""}
+
+
+def test_run_coaching_returns_provider_configuration_error(monkeypatch, sample_profile) -> None:
+    from web import wizard
+
+    monkeypatch.setattr(wizard, "get_config", lambda: object())
+
+    def _raise_provider_error(config):
+        raise ValueError("missing API key")
+
+    monkeypatch.setattr(wizard, "_get_provider", _raise_provider_error)
+
+    result = run_coaching(
+        sample_profile,
+        {
+            "job": {
+                "title": "Data Analyst",
+                "company": "Tech Corp",
+                "location": "Dubai, UAE",
+                "description": "Looking for a data analyst",
+                "source": "remoteok",
+                "requirements": ["SQL"],
+            }
+        },
+        include_plan=False,
+    )
+
+    assert result == {
+        "errors": ["Provider configuration error: missing API key"],
+        "resume_edits": [],
+        "requirements": {},
+        "coaching": {},
+    }
 
 
 def test_load_web_results_missing_file(monkeypatch, tmp_path) -> None:

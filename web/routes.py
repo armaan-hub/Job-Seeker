@@ -244,6 +244,9 @@ def search_status():
         status["redirect"] = url_for("wizard.results_get")
     elif status.get("status") == "error":
         status["redirect"] = url_for("wizard.configure_get")
+    elif status.get("status") == "unknown":
+        status["redirect"] = url_for("wizard.configure_get")
+        status["message"] = "Search session expired. Please start a new search."
     return jsonify(status)
 
 

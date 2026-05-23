@@ -36,6 +36,7 @@ def test_500_renders_error_template() -> None:
 
     assert response.status_code == 500
     assert b"Something went wrong" in response.data
+    assert b'class="btn btn-primary"' in response.data
 
 
 def test_provider_health_in_context(monkeypatch) -> None:

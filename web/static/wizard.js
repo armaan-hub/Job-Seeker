@@ -26,22 +26,47 @@
   const polling = window.jobScoutPolling;
   if (polling && polling.jobId) {
     const statusEl = document.getElementById("search-status-message");
+    const maxAttempts = 60;
+    let attempts = 0;
+
+    const showPollingError = () => {
+      if (!statusEl) return;
+      statusEl.innerHTML =
+        'Search is taking longer than expected or the session expired. <a href="/wizard/configure">Restart search</a>.';
+    };
+
     const tick = async () => {
+      attempts += 1;
       try {
         const resp = await fetch(`/wizard/search-status?job_id=${encodeURIComponent(polling.jobId)}`);
+        if (!resp.ok) {
+          throw new Error(`Unexpected status code: ${resp.status}`);
+        }
         const status = await resp.json();
+        if (status.redirect) {
+          window.location.href = status.redirect;
+          return;
+        }
         if (statusEl) {
           statusEl.textContent =
             status.status === "running"
               ? "Searching job sources and scoring matches..."
-              : status.message || `Status: ${status.status}`;
+              : status.message || `Unexpected status: ${status.status}. Retrying...`;
         }
-        if (status.redirect && (status.status === "done" || status.status === "error")) {
-          window.location.href = status.redirect;
+        if (status.status !== "running" && attempts >= maxAttempts) {
+          showPollingError();
           return;
         }
       } catch (error) {
+        if (attempts >= maxAttempts) {
+          showPollingError();
+          return;
+        }
         if (statusEl) statusEl.textContent = "Still working...";
+      }
+      if (attempts >= maxAttempts) {
+        showPollingError();
+        return;
       }
       setTimeout(tick, 2000);
     };

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block step_number %}5{% endblock %}
 {% block content %}
-<a class="btn-secondary" href="/wizard/results">← Back to Results</a>
+<a class="btn btn-secondary" href="/wizard/results">← Back to Results</a>
 <h1>Coaching Report for {{ job.title }} at {{ job.company }}</h1>
 <p>
   <small>
@@ -15,7 +15,7 @@
     <input type="checkbox" name="include_plan" value="true" {% if include_plan %}checked{% endif %} onchange="this.form.submit()" />
     Include Full Action Plan
   </label>
-  <noscript><button type="submit" class="btn-primary">Apply</button></noscript>
+  <noscript><button type="submit" class="btn btn-primary">Apply</button></noscript>
 </form>
 
 {% if coaching.errors %}
@@ -47,11 +47,13 @@
       {% for edit in coaching.resume_edits %}
       {% set current_text = edit.current_text or "" %}
       {% set suggested_text = edit.suggested_text or "" %}
+      {% set edit_section = edit.section or "General" %}
+      {% set edit_reason = edit.reason or "" %}
       <tr>
-        <td>{{ edit.section }}</td>
+        <td>{{ edit_section }}</td>
         <td>{{ current_text[:80] }}{% if current_text|length > 80 %}…{% endif %}</td>
         <td>{{ suggested_text[:80] }}{% if suggested_text|length > 80 %}…{% endif %}</td>
-        <td>{{ edit.reason }}</td>
+        <td>{{ edit_reason }}</td>
       </tr>
       {% endfor %}
     </tbody>
@@ -91,9 +93,12 @@
     </thead>
     <tbody>
       {% for req in req_data.get('requirements', []) %}
+      {% set req_item = req.item or "Unknown" %}
+      {% set req_priority = req.priority or "N/A" %}
+      {% set req_note = req.candidate_note or "" %}
       <tr>
-        <td>{{ req.item }}</td>
-        <td {% if req.priority == 'must-have' %}class="priority-must"{% endif %}>{{ req.priority }}</td>
+        <td>{{ req_item }}</td>
+        <td {% if req_priority == 'must-have' %}class="priority-must"{% endif %}>{{ req_priority }}</td>
         <td>
           {% if req.candidate_has %}
           <span class="has-yes">✓</span>
@@ -101,7 +106,7 @@
           <span class="has-no">✗</span>
           {% endif %}
         </td>
-        <td>{{ req.candidate_note }}</td>
+        <td>{{ req_note }}</td>
       </tr>
       {% endfor %}
     </tbody>
@@ -144,7 +149,7 @@
     </ul>
   </div>
   {% else %}
-  <a class="btn-primary" href="{{ url_for('wizard.coaching_get', job_index=job_index, include_plan='true') }}">Get Full Action Plan</a>
+  <a class="btn btn-primary" href="{{ url_for('wizard.coaching_get', job_index=job_index, include_plan='true') }}">Get Full Action Plan</a>
   {% endif %}
 </section>
 {% endblock %}

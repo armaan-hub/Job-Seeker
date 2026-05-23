@@ -19,7 +19,7 @@ from jobscout.profile import ProfileParser, UserProfile
 from jobscout.providers.anthropic import AnthropicProvider
 from jobscout.providers.openai import OpenAIProvider
 from jobscout.providers.opencode import OpenCodeProvider
-from jobscout.scraper import JobListing, get_scraper
+from jobscout.scraper import BOARD_REGISTRY, JobListing, get_scraper
 
 JOB_REGISTRY: dict[str, dict[str, Any]] = {}
 
@@ -112,31 +112,54 @@ def load_profile_from_session(session) -> UserProfile | None:
 
 def get_provider_health() -> dict[str, Any]:
     """Return active provider configuration health for UI banner."""
-    config = get_config()
-    provider_name = config.active_provider
-    provider_cfg = (
-        config.get_active_provider_config()
-        if hasattr(config, "get_active_provider_config")
-        else getattr(config, provider_name)
-    )
-    key_name = {
-        "anthropic": "ANTHROPIC_API_KEY",
-        "openai": "OPENAI_API_KEY",
-        "opencode": "OPENCODE_API_KEY",
-    }[provider_name]
+    try:
+        config = get_config()
+        provider_name = config.active_provider
+        provider_cfg = (
+            config.get_active_provider_config()
+            if hasattr(config, "get_active_provider_config")
+            else getattr(config, provider_name)
+        )
+        key_name = {
+            "anthropic": "ANTHROPIC_API_KEY",
+            "openai": "OPENAI_API_KEY",
+            "opencode": "OPENCODE_API_KEY",
+        }[provider_name]
 
-    if provider_cfg.api_key:
+        if provider_cfg.api_key:
+            return {
+                "ok": True,
+                "provider": provider_name,
+                "message": f"{provider_name.capitalize()} configured ✓",
+            }
+
         return {
-            "ok": True,
+            "ok": False,
             "provider": provider_name,
-            "message": f"{provider_name.capitalize()} configured ✓",
+            "message": f"{key_name} not set in .env",
         }
+    except Exception:
+        return {"ok": True, "provider": "unknown", "message": ""}
 
-    return {
-        "ok": False,
-        "provider": provider_name,
-        "message": f"{key_name} not set in .env",
-    }
+
+def _no_jobs_found_message(sources: list[str]) -> str:
+    live_boards = [board for board in sources if BOARD_REGISTRY.get(board, {}).get("status") == "live"]
+    preview_boards = [
+        board
+        for board in sources
+        if BOARD_REGISTRY.get(board, {}).get("status") in {"preview", "stub"}
+    ]
+    if live_boards:
+        return (
+            f"No results from live boards ({', '.join(live_boards)}). "
+            "Try broader search terms or different location."
+        )
+    if preview_boards:
+        return (
+            f"No live jobs from preview-only boards ({', '.join(preview_boards)}). "
+            "Add 'remoteok' or 'mock' source for real or demo results."
+        )
+    return "No jobs found. Try adding 'remoteok' source for live jobs or 'mock' for a demo."
 
 
 def run_search_worker(profile_dict: dict, search_config: dict, job_id: str) -> None:
@@ -189,7 +212,7 @@ def run_search_worker(profile_dict: dict, search_config: dict, job_id: str) -> N
         if len(all_jobs) == 0:
             JOB_REGISTRY[job_id] = {
                 "status": "error",
-                "message": "No jobs found. Try selecting 'Mock' source for demonstration.",
+                "message": _no_jobs_found_message(sources),
                 "redirect": "configure",
             }
             return
@@ -289,8 +312,6 @@ def run_coaching(profile: UserProfile, job_dict: dict, include_plan: bool) -> di
     """Run all advisor modules and serialize for web templates."""
     job_payload = job_dict.get("job", job_dict)
     job = JobListing.from_dict(job_payload)
-    config = get_config()
-    provider = _get_provider(config)
 
     output: dict[str, Any] = {
         "resume_edits": [],
@@ -298,6 +319,17 @@ def run_coaching(profile: UserProfile, job_dict: dict, include_plan: bool) -> di
         "coaching": {},
         "errors": [],
     }
+
+    try:
+        config = get_config()
+        provider = _get_provider(config)
+    except Exception as exc:
+        return {
+            "errors": [f"Provider configuration error: {exc}"],
+            "resume_edits": [],
+            "requirements": {},
+            "coaching": {},
+        }
 
     try:
         resume_advisor = ResumeAdvisor(provider)
