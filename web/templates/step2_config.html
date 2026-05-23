@@ -1,66 +1,207 @@
 {% extends "base.html" %}
-{% block step_number %}2{% endblock %}
+
+{% block title %}Configure Search · AI Job Scout{% endblock %}
+
 {% block content %}
+<div class="wizard-container"> 
 
-<a href="{{ url_for('wizard.upload_get') }}" class="back-link">← Back to Profile</a>
-<h1 class="page-title">Configure Your Job Search</h1>
-<p class="page-subtitle">Set your preferences — roles, location, and where to search.</p>
+  <!-- CV Auto-fill Banner -->
+  {% if profile_name %}
+  <div class="autofill-banner">
+    <span class="autofill-icon">✨</span>
+    <div class="autofill-text">
+      <strong>Auto-filled from your CV</strong>
+      <span>Profile loaded for <strong>{{ profile_name }}</strong>{% if profile_title %} · {{ profile_title }}{% endif %} · {{ profile_skills }} skills detected</span>
+    </div>
+    <span class="autofill-check">✓</span>
+  </div>
+  {% endif %}
 
-<form method="POST" action="{{ url_for('wizard.configure_post') }}">
-  <div class="card">
-    <div class="card-title">🎯 Target Roles</div>
-    <div class="form-group">
-      <label class="form-label" for="roles">Job Titles / Roles</label>
-      <input class="form-input" id="roles" name="roles" type="text"
-             value="{{ roles | join(', ') }}"
-             placeholder="e.g. Data Analyst, Financial Analyst, BI Developer" />
-      <div class="form-hint">Separate multiple roles with a comma</div>
-      <div id="roles-tags" class="mt-4"></div>
+  <form method="post" action="{{ url_for('wizard.configure_post') }}" id="configForm">
+
+    <!-- SECTION 1: Job Targets -->
+    <div class="config-section">
+      <h2 class="section-title">🎯 Job Targets</h2>
+
+      <div class="form-group">
+        <label for="roles" class="form-label">
+          Target Roles
+          <span class="label-hint">Comma-separated list of job titles</span>
+        </label>
+        <input
+          class="form-input"
+          id="roles"
+          name="roles"
+          type="text"
+          value="{{ roles | join(', ') if roles else '' }}"
+          placeholder="e.g. Financial Data Analyst, Business Intelligence Developer"
+          required
+        />
+        {% if roles %}
+        <p class="input-hint autofilled">📋 Extracted from your CV</p>
+        {% endif %}
+      </div>
+
+      <div class="form-group">
+        <label for="location" class="form-label">
+          Preferred Location
+          <span class="label-hint">City, Country or "Remote"</span>
+        </label>
+        <input
+          class="form-input"
+          id="location"
+          name="location"
+          type="text"
+          value="{{ location or '' }}"
+          placeholder="e.g. Dubai, UAE or Remote"
+        />
+        {% if location %}
+        <p class="input-hint autofilled">📋 Extracted from your CV</p>
+        {% endif %}
+      </div>
     </div>
 
-    <div class="form-group">
-      <label class="form-label" for="location">Location</label>
-      <input class="form-input" id="location" name="location" type="text"
-             value="{{ location }}"
-             placeholder="e.g. Dubai, UAE" />
+    <!-- SECTION 2: Region / Country Selection -->
+    <div class="config-section">
+      <h2 class="section-title">🌍 Where Do You Want to Work?</h2>
+      <p class="section-hint">Select one or more regions. Job boards for each region will be selected automatically.</p>
+
+      <div class="region-grid" id="regionGrid">
+        {% for region_key, region in region_boards.items() %}
+        <div class="region-card" data-region="{{ region_key }}" onclick="toggleRegion('{{ region_key }}', this)">
+          <span class="region-icon">{{ region.icon }}</span>
+          <span class="region-name">{{ region.name }}</span>
+          <span class="region-check" id="check-{{ region_key }}" style="display:none">✓</span>
+        </div>
+        {% endfor %}
+      </div>
     </div>
-  </div>
 
-  <div class="card">
-    <div class="card-title">🔎 Job Sources</div>
-    <p class="text-muted" style="margin-bottom:14px;">Select where to search for jobs. <strong>Mock</strong> always returns demo results — great for testing.</p>
-    <div class="checkbox-grid">
-      {% for source, label, icon in [
-          ('mock',       '🧪 Mock (demo)',  ''),
-          ('linkedin',   '💼 LinkedIn',     ''),
-          ('indeed',     '🔍 Indeed',       ''),
-          ('bayt',       '🌍 Bayt',         ''),
-          ('naukrigulf', '🏖 NaukriGulf',   '')
-      ] %}
-      <label class="checkbox-item {% if source in sources %}checked{% endif %}">
-        <input type="checkbox" name="sources" value="{{ source }}" {% if source in sources %}checked{% endif %}
-               onchange="this.closest('.checkbox-item').classList.toggle('checked', this.checked)" />
-        {{ label }}
-      </label>
-      {% endfor %}
+    <!-- SECTION 3: Job Boards (shown per region + always show live boards) -->
+    <div class="config-section">
+      <h2 class="section-title">📋 Job Board Selection</h2>
+      <p class="section-hint">
+        Select the job boards to search. 
+        <span class="badge badge-verified">✅ Verified</span> = real, legitimate listings. 
+        <span class="badge badge-good">👍 Good</span> = generally reliable.
+        <span class="badge badge-demo">🧪 Demo</span> = test data only.
+        <span class="badge badge-stub">🔜 Coming</span> = integration in progress.
+      </p>
+
+      <div class="boards-grid" id="boardsGrid">
+        {% for key, meta in board_registry.items() %}
+        <label class="board-card {% if key in sources %}board-selected{% endif %}" id="board-{{ key }}"
+               data-regions="{{ board_regions.get(key, []) | join(' ') }}">
+          <input type="checkbox" name="sources" value="{{ key }}"
+                 {% if key in sources %}checked{% endif %}
+                 onchange="this.closest('.board-card').classList.toggle('board-selected', this.checked)" />
+          <div class="board-info">
+            <div class="board-label">{{ meta.label }}</div>
+            <div class="board-desc">{{ meta.description }}</div>
+          </div>
+          <span class="badge badge-{{ meta.quality }}">
+            {% if meta.quality == 'verified' %}✅ Verified
+            {% elif meta.quality == 'good' %}👍 Good
+            {% elif meta.quality == 'demo' %}🧪 Demo
+            {% else %}Unknown{% endif %}
+          </span>
+          {% if meta.status == 'stub' %}
+          <span class="coming-soon-tag">🔜 Soon</span>
+          {% elif meta.status == 'live' %}
+          <span class="live-tag">⚡ Live</span>
+          {% endif %}
+        </label>
+        {% endfor %}
+      </div>
+
+      <!-- Hidden input to ensure at least mock is sent if nothing selected -->
+      <p id="no-sources-warning" class="warning-text" style="display:none">
+        ⚠ Please select at least one job board.
+      </p>
     </div>
-  </div>
 
-  <div class="card">
-    <div class="card-title">⚙ Options</div>
-    <div class="form-group">
-      <label class="form-label" for="max_results">Max Results per Source</label>
-      <input class="form-input" id="max_results" name="max_results" type="number"
-             min="5" max="30" value="{{ max_results }}" style="max-width:120px;" />
-      <div class="form-hint">Between 5 and 30</div>
+    <!-- SECTION 4: Options -->
+    <div class="config-section">
+      <h2 class="section-title">⚙️ Search Options</h2>
+      <div class="form-group">
+        <label for="max_results" class="form-label">
+          Results per board
+          <span class="label-hint">How many jobs to fetch from each board</span>
+        </label>
+        <select class="form-input" id="max_results" name="max_results">
+          {% for n in [5, 10, 20, 50] %}
+          <option value="{{ n }}" {% if max_results == n %}selected{% endif %}>{{ n }} results</option>
+          {% endfor %}
+        </select>
+      </div>
     </div>
-  </div>
 
-  <div class="btn-group">
-    <button type="submit" class="btn-primary btn-lg">🔍 Start Search →</button>
-    <a href="{{ url_for('wizard.upload_get') }}" class="btn-secondary btn-lg">← Back</a>
-  </div>
-</form>
+    <div class="btn-row">
+      <a href="{{ url_for('wizard.upload_get') }}" class="btn btn-secondary">← Back</a>
+      <button type="submit" class="btn btn-primary" id="submitBtn">
+        Search Jobs →
+      </button>
+    </div>
 
-<script src="{{ url_for('static', filename='wizard.js') }}"></script>
+  </form>
+</div>
+
+<script>
+// Map: region_key → list of board keys
+const regionBoards = {{ region_board_map | tojson }};
+
+// Board regions: board_key → [region_keys]
+const boardRegions = {{ board_regions | tojson }};
+
+// Track selected regions
+const selectedRegions = new Set();
+
+function toggleRegion(regionKey, el) {
+  if (selectedRegions.has(regionKey)) {
+    selectedRegions.delete(regionKey);
+    el.classList.remove('region-selected');
+    document.getElementById('check-' + regionKey).style.display = 'none';
+  } else {
+    selectedRegions.add(regionKey);
+    el.classList.add('region-selected');
+    document.getElementById('check-' + regionKey).style.display = 'inline';
+  }
+  applyRegionFilter();
+}
+
+function applyRegionFilter() {
+  const boards = document.querySelectorAll('.board-card');
+  boards.forEach(card => {
+    const key = card.id.replace('board-', '');
+    const meta = card.dataset.regions ? card.dataset.regions.split(' ').filter(Boolean) : [];
+
+    if (selectedRegions.size === 0) {
+      // Show all when no region selected
+      card.style.display = '';
+    } else {
+      // Show board if its region is selected, OR if it has no region (global)
+      const visible = meta.length === 0 || meta.some(r => selectedRegions.has(r));
+      card.style.display = visible ? '' : 'none';
+      if (visible) {
+        // Auto-check the board
+        const cb = card.querySelector('input[type=checkbox]');
+        if (cb && !cb.checked) {
+          cb.checked = true;
+          card.classList.add('board-selected');
+        }
+      }
+    }
+  });
+}
+
+// Validate at submit
+document.getElementById('configForm').addEventListener('submit', function(e) {
+  const checked = document.querySelectorAll('input[name=sources]:checked');
+  if (checked.length === 0) {
+    e.preventDefault();
+    document.getElementById('no-sources-warning').style.display = 'block';
+    document.getElementById('boardsGrid').scrollIntoView({behavior: 'smooth'});
+  }
+});
+</script>
 {% endblock %}

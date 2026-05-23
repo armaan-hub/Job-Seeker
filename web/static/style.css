@@ -467,3 +467,276 @@ button:disabled {
   transform: none !important;
   box-shadow: none !important;
 }
+
+
+/* ── Configure Page Redesign ───────────────────────────── */
+.wizard-container {
+  display: grid;
+  gap: 20px;
+}
+
+.autofill-banner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #eff6ff, #f5f3ff);
+  border: 1px solid #c7d2fe;
+  border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.08);
+}
+
+.autofill-icon,
+.autofill-check {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.autofill-icon {
+  background: #dbeafe;
+  color: #1d4ed8;
+  font-size: 1.15rem;
+}
+
+.autofill-check {
+  margin-left: auto;
+  background: #dcfce7;
+  color: #15803d;
+  font-weight: 800;
+}
+
+.autofill-text {
+  display: grid;
+  gap: 4px;
+}
+
+.autofill-text span {
+  color: #475569;
+  font-size: 0.9rem;
+}
+
+.config-section {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+}
+
+.section-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 8px;
+}
+
+.section-hint {
+  color: #64748b;
+  font-size: 0.9rem;
+  margin-bottom: 18px;
+  line-height: 1.55;
+}
+
+.label-hint {
+  display: block;
+  color: #64748b;
+  font-size: 0.78rem;
+  font-weight: 400;
+  margin-top: 4px;
+}
+
+.input-hint {
+  margin-top: 8px;
+  font-size: 0.82rem;
+}
+
+.input-hint.autofilled {
+  color: #0f766e;
+  font-weight: 600;
+}
+
+.region-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 12px;
+}
+
+.region-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border: 1.5px solid #dbe4f0;
+  border-radius: 12px;
+  background: #f8fafc;
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.region-card:hover {
+  transform: translateY(-1px);
+  border-color: #93c5fd;
+  background: #eff6ff;
+}
+
+.region-selected {
+  border-color: #2563eb;
+  background: #dbeafe;
+  box-shadow: inset 0 0 0 1px #93c5fd;
+}
+
+.region-icon {
+  font-size: 1.2rem;
+}
+
+.region-name {
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.region-check {
+  margin-left: auto;
+  color: #1d4ed8;
+  font-weight: 800;
+}
+
+.boards-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.board-card {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  gap: 12px;
+  align-items: center;
+  padding: 16px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 14px;
+  background: #fff;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.board-card:hover {
+  border-color: #93c5fd;
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.08);
+}
+
+.board-card input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #2563eb;
+}
+
+.board-selected {
+  border-color: #2563eb;
+  background: #eff6ff;
+  box-shadow: inset 0 0 0 1px #bfdbfe;
+}
+
+.board-info {
+  display: grid;
+  gap: 4px;
+}
+
+.board-label {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.board-desc {
+  color: #64748b;
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+
+.badge,
+.live-tag,
+.coming-soon-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.badge-verified {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.badge-good {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.badge-demo {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.badge-stub,
+.coming-soon-tag {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.live-tag {
+  background: #ede9fe;
+  color: #6d28d9;
+}
+
+.warning-text {
+  margin-top: 14px;
+  color: #b45309;
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 0.88rem;
+}
+
+.btn-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 720px) {
+  .autofill-banner {
+    align-items: flex-start;
+  }
+
+  .autofill-check {
+    margin-left: 0;
+  }
+
+  .board-card {
+    grid-template-columns: auto 1fr;
+  }
+
+  .badge,
+  .live-tag,
+  .coming-soon-tag {
+    width: fit-content;
+  }
+
+  .btn-row {
+    flex-direction: column-reverse;
+  }
+
+  .btn-row .btn-primary,
+  .btn-row .btn-secondary {
+    width: 100%;
+  }
+}

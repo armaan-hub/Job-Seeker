@@ -145,16 +145,42 @@ def configure_get():
         flash("Please upload your profile first.", "error")
         return redirect(url_for("wizard.upload_get"))
 
+    from jobscout.scraper import BOARD_REGISTRY, REGION_BOARDS  # noqa: PLC0415
+
+    # Build reverse map: board → [region_keys] for JS
+    board_regions: dict[str, list[str]] = {}
+    region_board_map: dict[str, list[str]] = {}
+    for region_key, region_info in REGION_BOARDS.items():
+        region_board_map[region_key] = region_info["boards"]
+        for board_key in region_info["boards"]:
+            board_regions.setdefault(board_key, []).append(region_key)
+
     preview = session.get("profile_preview", {})
     search_config = session.get("search_config", {})
     defaults = get_config()
+
+    # Auto-fill: prefer search_config saved values, then profile preview, then defaults
+    roles = search_config.get("roles") or preview.get("target_roles") or defaults.default_roles
+    location = search_config.get("location") or preview.get("location") or defaults.default_location
+    sources = search_config.get("sources") or ["mock", "remoteok"]
+    max_results = search_config.get("max_results", 10)
+
     return render_template(
         "step2_config.html",
         step=2,
-        roles=search_config.get("roles", preview.get("target_roles", defaults.default_roles)),
-        location=search_config.get("location", preview.get("location", defaults.default_location)),
-        sources=search_config.get("sources", ["mock"]),
-        max_results=search_config.get("max_results", 10),
+        roles=roles,
+        location=location,
+        sources=sources,
+        max_results=max_results,
+        # Profile info for auto-fill banner
+        profile_name=preview.get("name"),
+        profile_title=preview.get("title"),
+        profile_skills=preview.get("skills_count", 0),
+        # Board registry and regions for UI
+        board_registry=BOARD_REGISTRY,
+        region_boards=REGION_BOARDS,
+        region_board_map=region_board_map,
+        board_regions=board_regions,
     )
 
 
@@ -163,7 +189,7 @@ def configure_post():
     roles_raw = request.form.get("roles", "")
     roles = [r.strip() for r in roles_raw.split(",") if r.strip()]
     location = request.form.get("location", "").strip()
-    sources = request.form.getlist("sources")
+    sources = [source for source in request.form.getlist("sources") if source]
 
     try:
         max_results = int(request.form.get("max_results", 10))

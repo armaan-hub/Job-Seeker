@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AI Job Scout</title>
+    <title>{% block title %}AI Job Scout{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
   </head>
   <body>
@@ -20,7 +20,7 @@
 
     <main class="container">
 
-      {% set current_step = (self.step_number()|trim)|int %}
+      {% set current_step = step if step is defined else (self.step_number()|trim)|int %}
       <ul class="wizard-progress">
         {% for label in ["Upload", "Configure", "Search", "Results", "Coaching"] %}
           {% set idx = loop.index %}
