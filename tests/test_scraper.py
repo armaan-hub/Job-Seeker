@@ -43,12 +43,10 @@ def test_job_listing_from_dict_preserves_gateway_flag() -> None:
 
 
 def test_search_url_builds_seek_au_deep_link() -> None:
-    """Seek AU URLs should point to the real board search page."""
-    assert (
-        _search_url("seek_au", "Data Analyst", "Sydney, Australia")
-        == "https://www.seek.com.au/data-analyst-jobs/in-sydney-australia"
-    )
-
+    """Seek AU URLs should use query params (slug path returns no results for unknown city slugs)."""
+    url = _search_url("seek_au", "Data Analyst", "Sydney, Australia")
+    assert url.startswith("https://www.seek.com.au/jobs?keywords=")
+    assert "Data+Analyst" in url or "Data%20Analyst" in url
 
 
 def test_build_generated_jobs_returns_single_gateway_card() -> None:
@@ -59,7 +57,8 @@ def test_build_generated_jobs_returns_single_gateway_card() -> None:
     assert jobs[0].title == "Browse Data Analyst jobs →"
     assert jobs[0].company == "SEEK"
     assert jobs[0].is_gateway is True
-    assert jobs[0].url == "https://www.seek.com.au/data-analyst-jobs/in-sydney-australia"
+    # URL should be the correct seek.com.au query-param format
+    assert jobs[0].url.startswith("https://www.seek.com.au/jobs?keywords=")
 
 
 

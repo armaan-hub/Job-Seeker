@@ -1,0 +1,148 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.14.4, pytest-9.0.3, pluggy-1.6.0 -- /usr/local/bin/python3
+cachedir: .pytest_cache
+rootdir: /Users/armaan/Job Finder/job-scout
+configfile: pyproject.toml
+plugins: langsmith-0.8.2, asyncio-1.3.0, dash-4.1.0, respx-0.23.1, anyio-4.13.0
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 102 items
+
+tests/test_advisor.py::TestDataclasses::test_resume_edit_importable PASSED [  0%]
+tests/test_advisor.py::TestDataclasses::test_requirement_importable PASSED [  1%]
+tests/test_advisor.py::TestDataclasses::test_requirements_report_importable PASSED [  2%]
+tests/test_advisor.py::TestDataclasses::test_coach_advice_importable PASSED [  3%]
+tests/test_advisor.py::TestResumeAdvisor::test_suggest_edits_returns_list PASSED [  4%]
+tests/test_advisor.py::TestResumeAdvisor::test_suggest_edits_parses_fields PASSED [  5%]
+tests/test_advisor.py::TestResumeAdvisor::test_suggest_edits_fallback_on_bad_json PASSED [  6%]
+tests/test_advisor.py::TestRequirementsAnalyzer::test_analyze_returns_report PASSED [  7%]
+tests/test_advisor.py::TestRequirementsAnalyzer::test_analyze_parses_requirements PASSED [  8%]
+tests/test_advisor.py::TestRequirementsAnalyzer::test_analyze_fallback_on_bad_json PASSED [  9%]
+tests/test_advisor.py::TestApplicationCoach::test_advise_returns_quick_tips PASSED [ 10%]
+tests/test_advisor.py::TestApplicationCoach::test_advise_includes_action_plan_when_requested PASSED [ 11%]
+tests/test_advisor.py::TestApplicationCoach::test_advise_fallback_on_bad_json PASSED [ 12%]
+tests/test_cv_tailor.py::test_keyword_fallback_no_provider PASSED        [ 13%]
+tests/test_cv_tailor.py::test_cache_returns_same_result PASSED           [ 14%]
+tests/test_cv_tailor.py::test_gaps_are_missing_keywords PASSED           [ 15%]
+tests/test_cv_tailor.py::test_match_score_is_reasonable PASSED           [ 16%]
+tests/test_cv_tailor.py::test_ai_provider_failure_falls_back PASSED      [ 17%]
+tests/test_cv_tailor.py::test_empty_jd_raises PASSED                     [ 18%]
+tests/test_cv_tailor.py::test_profile_to_text_flattens_correctly PASSED  [ 19%]
+tests/test_cv_tailor.py::test_ai_provider_success_returns_ai_available PASSED [ 20%]
+tests/test_job_matcher.py::test_keyword_fallback_score_reflects_overlap PASSED [ 21%]
+tests/test_job_matcher.py::test_match_single_sanitizes_html_errors_and_uses_keyword_score PASSED [ 22%]
+tests/test_matcher.py::TestMockScraper::test_get_scraper PASSED          [ 23%]
+tests/test_matcher.py::TestMockScraper::test_get_scraper_supports_international_boards PASSED [ 24%]
+tests/test_matcher.py::TestMockScraper::test_board_registry_and_regions_cover_new_boards PASSED [ 25%]
+tests/test_matcher.py::TestMockScraper::test_mock_search_returns_jobs PASSED [ 26%]
+tests/test_matcher.py::TestJobListing::test_job_to_prompt_text PASSED    [ 27%]
+tests/test_profile.py::TestProfileParser::test_load_json_profile PASSED  [ 28%]
+tests/test_profile.py::TestProfileParser::test_profile_to_prompt PASSED  [ 29%]
+tests/test_profile.py::TestProfileParser::test_profile_from_dict PASSED  [ 30%]
+tests/test_scam_detector.py::test_clean_job_scores_high PASSED           [ 31%]
+tests/test_scam_detector.py::test_missing_company_penalised PASSED       [ 32%]
+tests/test_scam_detector.py::test_scam_keywords_detected PASSED          [ 33%]
+tests/test_scam_detector.py::test_example_url_penalised PASSED           [ 34%]
+tests/test_scam_detector.py::test_duplicate_detection PASSED             [ 35%]
+tests/test_scam_detector.py::test_short_description_penalised PASSED     [ 36%]
+tests/test_scraper.py::test_job_listing_from_dict_preserves_gateway_flag PASSED [ 37%]
+tests/test_scraper.py::test_search_url_builds_seek_au_deep_link FAILED   [ 38%]
+tests/test_scraper.py::test_build_generated_jobs_returns_single_gateway_card FAILED [ 39%]
+tests/test_scraper.py::test_registry_and_scrapers_include_new_gateway_boards PASSED [ 40%]
+tests/test_scraper.py::test_remoteok_scraper_parses_live_api_results PASSED [ 41%]
+tests/test_state.py::TestStatePersistence::test_save_and_load_results PASSED [ 42%]
+tests/test_state.py::TestStatePersistence::test_load_results_empty_when_no_file PASSED [ 43%]
+tests/test_state.py::TestStatePersistence::test_load_job_at_index PASSED [ 44%]
+tests/test_state.py::TestStatePersistence::test_load_job_at_index_out_of_range PASSED [ 45%]
+tests/test_state.py::TestStatePersistence::test_load_job_at_index_no_results PASSED [ 46%]
+tests/test_web_app.py::test_create_app PASSED                            [ 47%]
+tests/test_web_app.py::test_index_redirects_to_upload PASSED             [ 48%]
+tests/test_web_app.py::test_500_renders_error_template PASSED            [ 49%]
+tests/test_web_app.py::test_provider_health_in_context PASSED            [ 50%]
+tests/test_web_flow.py::TestUploadStep::test_get_upload_page PASSED      [ 50%]
+tests/test_web_flow.py::TestUploadStep::test_valid_json_upload_redirects_to_configure PASSED [ 51%]
+tests/test_web_flow.py::TestUploadStep::test_invalid_json_redirects_back_with_error PASSED [ 52%]
+tests/test_web_flow.py::TestUploadStep::test_missing_file_shows_error PASSED [ 53%]
+tests/test_web_flow.py::TestUploadStep::test_large_profile_uses_disk_fallback PASSED [ 54%]
+tests/test_web_flow.py::TestUploadStep::test_pdf_upload_no_file_shows_error PASSED [ 55%]
+tests/test_web_flow.py::TestUploadStep::test_pdf_upload_wrong_type_shows_error PASSED [ 56%]
+tests/test_web_flow.py::TestUploadStep::test_pdf_upload_empty_pdf_shows_error PASSED [ 57%]
+tests/test_web_flow.py::TestUploadStep::test_pdf_upload_uses_minimal_fallback_when_no_ai PASSED [ 58%]
+tests/test_web_flow.py::TestConfigureStep::test_get_configure_redirects_if_no_profile PASSED [ 59%]
+tests/test_web_flow.py::TestConfigureStep::test_get_configure_prefills_from_session PASSED [ 60%]
+tests/test_web_flow.py::TestConfigureStep::test_post_configure_stores_config PASSED [ 61%]
+tests/test_web_flow.py::TestConfigureStep::test_post_configure_empty_roles_shows_error PASSED [ 62%]
+tests/test_web_flow.py::TestConfigureStep::test_post_configure_empty_sources_shows_error PASSED [ 63%]
+tests/test_web_flow.py::TestSearchStep::test_search_post_starts_worker PASSED [ 64%]
+tests/test_web_flow.py::TestSearchStep::test_searching_page_renders PASSED [ 65%]
+tests/test_web_flow.py::TestSearchStep::test_search_status_done_returns_redirect_url PASSED [ 66%]
+tests/test_web_flow.py::TestSearchStep::test_search_status_error_returns_configure_url PASSED [ 67%]
+tests/test_web_flow.py::TestSearchStep::test_search_status_unknown_returns_configure_url_and_message PASSED [ 68%]
+tests/test_web_flow.py::TestSearchStep::test_zero_results_worker_sets_error PASSED [ 69%]
+tests/test_web_flow.py::TestSearchStep::test_zero_results_worker_describes_live_sources PASSED [ 70%]
+tests/test_web_flow.py::TestSearchStep::test_zero_results_worker_describes_preview_only_sources PASSED [ 71%]
+tests/test_web_flow.py::TestSearchStep::test_zero_results_worker_describes_mixed_sources PASSED [ 72%]
+tests/test_web_flow.py::TestCoachingStep::test_coaching_redirects_on_invalid_index PASSED [ 73%]
+tests/test_web_flow.py::TestCoachingStep::test_coaching_redirects_on_missing_profile PASSED [ 74%]
+tests/test_web_flow.py::TestCoachingStep::test_coaching_renders_with_mock_data PASSED [ 75%]
+tests/test_web_flow.py::TestCoachingStep::test_coaching_shows_errors_gracefully PASSED [ 76%]
+tests/test_web_flow.py::TestCoachingStep::test_coaching_with_include_plan PASSED [ 77%]
+tests/test_web_flow.py::TestCoachingStep::test_coaching_uses_safe_fallbacks_and_button_classes PASSED [ 78%]
+tests/test_web_flow.py::TestResultsStep::test_results_redirects_when_no_data PASSED [ 79%]
+tests/test_web_flow.py::TestResultsStep::test_results_renders_job_cards PASSED [ 80%]
+tests/test_web_flow.py::TestResultsStep::test_results_renders_gateway_cards_with_search_actions PASSED [ 81%]
+tests/test_web_flow.py::TestResultsStep::test_results_score_colors PASSED [ 82%]
+tests/test_web_flow.py::TestResultsStep::test_results_export_returns_json PASSED [ 83%]
+tests/test_web_flow.py::test_search_status_unknown_job_id PASSED         [ 84%]
+tests/test_web_flow.py::test_results_export_empty PASSED                 [ 85%]
+tests/test_web_flow.py::test_coaching_invalid_index PASSED               [ 86%]
+tests/test_web_flow.py::test_upload_sample_post_missing_data_files_redirects PASSED [ 87%]
+tests/test_web_flow.py::test_provider_health_never_raises PASSED         [ 88%]
+tests/test_web_flow.py::test_stub_only_boards_gives_helpful_message PASSED [ 89%]
+tests/test_web_wizard.py::test_save_small_profile_uses_cookie PASSED     [ 90%]
+tests/test_web_wizard.py::test_save_large_profile_uses_disk PASSED       [ 91%]
+tests/test_web_wizard.py::test_load_profile_from_cookie PASSED           [ 92%]
+tests/test_web_wizard.py::test_load_profile_from_disk PASSED             [ 93%]
+tests/test_web_wizard.py::test_provider_health_missing_key PASSED        [ 94%]
+tests/test_web_wizard.py::test_provider_health_returns_safe_fallback_on_exception PASSED [ 95%]
+tests/test_web_wizard.py::test_run_coaching_returns_provider_configuration_error PASSED [ 96%]
+tests/test_web_wizard.py::test_load_web_results_missing_file PASSED      [ 97%]
+tests/test_web_wizard.py::test_run_search_worker_persists_gateway_flag PASSED [ 98%]
+tests/test_wizard_js.py::test_wizard_js_redirects_on_any_redirect PASSED [ 99%]
+tests/test_wizard_js.py::test_wizard_js_stops_after_max_retries_without_redirect PASSED [100%]
+
+=================================== FAILURES ===================================
+___________________ test_search_url_builds_seek_au_deep_link ___________________
+
+    def test_search_url_builds_seek_au_deep_link() -> None:
+        """Seek AU URLs should point to the real board search page."""
+>       assert (
+            _search_url("seek_au", "Data Analyst", "Sydney, Australia")
+            == "https://www.seek.com.au/data-analyst-jobs/in-sydney-australia"
+        )
+E       AssertionError: assert 'https://www....%2C+Australia' == 'https://www....ney-australia'
+E         
+E         - https://www.seek.com.au/data-analyst-jobs/in-sydney-australia
+E         + https://www.seek.com.au/jobs?keywords=Data+Analyst&where=Sydney%2C+Australia
+
+tests/test_scraper.py:47: AssertionError
+____________ test_build_generated_jobs_returns_single_gateway_card _____________
+
+    def test_build_generated_jobs_returns_single_gateway_card() -> None:
+        """Generated boards should return one gateway card, not fake listings."""
+        jobs = _build_generated_jobs("seek_au", ["Data Analyst"], "Sydney, Australia", 3)
+    
+        assert len(jobs) == 1
+        assert jobs[0].title == "Browse Data Analyst jobs →"
+        assert jobs[0].company == "SEEK"
+        assert jobs[0].is_gateway is True
+>       assert jobs[0].url == "https://www.seek.com.au/data-analyst-jobs/in-sydney-australia"
+E       AssertionError: assert 'https://www....%2C+Australia' == 'https://www....ney-australia'
+E         
+E         - https://www.seek.com.au/data-analyst-jobs/in-sydney-australia
+E         + https://www.seek.com.au/jobs?keywords=Data+Analyst&where=Sydney%2C+Australia
+
+tests/test_scraper.py:62: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_scraper.py::test_search_url_builds_seek_au_deep_link - Asse...
+FAILED tests/test_scraper.py::test_build_generated_jobs_returns_single_gateway_card
+======================== 2 failed, 100 passed in 0.41s =========================

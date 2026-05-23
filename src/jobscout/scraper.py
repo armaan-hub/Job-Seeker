@@ -1637,8 +1637,8 @@ def _search_url(source: str, role: str, location: str) -> str:
     )
 
     templates: dict[str, str] = {
-        # Australia — Seek uses slug+location path format
-        "seek_au": f"https://www.seek.com.au/{role_slug}-jobs/in-{location_slug}",
+        # Australia — Seek uses query params (slug path returns "No results" for non-standard city names)
+        "seek_au": f"https://www.seek.com.au/jobs?keywords={role_enc}&where={location_enc}",
         "seek": f"https://www.seek.com.au/jobs?keywords={role_enc}&where={location_enc}",  # legacy alias
         "indeed_au": f"https://au.indeed.com/jobs?q={role_enc}&l={location_enc}",
         "jora_au": f"https://au.jora.com/jobs?q={role_enc}&l={location_enc}",
@@ -1665,7 +1665,7 @@ def _search_url(source: str, role: str, location: str) -> str:
         "jobbank": f"https://www.jobbank.gc.ca/jobsearch/jobsearch?searchstring={role_enc}&locationstring={location_enc}",
         "workopolis": f"https://www.workopolis.com/jobsearch/find-jobs?ak={role_enc}&l={location_enc}",
         # Germany
-        "stepstone_de": f"https://www.stepstone.de/jobs/{role_slug}",
+        "stepstone_de": f"https://www.stepstone.de/jobs-suche/{role_slug}/in-{location_slug}",
         "xing_jobs": f"https://www.xing.com/jobs/search?keywords={role_enc}&location={location_enc}",
         "indeed_de": f"https://de.indeed.com/jobs?q={role_enc}&l={location_enc}",
         "arbeitsagentur": f"https://www.arbeitsagentur.de/jobsuche/suche?was={role_enc}&wo={location_enc}",
