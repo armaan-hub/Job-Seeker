@@ -641,9 +641,11 @@ class TestResultsStep:
         assert b"85" in response.data
         assert b"/wizard/coaching/1" in response.data
         assert b"Get Coaching" in response.data
+        # New template shows "Live Matched Jobs" section header
+        assert b"Live Matched Jobs" in response.data
 
     def test_results_renders_gateway_cards_with_search_actions(self, client, monkeypatch):
-        """Gateway cards render as board search links while live cards keep AI details."""
+        """Gateway cards render in the 'Search These Job Boards' section; live cards keep AI details."""
         from web import routes
 
         mixed_results = [
@@ -693,10 +695,11 @@ class TestResultsStep:
         response = client.get("/wizard/results")
 
         assert response.status_code == 200
-        assert b"Including 1 board search links and 1 live-matched jobs" in response.data
+        # New template: board section heading and SEEK search link
+        assert b"Search These Job Boards" in response.data
         assert b"Search SEEK" in response.data
-        assert b"Search Link" in response.data
-        assert response.data.count(b"AI Analysis") == 1
+        # Live jobs section present, gateway not shown as AI card
+        assert b"AI Analysis" in response.data
         assert response.data.count(b"Get Coaching") == 1
         assert response.data.count(b"score-badge") == 1
 

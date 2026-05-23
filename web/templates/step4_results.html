@@ -3,26 +3,23 @@
 
 {% block content %}
 <div class="wizard-container">
-  {% set counts = namespace(gateway=0) %}
+  {# Count live vs gateway results using namespace #}
+  {% set ns = namespace(live_count=0, gw_count=0) %}
   {% for r in results %}
-    {% if r.job.is_gateway %}
-      {% set counts.gateway = counts.gateway + 1 %}
-    {% endif %}
+    {% if r.job.is_gateway %}{% set ns.gw_count = ns.gw_count + 1 %}
+    {% else %}{% set ns.live_count = ns.live_count + 1 %}{% endif %}
   {% endfor %}
-  {% set live_count = results|length - counts.gateway %}
 
   <!-- Results Header -->
   <div class="results-header">
     <div>
       <h2 style="font-size:1.4rem;font-weight:800;color:#0f172a">
-        🎯 Your Top {{ results|length }} Job Matches
+        🎯 Job Search Results
       </h2>
       <p style="font-size:0.88rem;color:#64748b;margin-top:4px">
-        Ranked by AI match score against your profile
-        {% if counts.gateway %}
-        <br>
-        <span style="font-size:0.82rem">Including {{ counts.gateway }} board search links and {{ live_count }} live-matched jobs</span>
-        {% endif %}
+        {% if ns.live_count %}{{ ns.live_count }} live job{{ 's' if ns.live_count != 1 }} matched to your profile{% endif %}
+        {% if ns.live_count and ns.gw_count %} · {% endif %}
+        {% if ns.gw_count %}{{ ns.gw_count }} job board{{ 's' if ns.gw_count != 1 }} to search directly{% endif %}
       </p>
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap">
@@ -31,60 +28,28 @@
     </div>
   </div>
 
-  <!-- Data source notice -->
-  <div class="notice-banner notice-info" style="margin-bottom:20px">
+  {# ══════════════════════════════════════════════════════════════════════ #}
+  {# SECTION 1: Live AI-matched jobs                                       #}
+  {# ══════════════════════════════════════════════════════════════════════ #}
+  {% if ns.live_count %}
+  <div style="margin:20px 0 10px">
+    <h3 style="font-size:1.1rem;font-weight:700;color:#0f172a;margin-bottom:6px">
+      ⚡ Live Matched Jobs
+    </h3>
+    <p style="font-size:0.83rem;color:#64748b">Real job listings matched to your profile by AI. Click to apply.</p>
+  </div>
+
+  <div class="notice-banner notice-info" style="margin-bottom:14px">
     <span style="font-size:1.1rem">ℹ️</span>
     <div>
-      <strong>How results work:</strong>
-      <strong>⚡ Live</strong> cards (RemoteOK) show real-time jobs with AI match scores.
-      <strong>🔗 Search</strong> cards are direct links to search each job board for your role — click to find real listings.
+      These are live listings from remote-work job APIs. Match scores are AI-calculated against your CV.
+      <strong>Remote/Global</strong> jobs may not be location-specific — check the listing for work location.
     </div>
   </div>
 
   <div class="results-grid">
-    {% for r in results %}
+    {% for r in results if not r.job.is_gateway %}
     {% set i = loop.index %}
-    {% set is_gateway = r.job.is_gateway %}
-    {% set is_live = not is_gateway and r.job.source == 'remoteok' %}
-
-    {% if is_gateway %}
-    {# ── Gateway / Search-Link Card ──────────────────────────────── #}
-    <article class="result-card" style="border-left:4px solid #3b82f6;background:#f8faff">
-      <div class="result-header">
-        <div class="result-info">
-          <div class="result-title" style="font-size:1.05rem">🔍 {{ r.job.title }}</div>
-          <div class="result-company" style="color:#1e40af;font-weight:600">
-            🏢 {{ r.job.company }}
-            {% if r.job.location %}
-            &nbsp;·&nbsp; 📍 {{ r.job.location }}
-            {% endif %}
-          </div>
-          <div class="result-meta" style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;align-items:center">
-            <span class="chip chip-blue" style="font-weight:700">📋 {{ r.job.source | upper }}</span>
-            <span style="background:#dbeafe;color:#1d4ed8;padding:2px 10px;border-radius:99px;font-size:0.78rem;font-weight:600">🔗 Search Link</span>
-          </div>
-        </div>
-      </div>
-
-      <div style="margin:10px 0 6px;color:#64748b;font-size:0.82rem;line-height:1.4">
-        Real job board
-      </div>
-
-      <div style="margin:10px 0 14px;color:#475569;font-size:0.9rem;line-height:1.5">
-        {{ r.job.description }}
-      </div>
-
-      <div class="result-actions">
-        {% if r.job.url and r.job.url.startswith('http') %}
-        <a class="btn btn-primary" href="{{ r.job.url }}" target="_blank" rel="noopener noreferrer" style="font-size:1rem;padding:10px 24px">
-          🔍 Search {{ r.job.company }} →
-        </a>
-        {% endif %}
-      </div>
-    </article>
-
-    {% else %}
-    {# ── Live / AI-Matched Card ───────────────────────────────────── #}
     <article class="result-card">
       <div class="result-header">
         <div class="result-info">
@@ -97,13 +62,10 @@
           </div>
           <div class="result-meta" style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;align-items:center">
             <span class="chip chip-blue" style="font-weight:700">📋 {{ r.job.source | upper }}</span>
-            {% if is_live %}
             <span style="background:#dcfce7;color:#15803d;padding:2px 10px;border-radius:99px;font-size:0.78rem;font-weight:600">⚡ Live listing</span>
-            {% endif %}
             {% if r.job.salary %}
             <span class="chip chip-gray">💰 {{ r.job.salary }}</span>
             {% endif %}
-            {# Quality badge #}
             {% set qs = r.job.quality_score if r.job.quality_score is defined else 100 %}
             {% if qs >= 70 %}
             <span style="background:#dcfce7;color:#15803d;padding:2px 10px;border-radius:99px;font-size:0.75rem;font-weight:700" title="Quality score: {{ qs }}/100">✅ Verified {{ qs }}%</span>
@@ -113,7 +75,6 @@
             <span style="background:#fee2e2;color:#b91c1c;padding:2px 10px;border-radius:99px;font-size:0.75rem;font-weight:700" title="Quality score: {{ qs }}/100">🚨 Low quality {{ qs }}%</span>
             {% endif %}
           </div>
-          {# Scam warning flags #}
           {% if r.job.scam_flags is defined and r.job.scam_flags %}
           <div style="margin-top:6px;padding:4px 8px;background:#fff7ed;border:1px solid #fed7aa;border-radius:6px;font-size:0.75rem;color:#9a3412">
             ⚠️ Flagged: {{ r.job.scam_flags | join(' · ') }}
@@ -128,7 +89,11 @@
 
       <div class="result-reasoning">
         <strong style="color:#1e293b;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.5px">🤖 AI Analysis</strong><br>
-        {% if (r.reasoning|length) > 250 %}{{ r.reasoning[:250] }}…{% else %}{{ r.reasoning }}{% endif %}
+        {% if r.reasoning and (r.reasoning|length) > 10 %}
+          {% if (r.reasoning|length) > 250 %}{{ r.reasoning[:250] }}…{% else %}{{ r.reasoning }}{% endif %}
+        {% else %}
+          Keyword-based match score. Configure an AI provider for detailed analysis.
+        {% endif %}
       </div>
 
       {% if r.strengths %}
@@ -148,13 +113,12 @@
       <div class="result-actions">
         {% if r.job.url and r.job.url.startswith('http') %}
         <a class="btn btn-primary" href="{{ r.job.url }}" target="_blank" rel="noopener noreferrer">
-          View Real Job →
+          Apply Now →
         </a>
         {% endif %}
         <a class="btn btn-secondary" href="/wizard/coaching/{{ i }}">
           💡 Get Coaching →
         </a>
-        {# Tailor CV button — passes job details to step5 #}
         {% set jd_safe = (r.job.description or '') | urlencode %}
         <a class="btn" style="background:#7c3aed;color:#fff;border:none"
            href="/tailor?title={{ r.job.title | urlencode }}&company={{ r.job.company | urlencode }}&description={{ jd_safe }}&url={{ r.job.url | urlencode }}"
@@ -163,9 +127,56 @@
         </a>
       </div>
     </article>
-    {% endif %}
     {% endfor %}
   </div>
+  {% endif %}
+
+  {# ══════════════════════════════════════════════════════════════════════ #}
+  {# SECTION 2: Job Boards to Search (gateway cards)                      #}
+  {# ══════════════════════════════════════════════════════════════════════ #}
+  {% if ns.gw_count %}
+  <div style="margin:32px 0 10px;{% if ns.live_count %}border-top:2px solid #e2e8f0;padding-top:24px;{% endif %}">
+    <h3 style="font-size:1.1rem;font-weight:700;color:#0f172a;margin-bottom:6px">
+      🔍 Search These Job Boards
+    </h3>
+    <p style="font-size:0.83rem;color:#64748b">
+      These are the best recruitment sites for your selected country. Click each to search for your role directly on that board — these sites list <strong>real, verified jobs</strong> from local employers and recruiters.
+    </p>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-top:12px">
+    {% for r in results if r.job.is_gateway %}
+    <article style="background:#f8faff;border:1.5px solid #bfdbfe;border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-size:1.4rem">🏛️</span>
+        <div>
+          <div style="font-weight:700;color:#1e40af;font-size:0.95rem">{{ r.job.company }}</div>
+          <div style="font-size:0.78rem;color:#64748b">{{ r.job.source | upper }}</div>
+        </div>
+      </div>
+      {% if r.job.location %}
+      <div style="font-size:0.82rem;color:#475569">📍 {{ r.job.location }}</div>
+      {% endif %}
+      <div style="font-size:0.82rem;color:#475569;line-height:1.4">{{ r.job.description }}</div>
+      {% if r.job.url and r.job.url.startswith('http') %}
+      <a href="{{ r.job.url }}" target="_blank" rel="noopener noreferrer"
+         style="display:inline-flex;align-items:center;gap:6px;background:#1d4ed8;color:#fff;padding:8px 16px;border-radius:8px;font-size:0.85rem;font-weight:600;text-decoration:none;width:fit-content">
+        🔍 Search {{ r.job.company }} →
+      </a>
+      {% endif %}
+    </article>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if not results %}
+  <div class="notice-banner" style="margin:40px 0;background:#fef3c7;border-color:#f59e0b">
+    <span style="font-size:1.5rem">😕</span>
+    <div>
+      <strong>No results found.</strong> Try adjusting your search settings — select a different country or add more roles.
+    </div>
+  </div>
+  {% endif %}
 
   <!-- Bottom actions -->
   <div style="display:flex;gap:10px;margin-top:28px;flex-wrap:wrap">

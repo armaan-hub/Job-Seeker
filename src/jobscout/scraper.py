@@ -1289,13 +1289,22 @@ class GupyScraper(GeneratedScraper):
 
 
 def _role_matches(role: str, title: str, tags: list[str] | None = None, description: str = "") -> bool:
-    """Loose keyword match — any meaningful word from `role` found in title/tags/description."""
-    _STOP = {"and", "or", "in", "the", "a", "an", "of", "at", "for", "with", "to", "senior", "junior"}
+    """Strict keyword match — majority of meaningful words from `role` must appear in title/tags/description.
+
+    For a 2-word role like "Financial Analyst", BOTH words must match (not just "financial").
+    For a 3-word role, at least 2/3 must match. This prevents "Financial Services" matching "Financial Analyst".
+    """
+    _STOP = {"and", "or", "in", "the", "a", "an", "of", "at", "for", "with", "to", "senior", "junior", "lead", "staff"}
     words = [w for w in role.lower().split() if w not in _STOP and len(w) >= 3]
     if not words:
         return True  # no meaningful words → accept all
     haystack = (title + " " + " ".join(tags or []) + " " + description[:300]).lower()
-    return any(w in haystack for w in words)
+    matches = sum(1 for w in words if w in haystack)
+    # Require all words for short roles (≤2 words) to prevent false positives like
+    # "Financial" matching "Financial Services" for a "Financial Analyst" role.
+    # For 3+ word roles, require majority (≥60%) to allow partial but meaningful matches.
+    threshold = len(words) if len(words) <= 2 else max(2, round(len(words) * 0.6))
+    return matches >= threshold
 
 
 class RemotiveScraper(JobScraper):

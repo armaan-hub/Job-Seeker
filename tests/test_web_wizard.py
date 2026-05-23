@@ -192,6 +192,7 @@ def test_run_search_worker_persists_gateway_flag(monkeypatch) -> None:
 
     monkeypatch.setattr(wizard.Path, "home", lambda: state_root)
     monkeypatch.setattr(wizard, "get_scraper", lambda source: GatewayScraper())
+    monkeypatch.setattr(wizard, "GLOBAL_REAL_SCRAPERS", [])  # prevent extra scrapers adding jobs
     monkeypatch.setattr(wizard, "get_config", lambda: object())
     monkeypatch.setattr(wizard, "_get_provider", lambda config: object())
     monkeypatch.setattr(wizard, "JobMatcher", FakeMatcher)

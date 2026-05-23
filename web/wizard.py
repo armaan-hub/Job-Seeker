@@ -226,14 +226,15 @@ def run_search_worker(profile_dict: dict, search_config: dict, job_id: str) -> N
             except Exception:
                 continue
 
-        # If we have enough real (non-gateway) jobs, discard gateway cards
+        # Separate gateway cards from real live jobs — NEVER discard gateway cards.
+        # Gateway cards are direct search links to actual boards (seek_au, hays_au, etc.)
+        # and are the primary path to country-specific jobs. Real jobs are matched by AI.
+        gateway_jobs = [j for j in all_jobs if j.is_gateway]
         real_jobs = [j for j in all_jobs if not j.is_gateway]
-        if len(real_jobs) >= 3:
-            all_jobs = real_jobs
 
-        # ── Quality scoring ──────────────────────────────────────────────────
+        # ── Quality scoring (real jobs only — gateway cards don't need scoring) ──
         seen_keys: set[str] = set()
-        for jl in all_jobs:
+        for jl in real_jobs:
             result = _score_job(
                 title=jl.title,
                 company=jl.company,
@@ -245,10 +246,13 @@ def run_search_worker(profile_dict: dict, search_config: dict, job_id: str) -> N
             jl.quality_score = result.score
             jl.scam_flags = result.flags
 
-        # Filter out obvious scams (score < 15) — only when we have enough jobs
-        obvious_scams = [j for j in all_jobs if j.quality_score < 15]
-        if len(all_jobs) - len(obvious_scams) >= 3:
-            all_jobs = [j for j in all_jobs if j.quality_score >= 15]
+        # Filter out obvious scams from real jobs only
+        obvious_scams = [j for j in real_jobs if j.quality_score < 15]
+        if len(real_jobs) - len(obvious_scams) >= 3:
+            real_jobs = [j for j in real_jobs if j.quality_score >= 15]
+
+        # Merge: real matched jobs first (AI-ranked), then gateway cards appended at end
+        all_jobs = real_jobs + gateway_jobs
 
         if len(all_jobs) == 0:
             JOB_REGISTRY[job_id] = {
@@ -261,19 +265,22 @@ def run_search_worker(profile_dict: dict, search_config: dict, job_id: str) -> N
         config = get_config()
         provider = _get_provider(config)
 
-        try:
-            matcher = JobMatcher(provider)
-            results = matcher.match_profile_to_jobs(profile, all_jobs, detailed=True)
-        except Exception as exc:
-            JOB_REGISTRY[job_id] = {
-                "status": "error",
-                "message": f"Matching failed: {exc}",
-                "redirect": "configure",
-            }
-            return
+        # Run AI matching only on real (non-gateway) jobs with actual descriptions
+        matchable_jobs = [j for j in all_jobs if not j.is_gateway]
+        gateway_jobs_for_payload = [j for j in all_jobs if j.is_gateway]
+
+        matched_results = []
+        if matchable_jobs:
+            try:
+                matcher = JobMatcher(provider)
+                matched_results = matcher.match_profile_to_jobs(profile, matchable_jobs, detailed=True)
+            except Exception:
+                # Fallback: no AI scoring — keyword match scores will still appear
+                matched_results = []
 
         payload = []
-        for result in results:
+        # First: AI-ranked real jobs
+        for result in matched_results:
             posted_date = result.job.posted_date
             payload.append(
                 {
@@ -301,10 +308,39 @@ def run_search_worker(profile_dict: dict, search_config: dict, job_id: str) -> N
                 }
             )
 
+        # Gateway cards (board search links) always appended at the end
+        for gw in gateway_jobs_for_payload:
+            gw_posted = gw.posted_date
+            payload.append(
+                {
+                    "job": {
+                        "title": gw.title,
+                        "company": gw.company,
+                        "location": gw.location,
+                        "description": gw.description,
+                        "url": gw.url,
+                        "source": gw.source,
+                        "salary": gw.salary,
+                        "posted_date": gw_posted.isoformat() if isinstance(gw_posted, datetime) else None,
+                        "requirements": gw.requirements,
+                        "benefits": gw.benefits,
+                        "is_gateway": True,
+                        "quality_score": gw.quality_score,
+                        "scam_flags": gw.scam_flags,
+                    },
+                    "score": 0,
+                    "reasoning": "Click 'Search on this board' to find matching jobs directly on this recruitment site.",
+                    "skill_match": [],
+                    "missing_skills": [],
+                    "strengths": [],
+                    "improvement_tips": [],
+                }
+            )
+
         state_dir = _state_dir()
         state_dir.mkdir(parents=True, exist_ok=True)
         _web_results_path().write_text(json.dumps(payload, indent=2), encoding="utf-8")
-        JOB_REGISTRY[job_id] = {"status": "done", "count": len(results)}
+        JOB_REGISTRY[job_id] = {"status": "done", "count": len(payload)}
     except Exception as exc:
         JOB_REGISTRY[job_id] = {
             "status": "error",
