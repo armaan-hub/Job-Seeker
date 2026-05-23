@@ -228,9 +228,17 @@ body {
 .search-status-msg { color: #64748b; font-size: 0.95rem; }
 
 /* ── Results page ─────────────────────────────────────── */
-.results-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.results-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
 .results-count { font-size: 0.9rem; color: #64748b; }
 .results-grid { display: flex; flex-direction: column; gap: 16px; }
+
+/* Notice banners */
+.notice-banner {
+  display: flex; gap: 12px; align-items: flex-start;
+  padding: 14px 16px; border-radius: 10px; font-size: 0.88rem; line-height: 1.5;
+}
+.notice-info { background: #eff6ff; border: 1.5px solid #bfdbfe; color: #1e40af; }
+.notice-warn { background: #fffbeb; border: 1.5px solid #fcd34d; color: #92400e; }
 
 .result-card {
   background: #fff; border-radius: 12px;

@@ -96,38 +96,45 @@ BOARD_REGISTRY: dict[str, dict[str, str]] = {
 
 REGION_BOARDS: dict[str, dict[str, Any]] = {
     "uae": {
-        "name": "UAE",
+        "name": "UAE / Middle East",
         "icon": "🇦🇪",
+        "default_location": "Dubai, UAE",
         "boards": ["gulftalent", "bayt", "naukrigulf", "dubizzle"],
     },
     "saudi": {
         "name": "Saudi Arabia",
         "icon": "🇸🇦",
+        "default_location": "Riyadh, Saudi Arabia",
         "boards": ["gulftalent", "bayt", "naukrigulf"],
     },
     "uk": {
         "name": "United Kingdom",
         "icon": "🇬🇧",
-        "boards": ["linkedin", "indeed", "reed", "glassdoor"],
+        "default_location": "London, UK",
+        "boards": ["reed", "glassdoor"],
     },
     "australia": {
         "name": "Australia & NZ",
         "icon": "🇦🇺",
-        "boards": ["seek", "linkedin", "indeed"],
+        "default_location": "Sydney, Australia",
+        "boards": ["seek"],
     },
     "india": {
         "name": "India",
         "icon": "🇮🇳",
-        "boards": ["linkedin", "indeed", "foundit", "naukrigulf"],
+        "default_location": "Bangalore, India",
+        "boards": ["foundit", "naukrigulf"],
     },
     "sea": {
         "name": "Southeast Asia",
         "icon": "🇸🇬",
-        "boards": ["jobstreet", "linkedin", "indeed"],
+        "default_location": "Singapore",
+        "boards": ["jobstreet"],
     },
     "global_remote": {
         "name": "Remote / Global",
         "icon": "🌐",
+        "default_location": "Remote",
         "boards": ["remoteok", "weworkremotely"],
     },
 }

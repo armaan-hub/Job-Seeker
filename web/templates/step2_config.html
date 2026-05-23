@@ -68,13 +68,18 @@
 
       <div class="region-grid" id="regionGrid">
         {% for region_key, region in region_boards.items() %}
-        <div class="region-card" data-region="{{ region_key }}" onclick="toggleRegion('{{ region_key }}', this)">
+        <div class="region-card" data-region="{{ region_key }}"
+             data-location="{{ region.default_location }}"
+             onclick="toggleRegion('{{ region_key }}', this)">
           <span class="region-icon">{{ region.icon }}</span>
           <span class="region-name">{{ region.name }}</span>
           <span class="region-check" id="check-{{ region_key }}" style="display:none">✓</span>
         </div>
         {% endfor %}
       </div>
+      <p class="input-hint" id="regionLocationHint" style="display:none">
+        📍 Location updated to match selected region — you can still edit it manually below.
+      </p>
     </div>
 
     <!-- SECTION 3: Job Boards (shown per region + always show live boards) -->
@@ -153,6 +158,12 @@ const regionBoards = {{ region_board_map | tojson }};
 // Board regions: board_key → [region_keys]
 const boardRegions = {{ board_regions | tojson }};
 
+// Region default locations
+const regionLocations = {};
+document.querySelectorAll('.region-card').forEach(card => {
+  regionLocations[card.dataset.region] = card.dataset.location || '';
+});
+
 // Track selected regions
 const selectedRegions = new Set();
 
@@ -166,7 +177,26 @@ function toggleRegion(regionKey, el) {
     el.classList.add('region-selected');
     document.getElementById('check-' + regionKey).style.display = 'inline';
   }
+  // Update location field to match selected region(s)
+  updateLocationFromRegions();
   applyRegionFilter();
+}
+
+function updateLocationFromRegions() {
+  const locationInput = document.getElementById('location');
+  const hint = document.getElementById('regionLocationHint');
+  if (selectedRegions.size === 0) {
+    hint.style.display = 'none';
+    return;
+  }
+  // Build location string from all selected regions
+  const locs = [...selectedRegions]
+    .map(r => regionLocations[r] || '')
+    .filter(Boolean);
+  if (locs.length > 0) {
+    locationInput.value = locs.length === 1 ? locs[0] : locs.join(' / ');
+    hint.style.display = 'block';
+  }
 }
 
 function applyRegionFilter() {

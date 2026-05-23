@@ -1,51 +1,124 @@
 {% extends "base.html" %}
-{% block step_number %}4{% endblock %}
-{% block content %}
-<h1>Your Top Matches ({{ results|length }})</h1>
+{% block title %}Your Matches · AI Job Scout{% endblock %}
 
-<div class="results-grid">
-  {% for i, r in enumerate(results, 1) %}
-  <article class="result-card">
-    <div class="result-header">
-      <div>
-        <div class="result-title">{{ r.job.title }}</div>
-        <div class="result-company">{{ r.job.company }}{% if r.job.location %} • {{ r.job.location }}{% endif %}</div>
-        <div>
-          <span class="chip chip-blue">{{ r.job.source or "unknown" }}</span>
-          {% if r.job.salary %}<span class="chip chip-gray">{{ r.job.salary }}</span>{% endif %}
+{% block content %}
+<div class="wizard-container">
+
+  <!-- Results Header -->
+  <div class="results-header">
+    <div>
+      <h2 style="font-size:1.4rem;font-weight:800;color:#0f172a">
+        🎯 Your Top {{ results|length }} Job Matches
+      </h2>
+      <p style="font-size:0.88rem;color:#64748b;margin-top:4px">
+        Ranked by AI match score against your profile
+      </p>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <a href="{{ url_for('wizard.configure_get') }}" class="btn btn-secondary" style="font-size:0.85rem;padding:8px 14px">⚙ Adjust Search</a>
+      <a href="{{ url_for('wizard.results_export') }}" class="btn btn-secondary" style="font-size:0.85rem;padding:8px 14px">⬇ Export</a>
+    </div>
+  </div>
+
+  <!-- Data source notice -->
+  <div class="notice-banner notice-info" style="margin-bottom:20px">
+    <span style="font-size:1.1rem">ℹ️</span>
+    <div>
+      <strong>About these results:</strong>
+      Only <strong>RemoteOK</strong> returns live real-time listings. All other boards (Seek, GulfTalent, Bayt, etc.) show <em>representative sample jobs</em> — real scraper integrations are coming soon.
+      Boards are clearly labelled <span style="background:#dcfce7;color:#15803d;padding:1px 7px;border-radius:99px;font-size:0.78rem;font-weight:600">⚡ Live</span> or
+      <span style="background:#fef3c7;color:#92400e;padding:1px 7px;border-radius:99px;font-size:0.78rem;font-weight:600">🔬 Sample</span> on each card.
+    </div>
+  </div>
+
+  <div class="results-grid">
+    {% for i, r in enumerate(results, 1) %}
+    {% set is_live = r.job.source in ['remoteok', 'weworkremotely'] %}
+    <article class="result-card">
+
+      <!-- Card top row: title + score -->
+      <div class="result-header">
+        <div class="result-info">
+          <div class="result-title">{{ r.job.title }}</div>
+          <div class="result-company">
+            🏢 {{ r.job.company }}
+            {% if r.job.location %}
+            &nbsp;·&nbsp; 📍 {{ r.job.location }}
+            {% endif %}
+          </div>
+          <!-- Source + quality badges -->
+          <div class="result-meta" style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+            <span class="chip chip-blue" style="font-weight:700">
+              📋 {{ r.job.source | upper }}
+            </span>
+            {% if is_live %}
+            <span style="background:#dcfce7;color:#15803d;padding:2px 10px;border-radius:99px;font-size:0.78rem;font-weight:600">⚡ Live listing</span>
+            {% else %}
+            <span style="background:#fef3c7;color:#92400e;padding:2px 10px;border-radius:99px;font-size:0.78rem;font-weight:600">🔬 Sample job</span>
+            {% endif %}
+            {% if r.job.salary %}
+            <span class="chip chip-gray">💰 {{ r.job.salary }}</span>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Match Score -->
+        <div class="score-badge {% if r.score >= 70 %}score-green{% elif r.score >= 50 %}score-yellow{% else %}score-red{% endif %}">
+          {{ r.score|round|int }}
+          <span class="score-label">Match</span>
         </div>
       </div>
-      <div class="score-badge {% if r.score >= 70 %}score-green{% elif r.score >= 50 %}score-yellow{% else %}score-red{% endif %}">{{ r.score|round|int }}</div>
-    </div>
 
-    <h3>Why you match</h3>
-    <p>{% if (r.reasoning|length) > 200 %}{{ r.reasoning[:200] }}…{% else %}{{ r.reasoning }}{% endif %}</p>
+      <!-- Why you match -->
+      <div class="result-reasoning">
+        <strong style="color:#1e293b;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.5px">🤖 AI Analysis</strong><br>
+        {% if (r.reasoning|length) > 250 %}{{ r.reasoning[:250] }}…{% else %}{{ r.reasoning }}{% endif %}
+      </div>
 
-    {% if r.strengths %}
-    <div><strong>Strengths:</strong>
-      {% for item in r.strengths[:4] %}<span class="chip chip-green">{{ item }}</span>{% endfor %}
-    </div>
-    {% endif %}
+      <!-- Strengths -->
+      {% if r.strengths %}
+      <div class="chips-row">
+        <span class="chip-section">✅ Your strengths:</span>
+        {% for item in r.strengths[:4] %}<span class="chip chip-green">{{ item }}</span>{% endfor %}
+      </div>
+      {% endif %}
 
-    {% if r.missing_skills %}
-    <div><strong>Missing skills:</strong>
-      {% for item in r.missing_skills[:4] %}<span class="chip chip-red">{{ item }}</span>{% endfor %}
-    </div>
-    {% endif %}
+      <!-- Missing skills -->
+      {% if r.missing_skills %}
+      <div class="chips-row" style="margin-top:4px">
+        <span class="chip-section">📚 Skills to add:</span>
+        {% for item in r.missing_skills[:4] %}<span class="chip chip-red">{{ item }}</span>{% endfor %}
+      </div>
+      {% endif %}
 
-    <div class="result-actions">
-      <a class="btn-secondary" href="{{ r.job.url if r.job.url and (r.job.url.startswith('https://') or r.job.url.startswith('http://')) else '#' }}" target="_blank" rel="noopener noreferrer">View Job →</a>
-      <a class="btn-primary" href="/wizard/coaching/{{ i }}">Get Coaching →</a>
-    </div>
-  </article>
-  {% endfor %}
-</div>
+      <!-- Actions -->
+      <div class="result-actions">
+        {% if is_live and r.job.url and (r.job.url.startswith('https://') or r.job.url.startswith('http://')) %}
+        <a class="btn btn-primary" href="{{ r.job.url }}" target="_blank" rel="noopener noreferrer">
+          View Real Job →
+        </a>
+        {% else %}
+        <span class="btn btn-secondary" style="opacity:0.55;cursor:not-allowed" title="Sample listing — no real URL available">
+          🔬 Sample (no link)
+        </span>
+        {% endif %}
+        <a class="btn btn-secondary" href="/wizard/coaching/{{ i }}">
+          💡 Get Coaching →
+        </a>
+      </div>
 
-<div class="result-actions">
-  <form method="POST" action="/wizard/search">
-    <button type="submit" class="btn-primary">Search Again</button>
-  </form>
-  <a class="btn-secondary" href="/wizard/configure">Adjust Search</a>
-  <a href="/wizard/results-export">Download Results</a>
+    </article>
+    {% endfor %}
+  </div>
+
+  <!-- Bottom actions -->
+  <div style="display:flex;gap:10px;margin-top:28px;flex-wrap:wrap">
+    <form method="POST" action="/wizard/search">
+      <button type="submit" class="btn btn-primary">🔄 Search Again</button>
+    </form>
+    <a href="{{ url_for('wizard.configure_get') }}" class="btn btn-secondary">⚙ Change Settings</a>
+    <a href="{{ url_for('wizard.results_export') }}" class="btn btn-secondary">⬇ Download Results</a>
+  </div>
+
 </div>
 {% endblock %}
