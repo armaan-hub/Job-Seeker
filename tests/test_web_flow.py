@@ -376,6 +376,35 @@ class TestSearchStep:
             "No live jobs from preview-only boards (weworkremotely). Add 'remoteok' or 'mock' source for real or demo results."
         )
 
+    def test_zero_results_worker_describes_mixed_sources(self, monkeypatch, sample_profile_json: str) -> None:
+        from web.wizard import JOB_REGISTRY, run_search_worker
+
+        class EmptyScraper:
+            def search(self, roles, location, max_results):
+                return []
+
+        from web import wizard
+
+        monkeypatch.setattr(wizard, "get_scraper", lambda source: EmptyScraper())
+
+        job_id = "job-zero-mixed"
+        run_search_worker(
+            profile_dict={"profile_json": sample_profile_json},
+            search_config={
+                "roles": ["Data Analyst"],
+                "location": "Dubai",
+                "sources": ["remoteok", "weworkremotely"],
+                "max_results": 10,
+            },
+            job_id=job_id,
+        )
+
+        assert JOB_REGISTRY[job_id]["status"] == "error"
+        assert JOB_REGISTRY[job_id]["message"] == (
+            "No results from live boards (remoteok). Preview-only boards (weworkremotely) may not return live jobs. "
+            "Try broader search terms, a different location, or add 'mock' for a demo."
+        )
+
 
 @pytest.fixture
 def seeded_results() -> list[dict]:

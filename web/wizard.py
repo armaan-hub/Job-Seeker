@@ -149,6 +149,12 @@ def _no_jobs_found_message(sources: list[str]) -> str:
         for board in sources
         if BOARD_REGISTRY.get(board, {}).get("status") in {"preview", "stub"}
     ]
+    if live_boards and preview_boards:
+        return (
+            f"No results from live boards ({', '.join(live_boards)}). "
+            f"Preview-only boards ({', '.join(preview_boards)}) may not return live jobs. "
+            "Try broader search terms, a different location, or add 'mock' for a demo."
+        )
     if live_boards:
         return (
             f"No results from live boards ({', '.join(live_boards)}). "
