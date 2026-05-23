@@ -49,6 +49,29 @@ Provide your analysis in this JSON format:
 """
 
 
+def _keyword_fallback_score(profile_text: str, job: JobListing) -> float:
+    """Compute a basic keyword-overlap score when AI matching is unavailable."""
+    if not profile_text or not job:
+        return 50.0
+
+    import re
+
+    def _tokenize(text: str) -> set[str]:
+        return {w.lower() for w in re.findall(r"\b[a-z][a-z0-9]+\b", text.lower()) if len(w) > 3}
+
+    profile_words = _tokenize(profile_text)
+    job_text = f"{job.title} {job.description} {' '.join(job.requirements)}"
+    job_words = _tokenize(job_text)
+
+    if not job_words:
+        return 50.0
+
+    overlap = len(profile_words & job_words)
+    raw = min(overlap / max(len(job_words) * 0.3, 1), 1.0)
+    score = 30.0 + raw * 50.0
+    return round(score, 1)
+
+
 class JobMatcher:
     """AI-powered job matching engine."""
 
@@ -96,15 +119,24 @@ class JobMatcher:
             )
             return self._parse_match_response(response, job)
         except Exception as e:
-            # Fallback if AI fails
+            err_str = str(e)
+            if err_str.strip().startswith("<") or "<!DOCTYPE" in err_str or "<html" in err_str:
+                reasoning = "AI analysis unavailable — provider returned an unexpected response. Check your API key or provider settings."
+            elif len(err_str) > 200:
+                reasoning = "AI analysis unavailable — provider error (details truncated for display)"
+            else:
+                reasoning = f"AI analysis unavailable: {err_str}"
+
+            fallback_score = _keyword_fallback_score(profile_text, job)
+
             return MatchResult(
                 job=job,
-                score=50.0,
-                reasoning=f"AI matching failed: {e}",
+                score=fallback_score,
+                reasoning=reasoning,
                 skill_match={},
                 missing_skills=[],
-                strengths=[],
-                improvement_tips=["Unable to generate tips due to AI error"],
+                strengths=[f"Role at {job.company} in {job.location} — manual review recommended"],
+                improvement_tips=["AI analysis is temporarily unavailable. Review the job description directly."],
             )
 
     def _parse_match_response(

@@ -304,11 +304,85 @@ class DubizzleScraper(GeneratedScraper):
         super().__init__("dubizzle")
 
 
-class RemoteOKScraper(GeneratedScraper):
-    """Remote OK job scraper."""
+class RemoteOKScraper(JobScraper):
+    """Remote OK scraper – uses the public RemoteOK JSON API."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__("remoteok")
+
+    def search(
+        self,
+        roles: list[str],
+        location: str | None = None,
+        max_results: int = 20,
+        **kwargs: Any,
+    ) -> list[JobListing]:
+        """Fetch live remote jobs from remoteok.com/api."""
+        import re
+        import time
+
+        try:
+            import requests
+        except ImportError:
+            return _build_generated_jobs(self.name, roles, location, max_results)
+
+        all_results: list[JobListing] = []
+        seen_ids: set[str] = set()
+
+        for role in roles[:2]:
+            if len(all_results) >= max_results:
+                break
+            tag = role.lower().replace(" ", "-")
+            try:
+                resp = requests.get(
+                    f"https://remoteok.com/api?tags={tag}",
+                    headers={"User-Agent": "Mozilla/5.0 (AI Job Scout)"},
+                    timeout=12,
+                )
+                if resp.status_code != 200:
+                    continue
+                data = resp.json()
+                jobs = [job for job in data if isinstance(job, dict) and "position" in job]
+                for job in jobs:
+                    job_id = str(job.get("id", ""))
+                    if job_id in seen_ids:
+                        continue
+                    seen_ids.add(job_id)
+                    url = job.get("url") or (
+                        f"https://remoteok.com/l/{job_id}" if job_id else ""
+                    )
+                    tags = job.get("tags") or []
+                    description = job.get("description") or ""
+                    description = re.sub(r"<[^>]+>", " ", description).strip()
+                    all_results.append(
+                        JobListing(
+                            title=job.get("position", role),
+                            company=job.get("company", "Unknown"),
+                            location="Remote",
+                            description=(
+                                description[:800]
+                                if description
+                                else (
+                                    f"Remote {role} role at "
+                                    f"{job.get('company', 'a distributed team')}."
+                                )
+                            ),
+                            url=url,
+                            source="remoteok",
+                            salary=job.get("salary"),
+                            requirements=tags[:6] if tags else [],
+                        )
+                    )
+                    if len(all_results) >= max_results:
+                        break
+                time.sleep(0.5)
+            except Exception:
+                continue
+
+        if not all_results:
+            return _build_generated_jobs(self.name, roles, location, max_results)
+
+        return all_results[:max_results]
 
 
 class SeekScraper(GeneratedScraper):
@@ -416,6 +490,56 @@ class MockScraper(JobScraper):
         return mock_jobs[:max_results]
 
 
+def _search_url(source: str, role: str, location: str) -> str:
+    """Generate a real job board search URL for a given source, role, and location."""
+    import urllib.parse
+
+    encoded_role = urllib.parse.quote_plus(role)
+    encoded_location = urllib.parse.quote_plus(location)
+    slug_role = urllib.parse.quote(role.lower().replace(" ", "-"))
+    slug_location = urllib.parse.quote(location.replace(" ", "-").replace(",", "").strip())
+
+    urls: dict[str, str] = {
+        "seek": f"https://www.seek.com.au/{slug_role}-jobs/in-{slug_location}",
+        "linkedin": (
+            "https://www.linkedin.com/jobs/search/"
+            f"?keywords={encoded_role}&location={encoded_location}"
+        ),
+        "indeed": (
+            f"https://au.indeed.com/jobs?q={encoded_role}&l={encoded_location}"
+            if any(place in location.lower() for place in ["australia", "sydney", "melbourne"])
+            else f"https://www.indeed.com/jobs?q={encoded_role}&l={encoded_location}"
+        ),
+        "bayt": f"https://www.bayt.com/en/international/jobs/{slug_role}-jobs/?q={encoded_role}",
+        "naukrigulf": f"https://www.naukrigulf.com/{slug_role}-jobs",
+        "gulftalent": f"https://www.gulftalent.com/jobs?q={encoded_role}&l={encoded_location}",
+        "dubizzle": f"https://uae.dubizzle.com/jobs/?q={encoded_role}",
+        "glassdoor": (
+            "https://www.glassdoor.com/Job/jobs.htm"
+            f"?sc.keyword={encoded_role}&locKeyword={encoded_location}"
+        ),
+        "reed": f"https://www.reed.co.uk/jobs/{slug_role}-jobs",
+        "jobstreet": (
+            "https://www.jobstreet.com.sg/en/job-search/find-jobs.php"
+            f"?q={encoded_role}&l={encoded_location}"
+        ),
+        "foundit": (
+            "https://www.foundit.in/srp/results"
+            f"?query={encoded_role}&location={encoded_location}"
+        ),
+        "weworkremotely": (
+            "https://weworkremotely.com/remote-jobs/search"
+            f"?term={encoded_role}"
+        ),
+        "remoteok": f"https://remoteok.com/remote-{slug_role}-jobs",
+        "mock": "",
+    }
+    return urls.get(
+        source,
+        f"https://www.google.com/search?q={encoded_role}+jobs+{encoded_location}",
+    )
+
+
 def _build_generated_jobs(
     source: str,
     roles: list[str],
@@ -456,7 +580,7 @@ def _build_generated_jobs(
                     f"{BOARD_REGISTRY[source]['label']} sourced opportunity for {role}. "
                     "Ideal candidates bring strong analytics, reporting, and automation experience."
                 ),
-                url=f"https://example.com/{source}/{index + 1}",
+                url=_search_url(source, role, requested_location),
                 source=source,
                 requirements=requirements.copy(),
             )
