@@ -29,7 +29,7 @@ def tailor_cv(
         match_score: int                   — 0-100 estimate of CV-JD match
         ai_available: bool                 — whether AI was used or keyword-fallback
     """
-    cache_key = _make_cache_key(profile, job_description)
+    cache_key = _make_cache_key(profile, job_title, job_company, job_description)
     if cache_key in _CACHE:
         return _CACHE[cache_key]
 
@@ -232,6 +232,7 @@ def _profile_to_text(profile: dict) -> str:
     return " ".join(parts)
 
 
-def _make_cache_key(profile: dict, job_description: str) -> str:
-    combined = json.dumps(profile, sort_keys=True) + job_description[:2000]
+def _make_cache_key(profile: dict, job_title: str, job_company: str, job_description: str) -> str:
+    """Cache key must include all inputs that affect the tailored output."""
+    combined = json.dumps(profile, sort_keys=True) + job_title + job_company + job_description[:2000]
     return hashlib.md5(combined.encode()).hexdigest()

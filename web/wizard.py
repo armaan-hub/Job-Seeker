@@ -24,6 +24,9 @@ from jobscout.scraper import BOARD_REGISTRY, JobListing, get_scraper
 
 JOB_REGISTRY: dict[str, dict[str, Any]] = {}
 
+# Real-API scrapers always appended to any country search to surface remote/global jobs
+GLOBAL_REAL_SCRAPERS: list[str] = ["remoteok", "remotive", "arbeitnow", "themuse", "jobicy"]
+
 
 def _state_dir() -> Path:
     return Path.home() / ".jobscout"
@@ -208,9 +211,8 @@ def run_search_worker(profile_dict: dict, search_config: dict, job_id: str) -> N
 
         # Always include global real-API scrapers so remote jobs are surfaced
         # regardless of which country the user selected.
-        global_real_scrapers = ["remoteok", "remotive", "arbeitnow", "themuse", "jobicy"]
         effective_sources = list(sources)
-        for gs in global_real_scrapers:
+        for gs in GLOBAL_REAL_SCRAPERS:
             if gs not in effective_sources:
                 effective_sources.append(gs)
 

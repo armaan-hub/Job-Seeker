@@ -71,7 +71,11 @@ def score_job(
     # ── Stale listing ────────────────────────────────────────────────
     if posted_date:
         try:
-            pd = datetime.fromisoformat(posted_date.replace("Z", "+00:00"))
+            # Normalise: accept ISO string or unix epoch int/float
+            if isinstance(posted_date, (int, float)):
+                pd = datetime.fromtimestamp(posted_date, tz=UTC)
+            else:
+                pd = datetime.fromisoformat(str(posted_date).replace("Z", "+00:00"))
             age_days = (datetime.now(UTC) - pd).days
             if age_days > 180:
                 score -= 20

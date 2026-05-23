@@ -42,7 +42,8 @@
   </div>
 
   <div class="results-grid">
-    {% for i, r in enumerate(results, 1) %}
+    {% for r in results %}
+    {% set i = loop.index %}
     {% set is_gateway = r.job.is_gateway %}
     {% set is_live = not is_gateway and r.job.source == 'remoteok' %}
 
