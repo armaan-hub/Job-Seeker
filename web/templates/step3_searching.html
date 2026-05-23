@@ -1,9 +1,16 @@
 {% extends "base.html" %}
 {% block step_number %}3{% endblock %}
 {% block content %}
-<h1>Finding your matches...</h1>
-<div class="spinner" aria-label="loading"></div>
-<p id="search-status-message">Preparing search...</p>
+
+<div class="card search-loading-card">
+  <div class="spinner" aria-label="loading"></div>
+  <div class="search-title">Finding Your Best Job Matches…</div>
+  <p class="search-status-msg" id="search-status-message">Preparing search engine…</p>
+  <p class="text-muted" style="margin-top:20px; font-size:0.8rem;">
+    This takes 10–30 seconds. Stay on this page — it will redirect automatically.
+  </p>
+</div>
+
 <script>
   window.jobScoutPolling = { jobId: "{{ job_id }}" };
 </script>

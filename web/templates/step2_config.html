@@ -1,34 +1,66 @@
 {% extends "base.html" %}
 {% block step_number %}2{% endblock %}
 {% block content %}
-<h1>Configure Search</h1>
-<p>Tip: include Mock source for a deterministic demo flow.</p>
 
-<form method="POST" action="{{ url_for('wizard.configure_post') }}" class="job-card">
-  <label for="roles">Roles (comma-separated)</label>
-  <input id="roles" name="roles" type="text" value="{{ roles | join(', ') }}" />
-  <div id="roles-tags"></div>
+<a href="{{ url_for('wizard.upload_get') }}" class="back-link">← Back to Profile</a>
+<h1 class="page-title">Configure Your Job Search</h1>
+<p class="page-subtitle">Set your preferences — roles, location, and where to search.</p>
 
-  <label for="location">Location</label>
-  <input id="location" name="location" type="text" value="{{ location }}" />
+<form method="POST" action="{{ url_for('wizard.configure_post') }}">
+  <div class="card">
+    <div class="card-title">🎯 Target Roles</div>
+    <div class="form-group">
+      <label class="form-label" for="roles">Job Titles / Roles</label>
+      <input class="form-input" id="roles" name="roles" type="text"
+             value="{{ roles | join(', ') }}"
+             placeholder="e.g. Data Analyst, Financial Analyst, BI Developer" />
+      <div class="form-hint">Separate multiple roles with a comma</div>
+      <div id="roles-tags" class="mt-4"></div>
+    </div>
 
-  <fieldset>
-    <legend>Sources</legend>
-    {% for source in ['mock', 'linkedin', 'indeed', 'bayt', 'naukrigulf'] %}
-    <label>
-      <input type="checkbox" name="sources" value="{{ source }}" {% if source in sources %}checked{% endif %} />
-      {{ source }}
-    </label>
-    {% endfor %}
-  </fieldset>
+    <div class="form-group">
+      <label class="form-label" for="location">Location</label>
+      <input class="form-input" id="location" name="location" type="text"
+             value="{{ location }}"
+             placeholder="e.g. Dubai, UAE" />
+    </div>
+  </div>
 
-  <label for="max_results">Max Results (5-30)</label>
-  <input id="max_results" name="max_results" type="number" min="5" max="30" value="{{ max_results }}" />
+  <div class="card">
+    <div class="card-title">🔎 Job Sources</div>
+    <p class="text-muted" style="margin-bottom:14px;">Select where to search for jobs. <strong>Mock</strong> always returns demo results — great for testing.</p>
+    <div class="checkbox-grid">
+      {% for source, label, icon in [
+          ('mock',       '🧪 Mock (demo)',  ''),
+          ('linkedin',   '💼 LinkedIn',     ''),
+          ('indeed',     '🔍 Indeed',       ''),
+          ('bayt',       '🌍 Bayt',         ''),
+          ('naukrigulf', '🏖 NaukriGulf',   '')
+      ] %}
+      <label class="checkbox-item {% if source in sources %}checked{% endif %}">
+        <input type="checkbox" name="sources" value="{{ source }}" {% if source in sources %}checked{% endif %}
+               onchange="this.closest('.checkbox-item').classList.toggle('checked', this.checked)" />
+        {{ label }}
+      </label>
+      {% endfor %}
+    </div>
+  </div>
 
-  <div>
-    <a class="btn-secondary" href="{{ url_for('wizard.upload_get') }}">Back</a>
-    <button type="submit" class="btn-primary">Continue</button>
+  <div class="card">
+    <div class="card-title">⚙ Options</div>
+    <div class="form-group">
+      <label class="form-label" for="max_results">Max Results per Source</label>
+      <input class="form-input" id="max_results" name="max_results" type="number"
+             min="5" max="30" value="{{ max_results }}" style="max-width:120px;" />
+      <div class="form-hint">Between 5 and 30</div>
+    </div>
+  </div>
+
+  <div class="btn-group">
+    <button type="submit" class="btn-primary btn-lg">🔍 Start Search →</button>
+    <a href="{{ url_for('wizard.upload_get') }}" class="btn-secondary btn-lg">← Back</a>
   </div>
 </form>
+
 <script src="{{ url_for('static', filename='wizard.js') }}"></script>
 {% endblock %}

@@ -185,7 +185,7 @@ class TestSearchStep:
         response = client.get("/wizard/searching")
 
         assert response.status_code == 200
-        assert b"Finding your matches" in response.data
+        assert b"Finding Your Best Job Matches" in response.data
 
     def test_search_status_done_returns_redirect_url(self, client, monkeypatch) -> None:
         from web import routes

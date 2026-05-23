@@ -1,26 +1,50 @@
 {% extends "base.html" %}
 {% block step_number %}1{% endblock %}
 {% block content %}
-<h1>Upload Your Profile</h1>
-<p>Upload your profile as a JSON file. Don't have one? See README for format.</p>
 
-<form method="POST" enctype="multipart/form-data" action="{{ url_for('wizard.upload_post') }}" class="job-card">
-  <label for="profile_json">Choose profile JSON</label>
-  <input id="profile_json" type="file" name="profile_json" accept=".json" required />
-  <button type="submit" class="btn-primary">Upload Profile</button>
-</form>
-
-<form method="POST" action="{{ url_for('wizard.upload_sample_post') }}">
-  <button type="submit" class="btn-secondary">Use Sample Profile</button>
-</form>
+<h1 class="page-title">Upload Your Profile</h1>
+<p class="page-subtitle">Upload your CV/resume as a JSON file, or try with a sample profile first.</p>
 
 {% if session.get('profile_preview') %}
-<div class="job-card">
-  <h3>Profile Preview</h3>
-  <p><strong>Name:</strong> {{ session['profile_preview'].get('name', 'N/A') }}</p>
-  <p><strong>Title:</strong> {{ session['profile_preview'].get('title', 'N/A') }}</p>
-  <p><strong>Skills:</strong> {{ session['profile_preview'].get('skills_count', 0) }}</p>
-  <p><strong>Target Roles:</strong> {{ session['profile_preview'].get('target_roles', []) | join(', ') }}</p>
+<div class="profile-preview">
+  <div class="profile-avatar">👤</div>
+  <div>
+    <div class="profile-name">{{ session['profile_preview'].get('name', 'Your Profile') }}</div>
+    <div class="profile-title">{{ session['profile_preview'].get('title', '') }}</div>
+    <div class="profile-meta">
+      {{ session['profile_preview'].get('skills_count', 0) }} skills ·
+      Target roles: {{ session['profile_preview'].get('target_roles', []) | join(', ') or 'Not set' }}
+    </div>
+  </div>
 </div>
 {% endif %}
+
+<div class="card">
+  <div class="card-title">📄 Upload Profile JSON</div>
+
+  <form method="POST" enctype="multipart/form-data" action="{{ url_for('wizard.upload_post') }}">
+    <label class="upload-zone" for="profile_json" id="upload-zone">
+      <div class="upload-icon">📂</div>
+      <h3>Click to choose your profile JSON</h3>
+      <p>Supports <strong>.json</strong> files — your CV exported as structured data</p>
+      <input id="profile_json" type="file" name="profile_json" accept=".json" required
+             onchange="document.getElementById('upload-zone').style.borderColor='#22c55e'; document.getElementById('file-name').textContent=this.files[0].name;" />
+    </label>
+    <p id="file-name" class="text-muted mt-4"></p>
+    <div class="btn-group">
+      <button type="submit" class="btn-primary btn-lg">⬆ Upload &amp; Continue</button>
+    </div>
+  </form>
+</div>
+
+<div class="card">
+  <div class="card-title">🚀 Quick Start — Use Sample Profile</div>
+  <p class="text-muted">Don't have a JSON profile yet? Use our pre-built sample to explore the app.</p>
+  <form method="POST" action="{{ url_for('wizard.upload_sample_post') }}">
+    <div class="btn-group">
+      <button type="submit" class="btn-secondary btn-lg">🎭 Load Sample Profile</button>
+    </div>
+  </form>
+</div>
+
 {% endblock %}

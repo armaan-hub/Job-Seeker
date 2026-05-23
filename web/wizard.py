@@ -135,7 +135,7 @@ def get_provider_health() -> dict[str, Any]:
     return {
         "ok": False,
         "provider": provider_name,
-        "message": f"⚠ {key_name} not set in .env",
+        "message": f"{key_name} not set in .env",
     }
 
 

@@ -5,34 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AI Job Scout</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
-    <style>
-      .wizard-progress { display: flex; gap: 8px; margin: 16px 0 24px; padding: 0; list-style: none; }
-      .wizard-step { display: flex; align-items: center; gap: 8px; color: #6b7280; }
-      .wizard-circle { width: 28px; height: 28px; border-radius: 50%; background: #d1d5db; color: #111827; display: inline-flex; align-items: center; justify-content: center; font-size: 0.85rem; }
-      .wizard-step.active .wizard-circle { background: #2563eb; color: #fff; }
-      .wizard-step.done .wizard-circle { background: #16a34a; color: #fff; }
-      .warning-banner { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 10px 12px; margin-bottom: 14px; }
-      .flash-area { display: grid; gap: 8px; margin-bottom: 14px; }
-      .flash { padding: 10px 12px; border-radius: 6px; }
-      .flash-error { background: rgba(220, 38, 38, 0.1); border-left: 4px solid #dc2626; }
-      .flash-success { background: rgba(22, 163, 74, 0.1); border-left: 4px solid #16a34a; }
-    </style>
   </head>
   <body>
+
+    <header class="app-header">
+      <div class="app-header-inner">
+        <span class="app-logo">🎯</span>
+        <div>
+          <div class="app-name">AI Job Scout</div>
+          <div class="app-tagline">AI-powered job matching for your career</div>
+        </div>
+      </div>
+    </header>
+
     <main class="container">
+
       {% set current_step = (self.step_number()|trim)|int %}
       <ul class="wizard-progress">
         {% for label in ["Upload", "Configure", "Search", "Results", "Coaching"] %}
           {% set idx = loop.index %}
           <li class="wizard-step {% if idx < current_step %}done{% elif idx == current_step %}active{% endif %}">
-            <span class="wizard-circle">{{ idx }}</span>
+            <span class="wizard-circle">
+              {% if idx < current_step %}✓{% else %}{{ idx }}{% endif %}
+            </span>
             <span>{{ label }}</span>
           </li>
         {% endfor %}
       </ul>
 
       {% if not provider_health.ok %}
-      <div class="warning-banner">⚠ {{ provider_health.message }} — Add API key to .env and restart.</div>
+      <div class="warning-banner">
+        ⚠ <strong>API key missing:</strong> {{ provider_health.message }} — Add key to <code>.env</code> and restart.
+      </div>
       {% endif %}
 
       {% with messages = get_flashed_messages(with_categories=true) %}
