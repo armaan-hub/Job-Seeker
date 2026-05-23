@@ -205,15 +205,28 @@ def run_search_worker(profile_dict: dict, search_config: dict, job_id: str) -> N
             }
             return
 
-        per_source = max(1, max_results // len(sources))
+        # Always include global real-API scrapers so remote jobs are surfaced
+        # regardless of which country the user selected.
+        global_real_scrapers = ["remoteok", "remotive", "arbeitnow", "themuse", "jobicy"]
+        effective_sources = list(sources)
+        for gs in global_real_scrapers:
+            if gs not in effective_sources:
+                effective_sources.append(gs)
+
+        per_source = max(1, max_results // max(len(effective_sources), 1))
         all_jobs: list[JobListing] = []
 
-        for source in sources:
+        for source in effective_sources:
             try:
                 scraper = get_scraper(source)
                 all_jobs.extend(scraper.search(roles, location, per_source))
             except Exception:
                 continue
+
+        # If we have enough real (non-gateway) jobs, discard gateway cards
+        real_jobs = [j for j in all_jobs if not j.is_gateway]
+        if len(real_jobs) >= 3:
+            all_jobs = real_jobs
 
         if len(all_jobs) == 0:
             JOB_REGISTRY[job_id] = {

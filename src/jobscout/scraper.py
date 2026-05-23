@@ -429,7 +429,33 @@ BOARD_REGISTRY: dict[str, dict[str, str]] = {
         "label": "Remotive",
         "description": "Curated remote job board for tech and digital professionals.",
         "quality": "verified",
-        "status": "preview",
+        "status": "live",
+        "tier": "free_api",
+        "regions": ["global"],
+    },
+    "arbeitnow": {
+        "label": "Arbeitnow",
+        "description": "European and global remote job board with free public API.",
+        "quality": "verified",
+        "status": "live",
+        "tier": "free_api",
+        "regions": ["europe", "global"],
+    },
+    "themuse": {
+        "label": "The Muse",
+        "description": "US and global job board with company culture insights.",
+        "quality": "verified",
+        "status": "live",
+        "tier": "free_api",
+        "regions": ["usa", "global"],
+    },
+    "jobicy": {
+        "label": "Jobicy",
+        "description": "Remote-focused job board with free public API.",
+        "quality": "good",
+        "status": "live",
+        "tier": "free_api",
+        "regions": ["global"],
     },
     "wellfound": {
         "label": "Wellfound",
@@ -540,7 +566,16 @@ REGION_BOARDS: dict[str, dict[str, Any]] = {
         "name": "Remote / Global",
         "icon": "🌐",
         "default_location": "Remote",
-        "boards": ["remoteok", "weworkremotely", "remotive", "wellfound", "himalayas"],
+        "boards": [
+            "remoteok",
+            "weworkremotely",
+            "arbeitnow",
+            "themuse",
+            "jobicy",
+            "remotive",
+            "wellfound",
+            "himalayas",
+        ],
     },
 }
 
@@ -623,11 +658,14 @@ _DEFAULT_LOCATIONS: dict[str, str] = {
     "indeed_br": "São Paulo, Brazil",
     "gupy": "São Paulo, Brazil",
     "remotive": "Remote",
+    "arbeitnow": "Remote",
+    "themuse": "Remote",
+    "jobicy": "Remote",
     "wellfound": "Remote",
     "himalayas": "Remote",
 }
 
-_REMOTE_BOARDS = {"mock", "remoteok", "weworkremotely", "remotive", "wellfound", "himalayas"}
+_REMOTE_BOARDS = {"mock", "remoteok", "weworkremotely", "remotive", "arbeitnow", "themuse", "jobicy", "wellfound", "himalayas"}
 
 @dataclass
 class JobListing:
@@ -1159,9 +1197,349 @@ class GupyScraper(GeneratedScraper):
         super().__init__("gupy")
 
 
-class RemotiveScraper(GeneratedScraper):
+class RemotiveScraper(JobScraper):
+    """Remotive scraper – uses the public Remotive JSON API."""
+
     def __init__(self) -> None:
         super().__init__("remotive")
+
+    def search(
+        self,
+        roles: list[str],
+        location: str | None = None,
+        max_results: int = 20,
+        **kwargs: Any,
+    ) -> list[JobListing]:
+        """Fetch live remote jobs from remotive.com/api/remote-jobs."""
+        import re
+        import time
+
+        try:
+            import requests
+        except ImportError:
+            return _build_generated_jobs(self.name, roles, location, max_results)
+
+        all_results: list[JobListing] = []
+        seen_ids: set[str] = set()
+
+        for role in roles[:2]:
+            if len(all_results) >= max_results:
+                break
+            try:
+                resp = requests.get(
+                    "https://remotive.com/api/remote-jobs",
+                    params={"search": role, "limit": 20},
+                    headers={"User-Agent": "Mozilla/5.0 (AI Job Scout)"},
+                    timeout=12,
+                )
+                if resp.status_code != 200:
+                    continue
+                data = resp.json()
+                jobs = data.get("jobs", [])
+                for job in jobs:
+                    job_id = str(job.get("id", ""))
+                    if job_id in seen_ids:
+                        continue
+                    seen_ids.add(job_id)
+                    title = job.get("title", role)
+                    if role.lower() not in title.lower() and role.lower() not in " ".join(
+                        job.get("tags", [])
+                    ).lower():
+                        continue
+                    description = re.sub(r"<[^>]+>", " ", job.get("description", "")).strip()
+                    all_results.append(
+                        JobListing(
+                            title=title,
+                            company=job.get("company_name", "Unknown"),
+                            location=job.get("candidate_required_location") or "Remote",
+                            description=description[:800] if description else f"Remote {role} role.",
+                            url=job.get("url", ""),
+                            source="remotive",
+                            salary=job.get("salary") or None,
+                            posted_date=self._parse_date(job.get("publication_date")),
+                            requirements=job.get("tags", [])[:6],
+                            is_gateway=False,
+                        )
+                    )
+                    if len(all_results) >= max_results:
+                        break
+                time.sleep(0.3)
+            except Exception:
+                continue
+
+        if not all_results:
+            return _build_generated_jobs(self.name, roles, location, max_results)
+
+        return all_results[:max_results]
+
+
+class ArbeitnowScraper(JobScraper):
+    """Arbeitnow scraper – uses the public Arbeitnow job-board API."""
+
+    def __init__(self) -> None:
+        super().__init__("arbeitnow")
+
+    def search(
+        self,
+        roles: list[str],
+        location: str | None = None,
+        max_results: int = 20,
+        **kwargs: Any,
+    ) -> list[JobListing]:
+        """Fetch live jobs from arbeitnow.com/api/job-board-api."""
+        import time
+
+        try:
+            import requests
+        except ImportError:
+            return _build_generated_jobs(self.name, roles, location, max_results)
+
+        all_results: list[JobListing] = []
+        seen_slugs: set[str] = set()
+
+        for role in roles[:2]:
+            if len(all_results) >= max_results:
+                break
+            try:
+                resp = requests.get(
+                    "https://arbeitnow.com/api/job-board-api",
+                    params={"q": role},
+                    headers={"User-Agent": "Mozilla/5.0 (AI Job Scout)"},
+                    timeout=12,
+                )
+                if resp.status_code != 200:
+                    continue
+                data = resp.json()
+                jobs = data.get("data", [])
+                for job in jobs:
+                    slug = job.get("slug", "")
+                    if slug in seen_slugs:
+                        continue
+                    seen_slugs.add(slug)
+                    title = job.get("title", role)
+                    if role.lower() not in title.lower() and role.lower() not in " ".join(
+                        job.get("tags", [])
+                    ).lower():
+                        continue
+                    all_results.append(
+                        JobListing(
+                            title=title,
+                            company=job.get("company_name", "Unknown"),
+                            location=job.get("location") or "Remote",
+                            description=(job.get("description") or f"Remote {role} role.")[:800],
+                            url=job.get("url", ""),
+                            source="arbeitnow",
+                            posted_date=self._parse_date(job.get("created_at")),
+                            requirements=job.get("tags", [])[:6],
+                            is_gateway=False,
+                        )
+                    )
+                    if len(all_results) >= max_results:
+                        break
+                time.sleep(0.3)
+            except Exception:
+                continue
+
+        if not all_results:
+            return _build_generated_jobs(self.name, roles, location, max_results)
+
+        return all_results[:max_results]
+
+
+class TheMuseScraper(JobScraper):
+    """The Muse scraper – uses the public Muse jobs API."""
+
+    def __init__(self) -> None:
+        super().__init__("themuse")
+
+    def search(
+        self,
+        roles: list[str],
+        location: str | None = None,
+        max_results: int = 20,
+        **kwargs: Any,
+    ) -> list[JobListing]:
+        """Fetch live jobs from themuse.com/api/public/jobs."""
+        import time
+
+        try:
+            import requests
+        except ImportError:
+            return _build_generated_jobs(self.name, roles, location, max_results)
+
+        all_results: list[JobListing] = []
+        seen_ids: set[str] = set()
+
+        try:
+            resp = requests.get(
+                "https://www.themuse.com/api/public/jobs",
+                params={"page": 0, "category": "Data & Analysis", "level": ["Senior Level", "Mid Level"]},
+                headers={"User-Agent": "Mozilla/5.0 (AI Job Scout)"},
+                timeout=12,
+            )
+            if resp.status_code == 200:
+                data = resp.json()
+                jobs = data.get("results", [])
+                for role in roles[:2]:
+                    for job in jobs:
+                        job_id = str(job.get("id", ""))
+                        if job_id in seen_ids:
+                            continue
+                        title = job.get("name", "")
+                        if role.lower() not in title.lower():
+                            continue
+                        seen_ids.add(job_id)
+                        levels = [lv.get("name", "") for lv in job.get("levels", [])]
+                        locs = [lo.get("name", "") for lo in job.get("locations", [])]
+                        refs = job.get("refs", {})
+                        url = refs.get("landing_page", "")
+                        all_results.append(
+                            JobListing(
+                                title=title,
+                                company=job.get("company", {}).get("name", "Unknown"),
+                                location=", ".join(locs) if locs else "Remote",
+                                description=f"{title} at {job.get('company', {}).get('name', 'a company')}. Level: {', '.join(levels)}.",
+                                url=url,
+                                source="themuse",
+                                posted_date=self._parse_date(job.get("published_on")),
+                                requirements=levels[:3],
+                                is_gateway=False,
+                            )
+                        )
+                        if len(all_results) >= max_results:
+                            break
+                    if len(all_results) >= max_results:
+                        break
+            time.sleep(0.3)
+        except Exception:
+            pass
+
+        if not all_results:
+            # Fallback: broader search without category filter
+            try:
+                resp = requests.get(
+                    "https://www.themuse.com/api/public/jobs",
+                    params={"page": 0},
+                    headers={"User-Agent": "Mozilla/5.0 (AI Job Scout)"},
+                    timeout=12,
+                )
+                if resp.status_code == 200:
+                    data = resp.json()
+                    jobs = data.get("results", [])
+                    for role in roles[:2]:
+                        for job in jobs:
+                            job_id = str(job.get("id", ""))
+                            if job_id in seen_ids:
+                                continue
+                            title = job.get("name", "")
+                            if role.lower() not in title.lower():
+                                continue
+                            seen_ids.add(job_id)
+                            levels = [lv.get("name", "") for lv in job.get("levels", [])]
+                            locs = [lo.get("name", "") for lo in job.get("locations", [])]
+                            refs = job.get("refs", {})
+                            url = refs.get("landing_page", "")
+                            all_results.append(
+                                JobListing(
+                                    title=title,
+                                    company=job.get("company", {}).get("name", "Unknown"),
+                                    location=", ".join(locs) if locs else "Remote",
+                                    description=f"{title} at {job.get('company', {}).get('name', 'a company')}. Level: {', '.join(levels)}.",
+                                    url=url,
+                                    source="themuse",
+                                    posted_date=self._parse_date(job.get("published_on")),
+                                    requirements=levels[:3],
+                                    is_gateway=False,
+                                )
+                            )
+                            if len(all_results) >= max_results:
+                                break
+                        if len(all_results) >= max_results:
+                            break
+            except Exception:
+                pass
+
+        if not all_results:
+            return _build_generated_jobs(self.name, roles, location, max_results)
+
+        return all_results[:max_results]
+
+
+class JobicyScraper(JobScraper):
+    """Jobicy scraper – uses the public Jobicy remote-jobs API."""
+
+    def __init__(self) -> None:
+        super().__init__("jobicy")
+
+    def search(
+        self,
+        roles: list[str],
+        location: str | None = None,
+        max_results: int = 20,
+        **kwargs: Any,
+    ) -> list[JobListing]:
+        """Fetch live remote jobs from jobicy.com/api/v2/remote-jobs."""
+        import time
+
+        try:
+            import requests
+        except ImportError:
+            return _build_generated_jobs(self.name, roles, location, max_results)
+
+        all_results: list[JobListing] = []
+        seen_ids: set[str] = set()
+
+        try:
+            resp = requests.get(
+                "https://jobicy.com/api/v2/remote-jobs",
+                params={"count": 20, "industry": "data-analysis"},
+                headers={"User-Agent": "Mozilla/5.0 (AI Job Scout)"},
+                timeout=12,
+            )
+            if resp.status_code == 200:
+                data = resp.json()
+                jobs = data.get("jobs", [])
+                for role in roles[:2]:
+                    for job in jobs:
+                        job_id = str(job.get("id", ""))
+                        if job_id in seen_ids:
+                            continue
+                        title = job.get("jobTitle", role)
+                        if role.lower() not in title.lower():
+                            continue
+                        seen_ids.add(job_id)
+                        sal_min = job.get("annualSalaryMin")
+                        sal_max = job.get("annualSalaryMax")
+                        salary = None
+                        if sal_min and sal_max:
+                            salary = f"${sal_min:,}–${sal_max:,}"
+                        elif sal_min:
+                            salary = f"${sal_min:,}+"
+                        all_results.append(
+                            JobListing(
+                                title=title,
+                                company=job.get("companyName", "Unknown"),
+                                location=job.get("jobGeo") or "Remote",
+                                description=(job.get("jobExcerpt") or f"Remote {role} role.")[:800],
+                                url=job.get("url", ""),
+                                source="jobicy",
+                                salary=salary,
+                                posted_date=self._parse_date(job.get("pubDate")),
+                                is_gateway=False,
+                            )
+                        )
+                        if len(all_results) >= max_results:
+                            break
+                    if len(all_results) >= max_results:
+                        break
+            time.sleep(0.3)
+        except Exception:
+            pass
+
+        if not all_results:
+            return _build_generated_jobs(self.name, roles, location, max_results)
+
+        return all_results[:max_results]
 
 
 class WellfoundScraper(GeneratedScraper):
@@ -1249,24 +1627,24 @@ def _search_url(source: str, role: str, location: str) -> str:
     )
 
     templates: dict[str, str] = {
-        # Australia
+        # Australia — Seek uses slug+location path format
         "seek_au": f"https://www.seek.com.au/{role_slug}-jobs/in-{location_slug}",
-        "seek": f"https://www.seek.com.au/{role_slug}-jobs/in-{location_slug}",  # legacy alias
+        "seek": f"https://www.seek.com.au/jobs?keywords={role_enc}&where={location_enc}",  # legacy alias
         "indeed_au": f"https://au.indeed.com/jobs?q={role_enc}&l={location_enc}",
         "jora_au": f"https://au.jora.com/jobs?q={role_enc}&l={location_enc}",
-        "adzuna_au": f"https://www.adzuna.com.au/search?q={role_enc}&loc={location_enc}",
+        "adzuna_au": f"https://www.adzuna.com.au/jobs/search?q={role_enc}&where={location_enc}",
         "careerone": f"https://www.careerone.com.au/jobs?q={role_enc}&where={location_enc}",
         # New Zealand
-        "seek_nz": f"https://www.seek.co.nz/{role_slug}-jobs",
+        "seek_nz": f"https://www.seek.co.nz/jobs?keywords={role_enc}&where={location_enc}",
         "trademe_jobs": f"https://www.trademe.co.nz/a/jobs/search?search_string={role_enc}",
         "jora_nz": f"https://nz.jora.com/jobs?q={role_enc}&l={location_enc}",
-        # UK
-        "reed": f"https://www.reed.co.uk/jobs/{role_slug}-jobs-in-{location_slug}",
-        "totaljobs": f"https://www.totaljobs.com/jobs/{role_slug}/in-{location_slug}",
+        # UK — slug-only (no location in path avoids 404s on unknown city slugs)
+        "reed": f"https://www.reed.co.uk/jobs/{role_slug}-jobs",
+        "totaljobs": f"https://www.totaljobs.com/jobs/{role_slug}",
         "cv_library": f"https://www.cv-library.co.uk/search-jobs?q={role_enc}&geo={location_enc}&us=1",
         "indeed_uk": f"https://uk.indeed.com/jobs?q={role_enc}&l={location_enc}",
-        "adzuna_uk": f"https://www.adzuna.co.uk/search?q={role_enc}&loc={location_enc}",
-        "guardian_jobs": f"https://jobs.theguardian.com/search/?q={role_enc}&l={location_enc}",
+        "adzuna_uk": f"https://www.adzuna.co.uk/jobs/search?q={role_enc}&where={location_enc}",
+        "guardian_jobs": f"https://jobs.theguardian.com/search/?q={role_enc}",
         # USA
         "indeed_us": f"https://www.indeed.com/jobs?q={role_enc}&l={location_enc}",
         "ziprecruiter": f"https://www.ziprecruiter.com/jobs-search?search={role_enc}&location={location_enc}",
@@ -1317,10 +1695,10 @@ def _search_url(source: str, role: str, location: str) -> str:
         "kalibrr": f"https://www.kalibrr.com/job-board/te/{role_slug}",
         "glints_sea": f"https://glints.com/opportunities/jobs/explore?keyword={role_enc}",
         # South Africa
-        "careers24": f"https://www.careers24.com/jobs/{role_slug}-jobs/",
-        "pnet": f"https://www.pnet.co.za/jobs/{role_slug}-jobs/",
+        "careers24": f"https://www.careers24.com/jobs/?search={role_enc}&location={location_enc}",
+        "pnet": f"https://www.pnet.co.za/jobs/?search={role_enc}&location={location_enc}",
         "indeed_za": f"https://za.indeed.com/jobs?q={role_enc}&l={location_enc}",
-        "adzuna_za": f"https://www.adzuna.co.za/search?q={role_enc}",
+        "adzuna_za": f"https://www.adzuna.co.za/jobs/search?q={role_enc}",
         # Brazil
         "catho": f"https://www.catho.com.br/vagas/{role_slug}/",
         "vagas": f"https://www.vagas.com.br/vagas-de-{role_slug}",
@@ -1447,6 +1825,9 @@ def get_scraper(name: str, **kwargs: Any) -> JobScraper:
         "remotive": RemotiveScraper,
         "wellfound": WellfoundScraper,
         "himalayas": HimalayasScraper,
+        "arbeitnow": ArbeitnowScraper,
+        "themuse": TheMuseScraper,
+        "jobicy": JobicyScraper,
     }
 
     if name not in scrapers:
