@@ -102,7 +102,22 @@
             {% if r.job.salary %}
             <span class="chip chip-gray">💰 {{ r.job.salary }}</span>
             {% endif %}
+            {# Quality badge #}
+            {% set qs = r.job.quality_score if r.job.quality_score is defined else 100 %}
+            {% if qs >= 70 %}
+            <span style="background:#dcfce7;color:#15803d;padding:2px 10px;border-radius:99px;font-size:0.75rem;font-weight:700" title="Quality score: {{ qs }}/100">✅ Verified {{ qs }}%</span>
+            {% elif qs >= 40 %}
+            <span style="background:#fef9c3;color:#92400e;padding:2px 10px;border-radius:99px;font-size:0.75rem;font-weight:700" title="Quality score: {{ qs }}/100">⚠️ Check {{ qs }}%</span>
+            {% else %}
+            <span style="background:#fee2e2;color:#b91c1c;padding:2px 10px;border-radius:99px;font-size:0.75rem;font-weight:700" title="Quality score: {{ qs }}/100">🚨 Low quality {{ qs }}%</span>
+            {% endif %}
           </div>
+          {# Scam warning flags #}
+          {% if r.job.scam_flags is defined and r.job.scam_flags %}
+          <div style="margin-top:6px;padding:4px 8px;background:#fff7ed;border:1px solid #fed7aa;border-radius:6px;font-size:0.75rem;color:#9a3412">
+            ⚠️ Flagged: {{ r.job.scam_flags | join(' · ') }}
+          </div>
+          {% endif %}
         </div>
         <div class="score-badge {% if r.score >= 70 %}score-green{% elif r.score >= 50 %}score-yellow{% else %}score-red{% endif %}">
           {{ r.score|round|int }}
@@ -137,6 +152,13 @@
         {% endif %}
         <a class="btn btn-secondary" href="/wizard/coaching/{{ i }}">
           💡 Get Coaching →
+        </a>
+        {# Tailor CV button — passes job details to step5 #}
+        {% set jd_safe = (r.job.description or '') | urlencode %}
+        <a class="btn" style="background:#7c3aed;color:#fff;border:none"
+           href="/tailor?title={{ r.job.title | urlencode }}&company={{ r.job.company | urlencode }}&description={{ jd_safe }}&url={{ r.job.url | urlencode }}"
+           target="_blank">
+          ✏️ Tailor My CV →
         </a>
       </div>
     </article>

@@ -682,6 +682,8 @@ class JobListing:
     requirements: list[str] = field(default_factory=list)
     benefits: list[str] = field(default_factory=list)
     is_gateway: bool = False
+    quality_score: int = 100
+    scam_flags: list[str] = field(default_factory=list)
 
     def to_prompt_text(self) -> str:
         """Convert a listing to prompt-friendly text."""
@@ -708,6 +710,8 @@ Requirements: {', '.join(self.requirements[:5])}
             requirements=data.get("requirements", []),
             benefits=data.get("benefits", []),
             is_gateway=data.get("is_gateway", False),
+            quality_score=data.get("quality_score", 100),
+            scam_flags=data.get("scam_flags", []),
         )
 
 

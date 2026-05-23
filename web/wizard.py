@@ -19,6 +19,7 @@ from jobscout.profile import ProfileParser, UserProfile
 from jobscout.providers.anthropic import AnthropicProvider
 from jobscout.providers.openai import OpenAIProvider
 from jobscout.providers.opencode import OpenCodeProvider
+from jobscout.scam_detector import score_job as _score_job
 from jobscout.scraper import BOARD_REGISTRY, JobListing, get_scraper
 
 JOB_REGISTRY: dict[str, dict[str, Any]] = {}
@@ -228,6 +229,25 @@ def run_search_worker(profile_dict: dict, search_config: dict, job_id: str) -> N
         if len(real_jobs) >= 3:
             all_jobs = real_jobs
 
+        # ── Quality scoring ──────────────────────────────────────────────────
+        seen_keys: set[str] = set()
+        for jl in all_jobs:
+            result = _score_job(
+                title=jl.title,
+                company=jl.company,
+                description=jl.description or "",
+                url=jl.url,
+                posted_date=jl.posted_date.isoformat() if isinstance(jl.posted_date, datetime) else (jl.posted_date or ""),
+                seen_keys=seen_keys,
+            )
+            jl.quality_score = result.score
+            jl.scam_flags = result.flags
+
+        # Filter out obvious scams (score < 15) — only when we have enough jobs
+        obvious_scams = [j for j in all_jobs if j.quality_score < 15]
+        if len(all_jobs) - len(obvious_scams) >= 3:
+            all_jobs = [j for j in all_jobs if j.quality_score >= 15]
+
         if len(all_jobs) == 0:
             JOB_REGISTRY[job_id] = {
                 "status": "error",
@@ -267,6 +287,8 @@ def run_search_worker(profile_dict: dict, search_config: dict, job_id: str) -> N
                         "requirements": result.job.requirements,
                         "benefits": result.job.benefits,
                         "is_gateway": result.job.is_gateway,
+                        "quality_score": result.job.quality_score,
+                        "scam_flags": result.job.scam_flags,
                     },
                     "score": result.score,
                     "reasoning": result.reasoning,

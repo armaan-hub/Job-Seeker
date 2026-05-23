@@ -53,7 +53,82 @@ def create_app() -> Flask:
 
     app.register_blueprint(wizard_bp)
 
+    @app.route("/api/tailor", methods=["POST"])
+    def api_tailor():
+        """Tailor the user's CV for a specific job listing."""
+        from flask import jsonify, request, session
+
+        data = request.get_json(force=True, silent=True) or {}
+        job_title = data.get("job_title", "")
+        job_company = data.get("job_company", "")
+        job_description = data.get("job_description", "")
+
+        if not job_description or len(job_description.strip()) < 20:
+            return jsonify({"error": "job_description is required (min 20 chars)"}), 400
+
+        profile = _load_profile_dict(session)
+        if not profile:
+            return jsonify({"error": "No profile loaded. Please upload your CV first."}), 400
+
+        try:
+            from jobscout.config import get_config
+            from web.wizard import _get_provider
+            cfg = get_config()
+            provider = _get_provider(cfg)
+        except Exception:
+            provider = None
+
+        from jobscout.cv_tailor import tailor_cv
+        result = tailor_cv(
+            profile=profile,
+            job_title=job_title,
+            job_company=job_company,
+            job_description=job_description,
+            provider=provider,
+        )
+        return jsonify(result)
+
+    @app.route("/tailor")
+    def tailor_page():
+        """CV tailoring page — receives job details via query params."""
+        from flask import render_template, request
+        job_title = request.args.get("title", "")
+        job_company = request.args.get("company", "")
+        job_description = request.args.get("description", "")
+        job_url = request.args.get("url", "")
+        return render_template(
+            "step5_tailor.html",
+            job_title=job_title,
+            job_company=job_company,
+            job_description=job_description,
+            job_url=job_url,
+        )
+
     return app
+
+
+def _load_profile_dict(session) -> dict | None:
+    """Load raw profile dict from session-backed storage."""
+    import json as _json
+    from pathlib import Path
+
+    profile_data = session.get("profile_data", {})
+    profile_json = profile_data.get("profile_json")
+    if profile_json:
+        try:
+            return _json.loads(profile_json)
+        except Exception:
+            return None
+
+    if profile_data.get("profile_storage") == "disk" or profile_data.get("storage") == "disk":
+        path = Path.home() / ".jobscout" / "session_profile.json"
+        if path.exists():
+            try:
+                return _json.loads(path.read_text(encoding="utf-8"))
+            except Exception:
+                return None
+
+    return None
 
 
 if __name__ == "__main__":
