@@ -1201,6 +1201,16 @@ class GupyScraper(GeneratedScraper):
         super().__init__("gupy")
 
 
+def _role_matches(role: str, title: str, tags: list[str] | None = None, description: str = "") -> bool:
+    """Loose keyword match — any meaningful word from `role` found in title/tags/description."""
+    _STOP = {"and", "or", "in", "the", "a", "an", "of", "at", "for", "with", "to", "senior", "junior"}
+    words = [w for w in role.lower().split() if w not in _STOP and len(w) >= 3]
+    if not words:
+        return True  # no meaningful words → accept all
+    haystack = (title + " " + " ".join(tags or []) + " " + description[:300]).lower()
+    return any(w in haystack for w in words)
+
+
 class RemotiveScraper(JobScraper):
     """Remotive scraper – uses the public Remotive JSON API."""
 
@@ -1246,9 +1256,7 @@ class RemotiveScraper(JobScraper):
                         continue
                     seen_ids.add(job_id)
                     title = job.get("title", role)
-                    if role.lower() not in title.lower() and role.lower() not in " ".join(
-                        job.get("tags", [])
-                    ).lower():
+                    if not _role_matches(role, title, job.get("tags", [])):
                         continue
                     description = re.sub(r"<[^>]+>", " ", job.get("description", "")).strip()
                     all_results.append(
@@ -1321,9 +1329,7 @@ class ArbeitnowScraper(JobScraper):
                         continue
                     seen_slugs.add(slug)
                     title = job.get("title", role)
-                    if role.lower() not in title.lower() and role.lower() not in " ".join(
-                        job.get("tags", [])
-                    ).lower():
+                    if not _role_matches(role, title, job.get("tags", [])):
                         continue
                     all_results.append(
                         JobListing(
@@ -1390,7 +1396,7 @@ class TheMuseScraper(JobScraper):
                         if job_id in seen_ids:
                             continue
                         title = job.get("name", "")
-                        if role.lower() not in title.lower():
+                        if not _role_matches(role, title):
                             continue
                         seen_ids.add(job_id)
                         levels = [lv.get("name", "") for lv in job.get("levels", [])]
@@ -1436,7 +1442,7 @@ class TheMuseScraper(JobScraper):
                             if job_id in seen_ids:
                                 continue
                             title = job.get("name", "")
-                            if role.lower() not in title.lower():
+                            if not _role_matches(role, title):
                                 continue
                             seen_ids.add(job_id)
                             levels = [lv.get("name", "") for lv in job.get("levels", [])]
@@ -1509,7 +1515,7 @@ class JobicyScraper(JobScraper):
                         if job_id in seen_ids:
                             continue
                         title = job.get("jobTitle", role)
-                        if role.lower() not in title.lower():
+                        if not _role_matches(role, title, description=job.get("jobExcerpt", "")):
                             continue
                         seen_ids.add(job_id)
                         sal_min = job.get("annualSalaryMin")

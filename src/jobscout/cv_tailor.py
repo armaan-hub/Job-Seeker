@@ -126,24 +126,45 @@ def _ai_tailor(
         return None
 
 
+def _flatten_skills(skills_val) -> list[str]:
+    """Convert skills to flat list whether it's a dict-of-lists or a list."""
+    if isinstance(skills_val, dict):
+        result = []
+        for lst in skills_val.values():
+            if isinstance(lst, list):
+                result.extend(str(s) for s in lst)
+        return result
+    elif isinstance(skills_val, list):
+        return [str(s) for s in skills_val]
+    return []
+
+
+def _get_profile_fields(profile: dict) -> tuple[str, str, str]:
+    """Return (name, current_role, summary) handling nested 'profile' key or flat layout."""
+    p = profile.get("profile", {})
+    name = p.get("name") or profile.get("name", "Candidate")
+    role = p.get("title") or profile.get("current_role") or profile.get("title", "Financial Data Analyst")
+    summary = profile.get("professional_summary") or profile.get("summary", "")
+    return name, role, summary
+
+
 def _keyword_tailor(profile: dict, jd_keywords: list[str]) -> dict:
     """Fallback: return profile sections with matching keywords highlighted."""
-    skills = profile.get("skills", [])
-    relevant_skills = [s for s in skills if any(kw.lower() in s.lower() for kw in jd_keywords)]
+    all_skills = _flatten_skills(profile.get("skills", []))
+    relevant_skills = [s for s in all_skills if any(kw.lower() in s.lower() for kw in jd_keywords)]
     if not relevant_skills:
-        relevant_skills = skills[:10]
+        relevant_skills = all_skills[:10]
 
     experience = profile.get("experience", [])
     exp_bullets = []
     for exp in experience[:3]:
-        role = exp.get("title", "")
+        role = exp.get("role", "") or exp.get("title", "")
         company = exp.get("company", "")
-        responsibilities = exp.get("responsibilities", [])
+        responsibilities = exp.get("bullets", []) or exp.get("responsibilities", [])
         for r in responsibilities[:2]:
             exp_bullets.append(f"• {r} ({role} at {company})")
 
-    name = profile.get("name", "Candidate")
-    current_role = profile.get("current_role", "")
+    name, current_role, _summary = _get_profile_fields(profile)
 
     return {
         "summary": (
@@ -192,17 +213,19 @@ def _extract_keywords(text: str) -> list[str]:
 def _profile_to_text(profile: dict) -> str:
     """Flatten profile dict to a single text string for analysis."""
     parts = []
-    if profile.get("name"):
-        parts.append(profile["name"])
-    if profile.get("current_role"):
-        parts.append(profile["current_role"])
-    if profile.get("summary"):
-        parts.append(profile["summary"])
-    for skill in profile.get("skills", []):
-        parts.append(str(skill))
+    name, current_role, summary = _get_profile_fields(profile)
+    if name:
+        parts.append(name)
+    if current_role:
+        parts.append(current_role)
+    if summary:
+        parts.append(summary)
+    for skill in _flatten_skills(profile.get("skills", [])):
+        parts.append(skill)
     for exp in profile.get("experience", []):
-        parts.append(f"{exp.get('title', '')} {exp.get('company', '')}")
-        for r in exp.get("responsibilities", []):
+        role = exp.get("role", "") or exp.get("title", "")
+        parts.append(f"{role} {exp.get('company', '')}")
+        for r in (exp.get("bullets") or exp.get("responsibilities", []))[:3]:
             parts.append(str(r))
     for edu in profile.get("education", []):
         parts.append(f"{edu.get('degree', '')} {edu.get('institution', '')}")

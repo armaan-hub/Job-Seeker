@@ -17,7 +17,7 @@
     }
   },
 
-  "professional_summary": "Financial Data Analyst with 10+ years of experience bridging Finance and Data Engineering. Specialises in building automated data pipelines that transform messy financial data into actionable insights. Expert in Excel, VBA, and Power Query. Recently engineered a Big Data ETL solution processing 6 million+ records (1.5 GB) for a Real Estate portfolio. Certified Artificial Intelligence Professional (KHDA Attested | CPD Certified | London Chamber | Grade: A++ Excellent). Currently completing AI, Data Science & Machine Learning programme at LISRC (Jun 2026). Immediately available in Dubai.",
+  "professional_summary": "Senior Financial Data Analyst & FP&A Specialist with 10+ years of experience bridging Finance and Data Engineering. Expert in ETL pipeline design, Power BI dashboards, Advanced SQL, and financial modelling — transforming complex datasets into actionable business intelligence. Proven track record in budgeting & forecasting, KPI reporting, variance analysis, and executive stakeholder presentations. Recently engineered a Big Data ETL solution processing 6 million+ records (1.5 GB), cutting reporting time from days to minutes. Certified Artificial Intelligence Professional (KHDA Attested | CPD Certified | Grade: A++ Excellent). Immediately available in Dubai — UAE Employment Visa (transferable).",
 
   "experience": [
     {
@@ -181,37 +181,44 @@
 
   "skills": {
     "data_engineering": [
-      "ETL Pipeline Design",
+      "ETL Pipeline Design & Optimisation",
       "Advanced Power Query (M Language)",
       "Excel VBA & Macros",
       "Power BI ETL",
       "Data Cleansing & Mining",
-      "Big Data Processing (6M+ records)"
+      "Big Data Processing (6M+ records)",
+      "Data Modeling (Star Schema, Dimensional)",
+      "Data Governance"
     ],
     "analytics_and_databases": [
-      "SQL (Querying & Joins)",
-      "Python (Pandas)",
-      "Power BI (DAX)",
+      "Advanced SQL (CTEs, Window Functions, Stored Procedures, Joins)",
+      "Python (Pandas, NumPy, Matplotlib)",
+      "Power BI (DAX, Calculated Columns, Measures)",
+      "Business Intelligence (BI)",
+      "Dashboard Design & Development",
+      "KPI Reporting & Development",
       "Financial Modeling",
-      "Business Analysis"
+      "Business Analysis",
+      "MIS Reporting"
     ],
-    "ai_and_data_science": [
-      "Certified AI Professional (KHDA)",
-      "Claude Code (Anthropic)",
-      "Claude AI Skills",
-      "Data Science Methodology",
-      "Data Modeling",
-      "Machine Learning (Foundational)"
-    ],
-    "finance": [
-      "AML/KYC Compliance",
-      "Internal Audit",
-      "Cost & Variance Analysis",
-      "Financial Reporting",
-      "VAT & Tax Filing",
+    "finance_and_fp_a": [
+      "FP&A (Financial Planning & Analysis)",
+      "Budgeting & Forecasting",
+      "Variance Analysis & Cost Leakage Detection",
       "P&L Analysis",
       "Cash Flow Analysis",
-      "Balance Sheet Preparation"
+      "Balance Sheet Preparation",
+      "Financial Reporting (IFRS-aligned)",
+      "AML / KYC Compliance (UAE Central Bank)",
+      "Internal Audit",
+      "VAT & Tax Filing (UAE)"
+    ],
+    "ai_and_data_science": [
+      "Certified AI Professional (KHDA A++ Excellent)",
+      "Claude Code (Anthropic)",
+      "Machine Learning (Foundational)",
+      "Data Science Methodology",
+      "Data Modeling"
     ],
     "tools_and_platforms": [
       "Microsoft Excel (Advanced)",
@@ -219,16 +226,16 @@
       "Power Query",
       "VBA",
       "SQL",
-      "Python (Pandas)",
-      "Claude AI",
-      "Claude Code"
+      "Python (Pandas, NumPy)",
+      "Claude AI / Claude Code"
     ],
     "soft_skills": [
+      "Executive Stakeholder Management & Presentations",
+      "Cross-Functional Team Collaboration",
       "Strategic Problem Solving",
-      "Analytical Thinking",
-      "Cross-Functional Teamwork",
       "Process Optimisation",
-      "Attention to Detail"
+      "Attention to Detail",
+      "Analytical Thinking"
     ]
   },
 
@@ -272,8 +279,36 @@
     "use_premium_cv_for": ["Direct recruiter emails", "Interviews", "Networking"],
     "top_keywords": [
       "ETL Pipeline", "Power BI", "DAX", "Power Query", "VBA", "Financial Modeling",
-      "AML", "KYC", "SQL", "Python", "Pandas", "Data Automation",
+      "AML", "KYC", "SQL", "Advanced SQL", "Python", "Pandas", "NumPy",
+      "FP&A", "Budgeting and Forecasting", "KPI Reporting", "Business Intelligence",
+      "Data Automation", "Variance Analysis", "IFRS", "MIS Reporting",
+      "Stakeholder Management", "Dashboard", "Data Modeling",
       "Certified AI Professional", "KHDA", "Financial Data Analyst"
+    ]
+  },
+
+  "cv_gap_audit": {
+    "last_updated": "2026-05-23",
+    "keywords_added": [
+      "FP&A (Financial Planning & Analysis) — evident from forecasting & financial modeling work",
+      "Budgeting & Forecasting — explicitly mentioned in experience bullets",
+      "KPI Reporting & Development — implicit in Power BI dashboard work",
+      "Business Intelligence (BI) — core of all dashboard/reporting work",
+      "Dashboard Design & Development — Power BI work",
+      "Advanced SQL (CTEs, Window Functions, Stored Procedures) — upgrade from generic 'SQL Querying'",
+      "Data Modeling (Star Schema, Dimensional) — required for Power BI data warehouse work",
+      "Data Governance — AML/KYC data structures imply governance",
+      "IFRS-aligned Financial Reporting — UAE accounting uses IFRS",
+      "NumPy, Matplotlib — natural alongside Pandas",
+      "MIS Reporting — UAE corporate term for management reporting",
+      "Executive Stakeholder Management & Presentations — 10+ years senior roles",
+      "Financial Reporting (IFRS-aligned) — explicit standard for UAE finance roles"
+    ],
+    "recommended_to_learn": [
+      "Tableau — frequently requested alongside Power BI in UAE/global roles",
+      "Azure Data Factory / Power Automate — natural extension of Power BI/ETL experience",
+      "Snowflake / Azure Synapse — modern cloud data warehouse (emerging in UAE)",
+      "Python advanced: Seaborn, SciPy, scikit-learn — for AI Data Analyst roles"
     ]
   }
 }

@@ -98,6 +98,7 @@ def create_app() -> Flask:
         job_url = request.args.get("url", "")
         return render_template(
             "step5_tailor.html",
+            step=5,
             job_title=job_title,
             job_company=job_company,
             job_description=job_description,
