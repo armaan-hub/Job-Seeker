@@ -45,8 +45,8 @@ class JobScoutConfig(BaseModel):
 
     opencode: ProviderConfig = Field(
         default_factory=lambda: ProviderConfig(
-            base_url=os.getenv("OPENCODE_BASE_URL", "http://localhost:4001"),
-            api_key=os.getenv("OPENAI_API_KEY", "dummy"),
+            base_url=os.getenv("OPENCODE_BASE_URL", "https://opencode.ai/zen"),
+            api_key=os.getenv("OPENCODE_API_KEY", ""),
         )
     )
 

@@ -122,7 +122,7 @@ def get_provider_health() -> dict[str, Any]:
     key_name = {
         "anthropic": "ANTHROPIC_API_KEY",
         "openai": "OPENAI_API_KEY",
-        "opencode": "OPENAI_API_KEY",
+        "opencode": "OPENCODE_API_KEY",
     }[provider_name]
 
     if provider_cfg.api_key:

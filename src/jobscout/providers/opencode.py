@@ -11,8 +11,8 @@ class OpenCodeProvider(AIProvider):
 
     def __init__(self, base_url: str | None = None, api_key: str | None = None):
         super().__init__(
-            api_key=api_key or os.getenv("OPENAI_API_KEY", "dummy"),
-            base_url=base_url or os.getenv("OPENCODE_BASE_URL", "http://localhost:4001"),
+            api_key=api_key or os.getenv("OPENCODE_API_KEY", ""),
+            base_url=base_url or os.getenv("OPENCODE_BASE_URL", "https://opencode.ai/zen"),
         )
         self._client: Any | None = None
 
