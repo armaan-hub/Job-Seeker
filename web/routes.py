@@ -164,6 +164,7 @@ def configure_get():
     location = search_config.get("location") or preview.get("location") or defaults.default_location
     sources = search_config.get("sources") or ["mock", "remoteok"]
     max_results = search_config.get("max_results", 10)
+    selected_regions = search_config.get("selected_regions", [])
 
     return render_template(
         "step2_config.html",
@@ -172,6 +173,7 @@ def configure_get():
         location=location,
         sources=sources,
         max_results=max_results,
+        selected_regions=selected_regions,
         # Profile info for auto-fill banner
         profile_name=preview.get("name"),
         profile_title=preview.get("title"),
@@ -190,6 +192,7 @@ def configure_post():
     roles = [r.strip() for r in roles_raw.split(",") if r.strip()]
     location = request.form.get("location", "").strip()
     sources = [source for source in request.form.getlist("sources") if source]
+    selected_regions = request.form.getlist("selected_regions")
 
     try:
         max_results = int(request.form.get("max_results", 10))
@@ -207,6 +210,7 @@ def configure_post():
         "roles": roles,
         "location": location,
         "sources": sources,
+        "selected_regions": selected_regions,
         "max_results": max_results,
     }
     return redirect(url_for("wizard.search_get"))

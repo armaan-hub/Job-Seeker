@@ -64,7 +64,7 @@
     <!-- SECTION 2: Region / Country Selection -->
     <div class="config-section">
       <h2 class="section-title">🌍 Where Do You Want to Work?</h2>
-      <p class="section-hint">Select one or more regions. Job boards for each region will be selected automatically.</p>
+      <p class="section-hint">Click your target country — job boards will be selected <strong>automatically</strong>. You can pick multiple regions.</p>
 
       <div class="region-grid" id="regionGrid">
         {% for region_key, region in region_boards.items() %}
@@ -80,20 +80,28 @@
       <p class="input-hint" id="regionLocationHint" style="display:none">
         📍 Location updated to match selected region — you can still edit it manually below.
       </p>
+      <!-- Hidden inputs to persist selected regions across form submit -->
+      <div id="selectedRegionInputs"></div>
     </div>
 
-    <!-- SECTION 3: Job Boards (shown per region + always show live boards) -->
+    <!-- SECTION 3: Job Boards (auto-filtered by region) -->
     <div class="config-section">
-      <h2 class="section-title">📋 Job Board Selection</h2>
+      <h2 class="section-title">📋 Job Boards</h2>
       <p class="section-hint">
-        Select the job boards to search. 
-        <span class="badge badge-verified">✅ Verified</span> = real, legitimate listings. 
-        <span class="badge badge-good">👍 Good</span> = generally reliable.
-        <span class="badge badge-demo">🧪 Demo</span> = test data only.
-        <span class="badge badge-stub">🔜 Coming</span> = integration in progress.
+        Boards are selected <strong>automatically</strong> based on your chosen country above.
+        <span class="badge badge-verified">✅ Verified</span> = real listings. 
+        <span class="badge badge-good">👍 Good</span> = reliable.
+        <span class="badge badge-live">⚡ Live</span> = live search API.
       </p>
 
-      <div class="boards-grid" id="boardsGrid">
+      <!-- Empty state — shown when no region is selected -->
+      <div id="boardsEmptyState" style="text-align:center;padding:2rem 1rem;color:#64748b;border:2px dashed #cbd5e1;border-radius:12px;margin-bottom:1rem;">
+        <div style="font-size:2rem;margin-bottom:0.5rem">🌍</div>
+        <strong>Select a country above</strong> to automatically load the best job boards for that region.
+        <br><small style="color:#94a3b8">No manual selection needed — we know which sites have the real jobs.</small>
+      </div>
+
+      <div class="boards-grid" id="boardsGrid" style="display:none">
         {% for key, meta in board_registry.items() %}
         <label class="board-card {% if key in sources %}board-selected{% endif %}" id="board-{{ key }}"
                data-regions="{{ board_regions.get(key, []) | join(' ') }}">
@@ -119,7 +127,12 @@
         {% endfor %}
       </div>
 
-      <!-- Hidden input to ensure at least mock is sent if nothing selected -->
+      <!-- Show how many boards are selected -->
+      <p id="boardsCount" style="font-size:0.85rem;color:#475569;margin-top:0.5rem;display:none">
+        <strong id="boardsCountNum">0</strong> job boards selected
+        <a href="#" onclick="showAllBoards(event)" style="margin-left:0.75rem;font-size:0.8rem;color:#6366f1">Customise manually ›</a>
+      </p>
+
       <p id="no-sources-warning" class="warning-text" style="display:none">
         ⚠ Please select at least one job board.
       </p>
@@ -158,6 +171,9 @@ const regionBoards = {{ region_board_map | tojson }};
 // Board regions: board_key → [region_keys]
 const boardRegions = {{ board_regions | tojson }};
 
+// Pre-selected regions from last search (persisted via session)
+const preSelectedRegions = {{ selected_regions | tojson }};
+
 // Region default locations
 const regionLocations = {};
 document.querySelectorAll('.region-card').forEach(card => {
@@ -177,9 +193,9 @@ function toggleRegion(regionKey, el) {
     el.classList.add('region-selected');
     document.getElementById('check-' + regionKey).style.display = 'inline';
   }
-  // Update location field to match selected region(s)
   updateLocationFromRegions();
   applyRegionFilter();
+  updateSelectedRegionInputs();
 }
 
 function updateLocationFromRegions() {
@@ -189,7 +205,6 @@ function updateLocationFromRegions() {
     hint.style.display = 'none';
     return;
   }
-  // Build location string from all selected regions
   const locs = [...selectedRegions]
     .map(r => regionLocations[r] || '')
     .filter(Boolean);
@@ -201,28 +216,87 @@ function updateLocationFromRegions() {
 
 function applyRegionFilter() {
   const boards = document.querySelectorAll('.board-card');
-  boards.forEach(card => {
-    const key = card.id.replace('board-', '');
-    const meta = card.dataset.regions ? card.dataset.regions.split(' ').filter(Boolean) : [];
+  const emptyState = document.getElementById('boardsEmptyState');
+  const boardsGrid = document.getElementById('boardsGrid');
+  const boardsCount = document.getElementById('boardsCount');
 
-    if (selectedRegions.size === 0) {
-      // Show all when no region selected
+  if (selectedRegions.size === 0) {
+    // No region selected — show empty state, hide grid
+    emptyState.style.display = '';
+    boardsGrid.style.display = 'none';
+    boardsCount.style.display = 'none';
+    // Uncheck everything
+    boards.forEach(card => {
+      const cb = card.querySelector('input[type=checkbox]');
+      if (cb) { cb.checked = false; card.classList.remove('board-selected'); }
+    });
+    return;
+  }
+
+  // Region(s) selected — show grid, hide empty state
+  emptyState.style.display = 'none';
+  boardsGrid.style.display = '';
+  boardsCount.style.display = '';
+
+  let checkedCount = 0;
+  boards.forEach(card => {
+    const meta = card.dataset.regions ? card.dataset.regions.split(' ').filter(Boolean) : [];
+    const isGlobal = meta.length === 0; // global boards (remotive, etc.) always shown
+    const inRegion = meta.some(r => selectedRegions.has(r));
+
+    if (isGlobal || inRegion) {
       card.style.display = '';
-    } else {
-      // Show board if its region is selected, OR if it has no region (global)
-      const visible = meta.length === 0 || meta.some(r => selectedRegions.has(r));
-      card.style.display = visible ? '' : 'none';
-      if (visible) {
-        // Auto-check the board
-        const cb = card.querySelector('input[type=checkbox]');
-        if (cb && !cb.checked) {
-          cb.checked = true;
-          card.classList.add('board-selected');
-        }
+      // Auto-check region boards
+      const cb = card.querySelector('input[type=checkbox]');
+      if (cb && !cb.checked) {
+        cb.checked = true;
+        card.classList.add('board-selected');
       }
+    } else {
+      // Hide and uncheck boards not in selected regions
+      card.style.display = 'none';
+      const cb = card.querySelector('input[type=checkbox]');
+      if (cb) { cb.checked = false; card.classList.remove('board-selected'); }
     }
+
+    const cb = card.querySelector('input[type=checkbox]');
+    if (cb && cb.checked && card.style.display !== 'none') checkedCount++;
+  });
+
+  document.getElementById('boardsCountNum').textContent = checkedCount;
+}
+
+function showAllBoards(e) {
+  e.preventDefault();
+  // Reveal all boards for manual selection
+  document.querySelectorAll('.board-card').forEach(card => { card.style.display = ''; });
+  document.getElementById('boardsCount').style.display = 'none';
+}
+
+function updateSelectedRegionInputs() {
+  const container = document.getElementById('selectedRegionInputs');
+  container.innerHTML = '';
+  selectedRegions.forEach(r => {
+    const inp = document.createElement('input');
+    inp.type = 'hidden';
+    inp.name = 'selected_regions';
+    inp.value = r;
+    container.appendChild(inp);
   });
 }
+
+// On page load: restore previously selected regions (from session)
+document.addEventListener('DOMContentLoaded', () => {
+  if (preSelectedRegions && preSelectedRegions.length > 0) {
+    preSelectedRegions.forEach(regionKey => {
+      const card = document.querySelector(`.region-card[data-region="${regionKey}"]`);
+      if (card) toggleRegion(regionKey, card);
+    });
+  } else {
+    // First visit — show empty state
+    applyRegionFilter();
+  }
+});
 
 // Validate at submit
 document.getElementById('configForm').addEventListener('submit', function(e) {
@@ -230,6 +304,8 @@ document.getElementById('configForm').addEventListener('submit', function(e) {
   if (checked.length === 0) {
     e.preventDefault();
     document.getElementById('no-sources-warning').style.display = 'block';
+    document.getElementById('boardsGrid').style.display = '';
+    document.getElementById('boardsEmptyState').style.display = 'none';
     document.getElementById('boardsGrid').scrollIntoView({behavior: 'smooth'});
   }
 });
